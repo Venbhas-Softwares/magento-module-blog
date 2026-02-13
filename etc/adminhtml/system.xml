@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="venbhas" translate="label" sortOrder="400">
+            <label>Venbhas</label>
+        </tab>
+        <section id="venbhas_article" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Article</label>
+            <tab>venbhas</tab>
+            <resource>Venbhas_Article::config</resource>
+            <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Module</label>
+                    <comment>Enable or disable the Article module globally.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="comments_enabled" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Comment Section</label>
+                    <comment>Allow visitors to post comments on articles.</comment>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="article_list_route" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Article List URL Key</label>
+                    <comment>URL path for the article listing page (e.g. articles). Used by the frontend router.</comment>
+                    <validate>validate-alphanum-with-hyphens</validate>
+                </field>
+                <field id="category_list_route" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Category List URL Key</label>
+                    <comment>URL path for the category listing page (e.g. categories). Used by the frontend router.</comment>
+                    <validate>validate-alphanum-with-hyphens</validate>
+                </field>
+            </group>
+            <group id="meta_robots" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Robots (Meta Robots)</label>
+                <comment>Default meta robots key for category and post pages. Can be overridden per category or per article.</comment>
+                <field id="category" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Category Robots</label>
+                    <comment>Robots key for category listing pages (e.g. INDEX, FOLLOW).</comment>
+                    <source_model>Venbhas\Article\Model\Config\Source\MetaRobots</source_model>
+                </field>
+                <field id="post" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Article Robots</label>
+                    <comment>Robots key for article detail pages.</comment>
+                    <source_model>Venbhas\Article\Model\Config\Source\MetaRobots</source_model>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

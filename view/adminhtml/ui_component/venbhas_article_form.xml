@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">venbhas_article_form.venbhas_article_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Article Information</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="save" class="Venbhas\Article\Block\Adminhtml\Article\Edit\SaveButton"/>
+            <button name="delete" class="Venbhas\Article\Block\Adminhtml\Article\Edit\DeleteButton"/>
+            <button name="back" class="Venbhas\Article\Block\Adminhtml\Article\Edit\BackButton"/>
+        </buttons>
+        <namespace>venbhas_article_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>venbhas_article_form.venbhas_article_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="venbhas_article_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="venbhas_article/article/save"/>
+        </settings>
+        <dataProvider class="Venbhas\Article\Model\Article\DataProvider" name="venbhas_article_form_data_source">
+            <settings>
+                <requestFieldName>article_id</requestFieldName>
+                <primaryFieldName>article_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="general">
+        <settings>
+            <label translate="true">General</label>
+        </settings>
+        <field name="article_id" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+                <dataScope>article_id</dataScope>
+            </settings>
+        </field>
+        <field name="status" formElement="select">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Status</label>
+                <dataScope>status</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Venbhas\Article\Model\Article\Source\Status"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="title" formElement="input">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Title</label>
+                <dataScope>title</dataScope>
+            </settings>
+        </field>
+        <field name="url_key" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">URL Key</label>
+                <dataScope>url_key</dataScope>
+                <notice translate="true">Leave empty to auto-generate from title.</notice>
+            </settings>
+        </field>
+        <field name="category_id" formElement="select">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Category</label>
+                <dataScope>category_id</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Venbhas\Article\Model\Article\Source\Categories"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+    </fieldset>
+    <fieldset name="content" sortOrder="15">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Content</label>
+        </settings>
+        <field name="short_description" formElement="textarea">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Short Description</label>
+                <dataScope>short_description</dataScope>
+            </settings>
+        </field>
+        <field name="description" template="ui/form/field" formElement="wysiwyg">
+            <settings>
+            <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <label translate="true">Description</label>
+                <dataScope>description</dataScope>
+            </settings>
+            <formElements>
+                <wysiwyg>
+                    <settings>
+                        <wysiwyg>true</wysiwyg>
+                    </settings>
+                </wysiwyg>
+            </formElements>
+        </field>
+        <field name="featured_image" formElement="fileUploader">
+            <settings>
+                <label translate="true">Featured Image</label>
+                <dataScope>featured_image</dataScope>
+                <componentType>fileUploader</componentType>
+                <maxFileSize>2097152</maxFileSize>
+                <allowedExtensions>jpg jpeg gif png webp</allowedExtensions>
+                <uploaderConfig>
+                    <param xsi:type="url" name="url" path="venbhas_article/article/upload"/>
+                </uploaderConfig>
+            </settings>
+            <formElements>
+                <fileUploader>
+                    <settings>
+                        <allowedExtensions>jpg jpeg gif png webp</allowedExtensions>
+                        <maxFileSize>2097152</maxFileSize>
+                        <uploaderConfig>
+                            <param xsi:type="url" name="url" path="venbhas_article/article/upload"/>
+                        </uploaderConfig>
+                    </settings>
+                </fileUploader>
+            </formElements>
+        </field>
+    </fieldset>
+    <fieldset name="seo" sortOrder="20">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Search Engine Optimization</label>
+        </settings>
+        <field name="meta_title" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Meta Title</label>
+                <dataScope>meta_title</dataScope>
+            </settings>
+        </field>
+        <field name="meta_keywords" formElement="textarea">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Meta Keywords</label>
+                <dataScope>meta_keywords</dataScope>
+            </settings>
+        </field>
+        <field name="meta_description" formElement="textarea">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Meta Description</label>
+                <dataScope>meta_description</dataScope>
+            </settings>
+        </field>
+        <field name="meta_robots" formElement="select">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Meta Robots</label>
+                <dataScope>meta_robots</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Venbhas\Article\Model\Config\Source\MetaRobots"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+    </fieldset>
+    <fieldset name="related_products" sortOrder="30">
+        <settings>
+            <collapsible>true</collapsible>
+            <label translate="true">Related Products</label>
+        </settings>
+        <field name="related_products" formElement="multiselect">
+            <settings>
+                <dataType>array</dataType>
+                <label translate="true">Related Products</label>
+                <dataScope>related_products</dataScope>
+                <notice translate="true">Select products to show as related to this article.</notice>
+            </settings>
+            <formElements>
+                <multiselect>
+                    <settings>
+                        <options class="Venbhas\Article\Model\Article\Source\Products"/>
+                    </settings>
+                </multiselect>
+            </formElements>
+        </field>
+    </fieldset>
+</form>

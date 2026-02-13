@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::content">
+                    <resource id="Venbhas_Article::article" title="Articles" translate="title" sortOrder="10">
+                        <resource id="Venbhas_Article::article_save" title="Save Article" translate="title" sortOrder="10"/>
+                        <resource id="Venbhas_Article::article_delete" title="Delete Article" translate="title" sortOrder="20"/>
+                    </resource>
+                    <resource id="Venbhas_Article::category" title="Article Categories" translate="title" sortOrder="20">
+                        <resource id="Venbhas_Article::category_save" title="Save Category" translate="title" sortOrder="10"/>
+                        <resource id="Venbhas_Article::category_delete" title="Delete Category" translate="title" sortOrder="20"/>
+                    </resource>
+                    <resource id="Venbhas_Article::comment" title="Article Comments" translate="title" sortOrder="30">
+                        <resource id="Venbhas_Article::comment_save" title="Save Comment" translate="title" sortOrder="10"/>
+                        <resource id="Venbhas_Article::comment_delete" title="Delete Comment" translate="title" sortOrder="20"/>
+                    </resource>
+                    <resource id="Venbhas_Article::config" title="Article Configuration" translate="title" sortOrder="40"/>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

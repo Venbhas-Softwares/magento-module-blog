@@ -1,0 +1,16 @@
+<?php
+$categories = $block->getCategoryCollection();
+?>
+
+<div class="article-category-leftnav">
+    <h3><?= __('Categories') ?></h3>
+    <ul>
+        <?php foreach ($categories as $cat): ?>
+            <li>
+                <a href="<?= $escaper->escapeUrl($block->getCategoryUrl($cat)) ?>">
+                    <?= $escaper->escapeHtml($cat->getName()) ?>
+                </a>
+            </li>
+        <?php endforeach; ?>
+    </ul>
+</div>

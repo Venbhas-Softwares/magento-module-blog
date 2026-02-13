@@ -1,0 +1,60 @@
+<?php
+$category = $block->getCategory();
+
+if (!$category) return;
+
+$articles = $block->getArticles();
+?>
+
+<div class="venbhas-article-category-view">
+
+    <!-- Category Header Section -->
+    <div class="category-header">
+    <h1><?= $escaper->escapeHtml($category->getName()) ?></h1>
+        <div class="category-image">
+            <?php if ($category->getFeaturedImage()): ?>
+                <img src="<?= $escaper->escapeUrl($block->getImageUrl($category->getFeaturedImage())) ?>"
+                     alt="<?= $escaper->escapeHtml($category->getName()) ?>">
+            <?php endif; ?>
+        </div>
+
+        <div class="category-info">
+            <?php if ($category->getDescription()): ?>
+                <div class="category-description">
+                    <?= $escaper->escapeHtml($category->getDescription()) ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <!-- Articles Section -->
+    <?php if ($articles && $articles->getSize()): ?>
+        <div class="category-articles">
+            <h2><?= __('Articles') ?></h2>
+
+            <ul class="article-list">
+                <?php foreach ($articles as $article): 
+                    $updatedAt = $article->getUpdatedAt();
+                    $formattedDate = $block->formatDate($updatedAt, \IntlDateFormatter::MEDIUM, true);
+                    $timeAgo = $block->getTimeAgo($updatedAt);
+                ?>
+                    <li class="article-item">
+                        <a href="<?= $escaper->escapeUrl($block->getArticleUrl($article)) ?>">
+                            <?= $escaper->escapeHtml($article->getTitle()) ?>
+                        </a>
+
+                        <div class="article-meta"
+                             title="<?= $escaper->escapeHtml($formattedDate) ?>">
+                            <?= __('Updated %1 ago', $timeAgo) ?>
+                        </div>
+
+                        <div class="article-hover">
+                            <?= $escaper->escapeHtml($article->getDescription()) ?>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
+</div>

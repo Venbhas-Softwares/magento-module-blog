@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+       
+        <css src="Venbhas_Article::css/article.css"/>
+    
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="Venbhas\Article\Block\Frontend\Article\ListBlock" name="article.list" template="Venbhas_Article::article/list.phtml">
+                <arguments>
+                    <argument name="list_title" xsi:type="string" translate="true">Articles</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,101 @@
+<?php
+/**
+ * @var $block \Venbhas\Article\Block\Frontend\Article\ListBlock
+ * @var \Magento\Framework\Escaper $escaper
+ */
+
+$articles   = $block->getArticles();
+$categories = $block->getCategories(); 
+//$listTitle  = $block->getListTitle();
+?>
+
+<div class="venbhas-article-wrapper">
+
+    <div class="article-layout">
+
+        <!-- LEFT COLUMN : Categories -->
+        <aside class="article-sidebar">
+            <h3><?= __('Categories') ?></h3>
+            <?php if ($categories && $categories->getSize()): ?>
+                <ul class="category-list">
+                    <?php foreach ($categories as $category): ?>
+                        <li>
+                        <a href="<?= $escaper->escapeUrl($block->getCategoryUrl($category)) ?>">
+                                <?= $escaper->escapeHtml($category->getName()) ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <p><?= __('No categories found.') ?></p>
+            <?php endif; ?>
+        </aside>
+
+        <!-- RIGHT COLUMN : Articles -->
+        <div class="article-content">
+            <?php if ($articles->getSize()): ?>
+                <ul class="article-list">
+                    <?php foreach ($articles as $article): ?>
+                        <?php
+                        $updatedAt = $article->getUpdatedAt();
+                        $formattedDate = $block->formatDate(
+                            $updatedAt,
+                            \IntlDateFormatter::MEDIUM,
+                            true
+                        );
+                        ?>
+                        <li class="article-item">
+                            <a href="<?= $escaper->escapeUrl($block->getArticleUrl((string) $article->getUrlKey())) ?>">
+                                <?= $escaper->escapeHtml($article->getTitle()) ?>
+                            </a>
+
+                            <span class="article-updated"
+                                  title="<?= $escaper->escapeHtmlAttr($formattedDate) ?>"
+                                  data-date="<?= $escaper->escapeHtmlAttr($updatedAt) ?>">
+                                <!-- JS will convert this -->
+                            </span>
+                            <?php if ($article->getShortDescription()): ?>
+                                <p><?= $escaper->escapeHtml($article->getShortDescription()) ?></p>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php else: ?>
+                <p><?= __('No articles yet.') ?></p>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div class="article-pagination">
+        <?php echo $block->getPagerHtml(); ?>
+    </div>
+</div>
+<script>
+require(['jquery'], function ($) {
+    function timeAgo(dateString) {
+        const now = new Date();
+        const past = new Date(dateString);
+        const seconds = Math.floor((now - past) / 1000);
+
+        const intervals = {
+            year: 31536000,
+            month: 2592000,
+            day: 86400,
+            hour: 3600,
+            minute: 60
+        };
+
+        for (let key in intervals) {
+            const interval = Math.floor(seconds / intervals[key]);
+            if (interval >= 1) {
+                return interval + " " + key + (interval > 1 ? "s" : "") + " ago";
+            }
+        }
+        return "Just now";
+    }
+
+    $('.article-updated').each(function () {
+        const date = $(this).data('date');
+        $(this).text("Last updated " + timeAgo(date));
+    });
+});
+</script>

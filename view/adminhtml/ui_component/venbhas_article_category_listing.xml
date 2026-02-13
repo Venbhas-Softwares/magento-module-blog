@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">venbhas_article_category_listing.venbhas_article_category_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="add">
+                <url path="*/*/new"/>
+                <class>primary</class>
+                <label translate="true">Add New Category</label>
+            </button>
+        </buttons>
+        <spinner>venbhas_article_category_columns</spinner>
+        <deps>
+            <dep>venbhas_article_category_listing.venbhas_article_category_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="venbhas_article_category_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">category_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Venbhas_Article::category</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="venbhas_article_category_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>category_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filterSearch name="fulltext"/>
+        <filters name="listing_filters"/>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <massaction name="listing_massaction">
+        <argument name="data" xsi:type="array">
+            <item name="config" xsi:type="array">
+                <item name="indexField" xsi:type="string">category_id</item>
+            </item>
+        </argument>
+        <action name="delete">
+            <settings>
+                <confirm>
+                    <message translate="true">Are you sure you want to delete selected categories?</message>
+                    <title translate="true">Delete selected</title>
+                </confirm>
+                <url path="venbhas_article/category/massDelete"/>
+                <type>delete</type>
+                <label translate="true">Delete</label>
+            </settings>
+        </action>
+        <action name="enable">
+            <settings>
+                <url path="venbhas_article/category/massEnable"/>
+                <type>enable</type>
+                <label translate="true">Enable</label>
+            </settings>
+        </action>
+        <action name="disable">
+            <settings>
+                <url path="venbhas_article/category/massDisable"/>
+                <type>disable</type>
+                <label translate="true">Disable</label>
+            </settings>
+        </action>
+    </massaction>
+    <columns name="venbhas_article_category_columns">
+        <selectionsColumn name="ids" sortOrder="0">
+            <settings>
+                <indexField>category_id</indexField>
+            </settings>
+        </selectionsColumn>
+        <column name="category_id" sortOrder="10">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">ID</label>
+                <sorting>asc</sorting>
+            </settings>
+        </column>
+        <column name="name" sortOrder="20">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Name</label>
+            </settings>
+        </column>
+        <column name="url_key" sortOrder="30">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">URL Key</label>
+            </settings>
+        </column>
+        <column name="status" sortOrder="40" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <options class="Venbhas\Article\Model\Source\IsActive"/>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+        <column name="created_at" sortOrder="50" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+                <label translate="true">Created</label>
+            </settings>
+        </column>
+        <column name="updated_at" sortOrder="60" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+                <label translate="true">Updated</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" sortOrder="70" class="Venbhas\Article\Ui\Component\Listing\Column\CategoryActions">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">90</item>
+                </item>
+            </argument>
+            <settings>
+                <indexField>category_id</indexField>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

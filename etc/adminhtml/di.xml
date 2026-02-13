@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="venbhas_article_listing_data_source" xsi:type="string">Venbhas\Article\Model\ResourceModel\Article\Grid\Collection</item>
+                <item name="venbhas_article_category_listing_data_source" xsi:type="string">Venbhas\Article\Model\ResourceModel\Category\Grid\Collection</item>
+                <item name="venbhas_article_comment_listing_data_source" xsi:type="string">Venbhas\Article\Model\ResourceModel\Comment\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Venbhas\Article\Model\ResourceModel\Article\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">venbhas_article</argument>
+            <argument name="eventPrefix" xsi:type="string">venbhas_article_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">article_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Venbhas\Article\Model\ResourceModel\Article</argument>
+        </arguments>
+    </type>
+    <type name="Venbhas\Article\Model\ResourceModel\Category\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">venbhas_article_category</argument>
+            <argument name="eventPrefix" xsi:type="string">venbhas_article_category_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">category_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Venbhas\Article\Model\ResourceModel\Category</argument>
+        </arguments>
+    </type>
+    <type name="Venbhas\Article\Model\ResourceModel\Comment\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">venbhas_article_comment</argument>
+            <argument name="eventPrefix" xsi:type="string">venbhas_article_comment_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">comment_grid_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Venbhas\Article\Model\ResourceModel\Comment</argument>
+        </arguments>
+    </type>
+</config>

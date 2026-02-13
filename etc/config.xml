@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <venbhas_article>
+            <general>
+                <enabled>1</enabled>
+                <comments_enabled>1</comments_enabled>
+                <article_list_route>articles</article_list_route>
+                <category_list_route>categories</category_list_route>
+            </general>
+            <meta_robots>
+                <category>INDEX,FOLLOW</category>
+                <post>INDEX,FOLLOW</post>
+            </meta_robots>
+        </venbhas_article>
+    </default>
+</config>

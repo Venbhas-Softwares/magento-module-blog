@@ -1,0 +1,26 @@
+<?php
+/**
+ * @var $block \Venbhas\Article\Block\Frontend\Category\ListBlock
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$categories = $block->getCategories();
+?>
+<div class="venbhas-category-list">
+    <h1 class="page-title"><?= $escaper->escapeHtml(__('Categories')) ?></h1>
+    <?php if ($categories->getSize()): ?>
+        <ul class="category-list">
+            <?php foreach ($categories as $category): ?>
+                <li class="category-item">
+                    <a href="<?= $escaper->escapeUrl($block->getCategoryUrl((string) $category->getUrlKey())) ?>">
+                        <?= $escaper->escapeHtml($category->getName()) ?>
+                    </a>
+                    <?php if ($category->getShortDescription()): ?>
+                        <p><?= $escaper->escapeHtml($category->getShortDescription()) ?></p>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php else: ?>
+        <p><?= $escaper->escapeHtml(__('No categories yet.')) ?></p>
+    <?php endif; ?>
+</div>

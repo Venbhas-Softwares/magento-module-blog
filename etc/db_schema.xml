@@ -1,0 +1,113 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="venbhas_article_category" resource="default" engine="innodb" comment="Article Category Table">
+        <column xsi:type="int" name="category_id" unsigned="true" nullable="false" identity="true" comment="Category ID"/>
+        <column xsi:type="varchar" name="name" nullable="false" length="255" comment="Category Name"/>
+        <column xsi:type="varchar" name="url_key" nullable="true" length="255" comment="URL Key"/>
+        <column xsi:type="smallint" name="status" unsigned="true" nullable="false" default="1" comment="Is Active"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created Time"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated Time"/>\
+        <column xsi:type="text" name="meta_keywords" unsigned="true" nullable="true" comment="Meta Keywords"/>
+        <column xsi:type="text" name="meta_description" unsigned="true" nullable="true" comment="Meta Description"/>
+        <column xsi:type="text" name="meta_robots" unsigned="true" nullable="true" comment="Meta Robots"/>
+        <column xsi:type="text" name="meta_title" unsigned="true" nullable="true" comment="Meta Title"/>
+        <column xsi:type="text" name="description" unsigned="true" nullable="false" comment="Content"/>
+        <column xsi:type="text" name="short_description" unsigned="true" nullable="false" comment="Short Content"/>
+        <column xsi:type="varchar" name="featured_image" unsigned="true" nullable="true" comment="Featured Image"/>
+        <column xsi:type="text" name="related_articles" unsigned="true" nullable="true" comment="related articles ids"/>
+        
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="category_id"/>
+        </constraint>
+        <index referenceId="VENBHAS_ARTICLE_CATEGORY_URL_KEY" indexType="btree">
+            <column name="url_key"/>
+        </index>
+    </table>
+
+    <table name="venbhas_article" resource="default" engine="innodb" comment="Article Table">
+        <column xsi:type="int" name="article_id" unsigned="true" nullable="false" identity="true" comment="Article ID"/>
+        <column xsi:type="varchar" name="title" nullable="false" length="255" comment="Title"/>
+        <column xsi:type="varchar" name="url_key" nullable="false" length="255" comment="URL Key"/>
+        <column xsi:type="varchar" name="meta_title" nullable="true" length="255" comment="Meta Title"/>
+        <column xsi:type="text" name="meta_description" nullable="true" comment="Meta Description"/>
+        <column xsi:type="text" name="meta_keywords" nullable="true" comment="Meta Keywords"/>
+        <column xsi:type="varchar" name="meta_robots" nullable="true" length="255" comment="Content Heading"/>
+        <column xsi:type="mediumtext" name="description" nullable="false" comment="Content"/>
+        <column xsi:type="varchar" name="short_description" nullable="false" length="500" comment="Short Content"/>
+        <column xsi:type="varchar" name="featured_image" nullable="true" length="255" comment="Featured Image"/>
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" default="1" comment="Is Active"/>
+        <column xsi:type="smallint" name="status" unsigned="true" nullable="false" default="1" comment="status 0=draft 1=published 2=archived"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Creation Time"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Update Time"/>
+        <column xsi:type="int" name="author" nullable="true" comment="Author"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="article_id"/>
+        </constraint>
+        <index referenceId="VENBHAS_ARTICLE_URL_KEY" indexType="btree">
+            <column name="url_key"/>
+        </index>
+        
+    </table>
+
+    <table name="venbhas_article_category_relation" resource="default" engine="innodb" comment="Article to Category Relation">
+    <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="Relation ID"/>
+        <column xsi:type="int" name="article_id" unsigned="true" nullable="false" comment="Article ID"/>
+        <column xsi:type="int" name="category_id" unsigned="true" nullable="false" comment="Category ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="VENBHAS_ARTICLE_CAT_REL_ARTICLE" table="venbhas_article_category_relation"
+                    column="article_id" referenceTable="venbhas_article" referenceColumn="article_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="VENBHAS_ARTICLE_CAT_REL_CATEGORY" table="venbhas_article_category_relation"
+                    column="category_id" referenceTable="venbhas_article_category" referenceColumn="category_id" onDelete="CASCADE"/>
+    </table>
+
+    <table name="venbhas_article_comment" resource="default" engine="innodb" comment="Article Comment Table">
+        <column xsi:type="int" name="comment_id" unsigned="true" nullable="false" identity="true" comment="Comment ID"/>
+        <column xsi:type="int" name="article_id" unsigned="true" nullable="false" comment="Article ID"/>
+        <column xsi:type="varchar" name="user_name" nullable="false" length="255" comment="Author Name"/>
+        <column xsi:type="varchar" name="user_email" nullable="false" length="255" comment="Author Email"/>
+        <column xsi:type="text" name="comment" nullable="false" comment="Comment"/>
+        <column xsi:type="text" name="reply" nullable="true" comment="Comment answer"/>
+        <column xsi:type="smallint" name="status" unsigned="true" nullable="false" default="0" comment="Status 0=pending 1=approved 2=rejected"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Creation Time"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Update Time"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="comment_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="VENBHAS_ARTICLE_COMMENT_ARTICLE" table="venbhas_article_comment"
+                    column="article_id" referenceTable="venbhas_article" referenceColumn="article_id" onDelete="CASCADE"/>
+        <index referenceId="VENBHAS_ARTICLE_COMMENT_ARTICLE_ID" indexType="btree">
+            <column name="article_id"/>
+        </index>
+    </table>
+
+    <table name="venbhas_article_related_products" resource="default" engine="innodb" comment="Article Related Products">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="Relation ID"/>
+        <column xsi:type="int" name="article_id" unsigned="true" nullable="false" comment="Article ID"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" comment="Product ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+            
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="VENBHAS_ARTICLE_REL_ARTICLE" table="venbhas_article_related_products"
+                    column="article_id" referenceTable="venbhas_article" referenceColumn="article_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="VENBHAS_ARTICLE_REL_PRODUCT" table="venbhas_article_related_products"
+                    column="product_id" referenceTable="catalog_product_entity" referenceColumn="entity_id" onDelete="CASCADE"/>
+    </table>
+
+    <table name="venbhas_article_category_related_products" resource="default" engine="innodb" comment="Article Category Related Products">
+        <column xsi:type="int" name="id" unsigned="true" nullable="false" identity="true" comment="Relation ID"/>
+        <column xsi:type="int" name="category_id" unsigned="true" nullable="false" comment="Category ID"/>
+        <column xsi:type="int" name="product_id" unsigned="true" nullable="false" comment="Product ID"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="id"/>
+            
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="VENBHAS_ARTICLE_CAT_REL_CAT" table="venbhas_article_category_related_products"
+                    column="category_id" referenceTable="venbhas_article_category" referenceColumn="category_id" onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="VENBHAS_ARTICLE_CAT_REL_PRODUCT" table="venbhas_article_category_related_products"
+                    column="product_id" referenceTable="catalog_product_entity" referenceColumn="entity_id" onDelete="CASCADE"/>
+    </table>
+</schema>
