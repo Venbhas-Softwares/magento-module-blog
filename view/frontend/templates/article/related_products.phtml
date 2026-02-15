@@ -1,0 +1,54 @@
+<?php
+$collection = $block->getRelatedProductCollection();
+
+?>
+
+<?php
+$collection = $block->getRelatedProductCollection();
+
+echo "SIZE: " . $collection->getSize();
+echo "<br>";
+
+$collection->load();
+$items = $collection->getItems();
+
+echo "ITEM COUNT: " . count($items);
+echo "<br><br>";
+
+foreach ($items as $_product) {
+    echo "PRODUCT ID: " . $_product->getId();
+    echo "<br>";
+}
+?>
+<div class="article-related-products">
+    <h3><?= $escaper->escapeHtml(__('Related Products')) ?></h3>
+
+    <div class="products wrapper grid products-grid">
+        <ol class="products list items product-items">
+            <?php foreach ($collection as $_product): ?>
+                <li class="item product product-item">
+                    <div class="product-item-info">
+
+                        <a href="<?= $_product->getProductUrl() ?>"
+                           class="product photo product-item-photo">
+                            <img src="<?= $block->getImage($_product->getId()); ?>" alt="<?= $escaper->escapeHtml($_product->getName()) ?>" />
+                        </a>
+
+                        <div class="product details product-item-details">
+                            <strong class="product name product-item-name">
+                                <a href="<?= $_product->getProductUrl() ?>">
+                                    <?= $escaper->escapeHtml($_product->getName()) ?>
+                                </a>
+                            </strong>
+
+                            <?= $block->getProductPrice($_product) ?>
+
+                        </div>
+
+                    </div>
+                </li>
+            <?php endforeach; ?>
+        </ol>
+    </div>
+</div>
+

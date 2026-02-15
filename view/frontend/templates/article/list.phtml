@@ -13,23 +13,7 @@ $categories = $block->getCategories();
 
     <div class="article-layout">
 
-        <!-- LEFT COLUMN : Categories -->
-        <aside class="article-sidebar">
-            <h3><?= __('Categories') ?></h3>
-            <?php if ($categories && $categories->getSize()): ?>
-                <ul class="category-list">
-                    <?php foreach ($categories as $category): ?>
-                        <li>
-                        <a href="<?= $escaper->escapeUrl($block->getCategoryUrl($category)) ?>">
-                                <?= $escaper->escapeHtml($category->getName()) ?>
-                            </a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
-            <?php else: ?>
-                <p><?= __('No categories found.') ?></p>
-            <?php endif; ?>
-        </aside>
+       
 
         <!-- RIGHT COLUMN : Articles -->
         <div class="article-content">

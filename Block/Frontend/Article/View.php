@@ -9,6 +9,10 @@ use Magento\Framework\View\Element\Template\Context;
 use Venbhas\Article\Model\Article;
 use Venbhas\Article\Model\ResourceModel\Article\RelatedProducts;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
+use Magento\Catalog\Model\ProductRepository;
+use Magento\Catalog\Helper\Image;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 class View extends Template
 {
@@ -21,16 +25,31 @@ class View extends Template
     /** @var StoreManagerInterface */
     private $storeManager;
 
+    /** @var CollectionFactory */
+    private $productCollectionFactory;
+
+    /** @var ProductRepository */
+    private $productRepository;
+
+    /** @var Image */
+    private $imageHelper;
+
     public function __construct(
         Context $context,
         Registry $registry,
         RelatedProducts $relatedProducts,
         StoreManagerInterface $storeManager,
+        CollectionFactory $productCollectionFactory,
+        ProductRepository $productRepository,
+        Image $imageHelper,
         array $data = []
     ) {
         $this->registry = $registry;
         $this->relatedProducts = $relatedProducts;
         $this->storeManager = $storeManager;
+        $this->productCollectionFactory = $productCollectionFactory;
+        $this->productRepository = $productRepository;
+        $this->imageHelper = $imageHelper;
         parent::__construct($context, $data);
     }
 
@@ -39,11 +58,7 @@ class View extends Template
         return $this->registry->registry('current_article');
     }
 
-    public function getRelatedProductIds(): array
-    {
-        $article = $this->getArticle();
-        return $article ? $this->relatedProducts->getRelatedProductIds((int) $article->getId()) : [];
-    }
+    
     public function getTimeAgo($datetime)
     {
         $timestamp = strtotime($datetime);
@@ -73,5 +88,7 @@ class View extends Template
             \Magento\Framework\UrlInterface::URL_TYPE_MEDIA
         ) . ltrim($image, '/');
     }
+    
+
 
 }

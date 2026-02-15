@@ -78,7 +78,6 @@
                 <validation>
                     <rule name="required-entry" xsi:type="boolean">true</rule>
                 </validation>
-                <rule name="validate-email" xsi:type="boolean">true</rule>
                 <dataType>text</dataType>
                 <label translate="true">User Email</label>
                 <dataScope>user_email</dataScope>

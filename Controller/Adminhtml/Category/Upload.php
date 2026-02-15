@@ -41,7 +41,7 @@ class Upload extends Action implements HttpPostActionInterface
     public function execute()
     {
         $result = ['error' => true, 'message' => __('File can not be uploaded.')];
-        $fileId = $this->getRequest()->getParam('param_name', 'file');
+        $fileId = $this->getRequest()->getParam('param_name', 'featured_image');
         try {
             $uploader = $this->uploaderFactory->create(['fileId' => $fileId]);
             $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png', 'webp']);

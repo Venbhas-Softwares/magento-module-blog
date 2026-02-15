@@ -98,11 +98,6 @@
                 </validation>
                 <label translate="true">Description</label>
                 <dataScope>description</dataScope>
-                <wysiwygConfig xsi:type="array">
-                    <item name="add_variables" xsi:type="boolean">true</item>
-                    <item name="add_widgets" xsi:type="boolean">true</item>
-                    <item name="add_images" xsi:type="boolean">true</item>
-                </wysiwygConfig>
             </settings>
             <formElements>
                 <wysiwyg>
@@ -116,12 +111,7 @@
             <settings>
                 <label translate="true">Featured Image</label>
                 <dataScope>featured_image</dataScope>
-                <componentType>fileUploader</componentType>
-                <maxFileSize>2097152</maxFileSize>
-                <allowedExtensions>jpg jpeg gif png webp</allowedExtensions>
-                <uploaderConfig>
-                    <param xsi:type="url" name="url" path="venbhas_article/category/upload"/>
-                </uploaderConfig>
+                <componentType>fileUploader</componentType>   
             </settings>
             <formElements>
                 <fileUploader>

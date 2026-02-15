@@ -1,11 +1,34 @@
 <?xml version="1.0"?>
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      layout="3columns"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+
     <head>
         <css src="Venbhas_Article::css/article.css"/>
     </head>
+
     <body>
-        <referenceContainer name="content">
-            <block class="Venbhas\Article\Block\Frontend\Article\View" name="article.view" template="Venbhas_Article::article/view.phtml"/>
+
+        <!-- Left Sidebar (Categories) -->
+        <referenceContainer name="sidebar.main">
+            <block class="Venbhas\Article\Block\Frontend\Category\ListCategory"
+                   name="venbhas.article.category.leftnav"
+                   template="Venbhas_Article::category/leftnav.phtml"/>
         </referenceContainer>
+
+        <!-- Main Article Content -->
+        <referenceContainer name="content">
+            <block class="Venbhas\Article\Block\Frontend\Article\View"
+                   name="article.view"
+                   template="Venbhas_Article::article/view.phtml"/>
+        </referenceContainer>
+
+        <!-- Right Sidebar (Related Products) -->
+        <referenceContainer name="sidebar.additional">
+            <block class="Venbhas\Article\Block\Frontend\RelatedProducts"
+                   name="article.related.products"
+                   template="Venbhas_Article::article/related_products.phtml"/>
+        </referenceContainer>
+
     </body>
 </page>

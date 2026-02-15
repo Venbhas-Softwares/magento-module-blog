@@ -1,63 +1,16 @@
 <?php
 /**
- * @var $block \Venbhas\Article\Block\Frontend\Article\ListBlock
+ * @var $block \Venbhas\Article\Block\Frontend\Article\View
  * @var \Magento\Framework\Escaper $escaper
  */
-$articles   = $block->getArticles();
-$categories = $block->getCategories();
-$listTitle  = $block->getListTitle();
+$article = $block->getArticle();
+if (!$article):
+    return;
+endif;
 ?>
-
-<div class="venbhas-article-page">
-
-    <!-- LEFT SIDEBAR -->
-    <aside class="article-sidebar">
-        <h3><?= $escaper->escapeHtml(__('Categories')) ?></h3>
-        <ul class="category-list">
-            <?php foreach ($categories as $category): ?>
-                <li>
-                    <a href="<?= $escaper->escapeUrl($block->getCategoryUrl($category)) ?>">
-                        <?= $escaper->escapeHtml($category->getName()) ?>
-                    </a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    </aside>
-
-    <!-- MAIN CONTENT -->
+<div class="venbhas-article-view">
+    <h1 class="article-title"><?= $escaper->escapeHtml($article->getTitle()) ?></h1>
     <div class="article-content">
-        <h1 class="page-title"><?= $escaper->escapeHtml($listTitle) ?></h1>
-
-        <?php if ($articles->getSize()): ?>
-            <?php foreach ($articles as $article): ?>
-                <div class="article-item">
-
-                    <!-- Article Image -->
-                    <div class="article-image">
-                        <?php if ($article->getImage()): ?>
-                            <img src="<?= $escaper->escapeUrl($block->getImageUrl($article->getImage())) ?>"
-                                 alt="<?= $escaper->escapeHtml($article->getTitle()) ?>" />
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- Article Info -->
-                    <div class="article-info">
-                        <h2>
-                            <a href="<?= $escaper->escapeUrl($block->getArticleUrl($article->getUrlKey())) ?>">
-                                <?= $escaper->escapeHtml($article->getTitle()) ?>
-                            </a>
-                        </h2>
-
-                        <?php if ($article->getShortDescription()): ?>
-                            <p><?= $escaper->escapeHtml($article->getShortDescription()) ?></p>
-                        <?php endif; ?>
-                    </div>
-
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p><?= $escaper->escapeHtml(__('No articles yet.')) ?></p>
-        <?php endif; ?>
+        <?= /* @noEscape */ $article->getDescription() ?>
     </div>
-
 </div>

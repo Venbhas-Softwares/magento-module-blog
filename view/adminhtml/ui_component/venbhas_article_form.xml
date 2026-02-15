@@ -127,16 +127,11 @@
                 </wysiwyg>
             </formElements>
         </field>
-        <field name="featured_image" formElement="fileUploader">
+      <field name="featured_image" formElement="fileUploader">
             <settings>
                 <label translate="true">Featured Image</label>
                 <dataScope>featured_image</dataScope>
-                <componentType>fileUploader</componentType>
-                <maxFileSize>2097152</maxFileSize>
-                <allowedExtensions>jpg jpeg gif png webp</allowedExtensions>
-                <uploaderConfig>
-                    <param xsi:type="url" name="url" path="venbhas_article/article/upload"/>
-                </uploaderConfig>
+                <componentType>fileUploader</componentType>   
             </settings>
             <formElements>
                 <fileUploader>
@@ -144,7 +139,7 @@
                         <allowedExtensions>jpg jpeg gif png webp</allowedExtensions>
                         <maxFileSize>2097152</maxFileSize>
                         <uploaderConfig>
-                            <param xsi:type="url" name="url" path="venbhas_article/article/upload"/>
+                            <param xsi:type="url" name="url" path="venbhas_article/category/upload"/>
                         </uploaderConfig>
                     </settings>
                 </fileUploader>

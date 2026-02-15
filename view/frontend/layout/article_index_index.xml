@@ -6,6 +6,11 @@
     
     </head>
     <body>
+    <referenceContainer name="sidebar.main">
+            <block class="Venbhas\Article\Block\Frontend\Category\ListCategory"
+                   name="venbhas.article.category.leftnav"
+                   template="Venbhas_Article::category/leftnav.phtml"/>
+        </referenceContainer>
         <referenceContainer name="content">
             <block class="Venbhas\Article\Block\Frontend\Article\ListBlock" name="article.list" template="Venbhas_Article::article/list.phtml">
                 <arguments>

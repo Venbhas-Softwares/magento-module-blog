@@ -39,32 +39,39 @@ class Upload extends Action implements HttpPostActionInterface
     }
 
     public function execute()
-    {
-        $result = ['error' => true, 'message' => __('File can not be uploaded.')];
-        $fileId = $this->getRequest()->getParam('param_name', 'file');
-        try {
-            $uploader = $this->uploaderFactory->create(['fileId' => $fileId]);
-            $uploader->setAllowedExtensions(['jpg', 'jpeg', 'gif', 'png', 'webp']);
-            $uploader->setAllowRenameFiles(true);
-            $uploader->setFilesDispersion(true);
-            $mediaDir = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
-            $path = $mediaDir->getAbsolutePath('venbhas/article');
-            $uploadResult = $uploader->save($path);
-            if (!empty($uploadResult['file'])) {
-                $relativePath = 'venbhas/article' . '/' . $uploadResult['file'];
-                $result = [
-                    'error' => false,
-                    'name' => $uploadResult['name'],
-                    'path' => $relativePath,
-                    'url' => $this->_url->getBaseUrl(['_type' => \Magento\Framework\UrlInterface::URL_TYPE_MEDIA]) . $relativePath,
-                ];
-            }
-        } catch (LocalizedException $e) {
-            $result['message'] = $e->getMessage();
-        } catch (\Exception $e) {
-            $this->logger->critical($e);
-            $result['message'] = $e->getMessage();
+{
+    $result = ['error' => true, 'message' => __('File cannot be uploaded.')];
+
+    // This must match the dataScope in your UI component
+    $fileId = $this->getRequest()->getParam('param_name', 'featured_image');
+
+    try {
+        $uploader = $this->uploaderFactory->create(['fileId' => $fileId]);
+        $uploader->setAllowedExtensions(['jpg','jpeg','gif','png','webp']);
+        $uploader->setAllowRenameFiles(true);
+        $uploader->setFilesDispersion(true);
+
+        $mediaDir = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+        $path = $mediaDir->getAbsolutePath('venbhas/article');
+
+        $uploadResult = $uploader->save($path);
+
+        if (!empty($uploadResult['file'])) {
+            $relativePath = 'venbhas/category' . $uploadResult['file']; // include dispersion path
+            $result = [
+                'name' => $uploadResult['name'],
+                'url' => $this->_url->getBaseUrl(['_type' => \Magento\Framework\UrlInterface::URL_TYPE_MEDIA]) . $relativePath,
+            ];
         }
-        return $this->resultFactory->create(ResultFactory::TYPE_JSON)->setData($result);
+
+    } catch (LocalizedException $e) {
+        $result['message'] = $e->getMessage();
+    } catch (\Exception $e) {
+        $this->logger->critical($e);
+        $result['message'] = $e->getMessage();
     }
+
+    return $this->resultFactory->create(ResultFactory::TYPE_JSON)->setData($result);
+}
+
 }

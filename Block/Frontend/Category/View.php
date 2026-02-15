@@ -98,4 +98,9 @@ class View extends Template
             \Magento\Framework\UrlInterface::URL_TYPE_MEDIA
         ) . ltrim($image, '/');
     }
+
+    public function getArticleUrl(string $urlKey): string
+    {
+        return $this->getUrl('article/' . $urlKey);
+    }
 }
