@@ -16,19 +16,23 @@
                    template="Venbhas_Article::category/leftnav.phtml"/>
         </referenceContainer>
 
-        <!-- Main Article Content -->
+        <!-- Main Article Content (article, comment section, related products) -->
         <referenceContainer name="content">
             <block class="Venbhas\Article\Block\Frontend\Article\View"
                    name="article.view"
                    template="Venbhas_Article::article/view.phtml"/>
-        </referenceContainer>
-
-        <!-- Right Sidebar (Related Products) -->
-        <referenceContainer name="sidebar.additional">
+            <block class="Venbhas\Article\Block\Frontend\Article\CommentForm"
+                   name="article.comment.form"
+                   template="Venbhas_Article::article/comment/form.phtml"/>
             <block class="Venbhas\Article\Block\Frontend\RelatedProducts"
                    name="article.related.products"
                    template="Venbhas_Article::article/related_products.phtml"/>
         </referenceContainer>
 
+        <referenceBlock name="catalog.compare.sidebar" remove="true"/>
+        <referenceBlock name="wishlist_sidebar" remove="true"/>
+        <referenceContainer name="sidebar.additional">
+            <block class="Venbhas\Article\Block\Frontend\Search" name="article.search.sidebar" template="Venbhas_Article::search/form.phtml"/>
+        </referenceContainer>
     </body>
 </page>

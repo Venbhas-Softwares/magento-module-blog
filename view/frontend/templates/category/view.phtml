@@ -31,7 +31,14 @@ $articles = $block->getArticles();
     <?php if ($articles && $articles->getSize()): ?>
         <div class="category-articles">
             <h2><?= __('Articles') ?></h2>
-
+            <div class="article-toolbar">
+                <label for="category-article-sort" class="label"><?= $escaper->escapeHtml(__('Sort by')) ?>:</label>
+                <select id="category-article-sort" class="article-sort-select" onchange="window.location.href=this.options[this.selectedIndex].value">
+                    <?php $currentSort = $block->getCurrentSortOrder(); foreach ($block->getSortOptions() as $value => $label): ?>
+                        <option value="<?= $escaper->escapeUrl($block->getSortUrl($value)) ?>" <?= $value === $currentSort ? ' selected' : '' ?>><?= $escaper->escapeHtml($label) ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
             <ul class="article-list">
                 <?php foreach ($articles as $article): 
                     $updatedAt = $article->getUpdatedAt();
@@ -54,6 +61,9 @@ $articles = $block->getArticles();
                     </li>
                 <?php endforeach; ?>
             </ul>
+            <div class="article-pagination">
+                <?= $block->getPagerHtml() ?>
+            </div>
         </div>
     <?php endif; ?>
 

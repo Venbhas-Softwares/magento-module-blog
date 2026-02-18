@@ -32,6 +32,21 @@
                     <comment>URL path for the category listing page (e.g. categories). Used by the frontend router.</comment>
                     <validate>validate-alphanum-with-hyphens</validate>
                 </field>
+                <field id="articles_per_page" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Articles Per Page</label>
+                    <comment>Number of articles to show per page on the article listing and category view pages. Used for pagination.</comment>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                </field>
+                <field id="default_sort_order" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Default Sort Order</label>
+                    <comment>Default sort for article listing and category view pages. Customers can change sort via the sort dropdown on the page.</comment>
+                    <source_model>Venbhas\Article\Model\Config\Source\SortOrder</source_model>
+                </field>
+                <field id="related_products_limit" translate="label comment" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Related Products Limit</label>
+                    <comment>Maximum number of related products to show on article and category view pages. Use scroll to view all.</comment>
+                    <validate>validate-digits validate-greater-than-zero</validate>
+                </field>
             </group>
             <group id="meta_robots" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Robots (Meta Robots)</label>

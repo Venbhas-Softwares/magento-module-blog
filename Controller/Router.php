@@ -15,8 +15,6 @@ use Venbhas\Article\Model\ResourceModel\Category as CategoryResource;
 
 class Router implements RouterInterface
 {
-    public const ROUTE_FRONT_NAME = 'article';
-
     /** @var ActionFactory */
     private $actionFactory;
 
@@ -57,7 +55,8 @@ class Router implements RouterInterface
     }
 
     /**
-     * Match request: configurable article list route, post list route, or legacy /article/... paths.
+     * Match request using store config: Article List URL Key and Category List URL Key.
+     * Single segment: list routes. Multi-segment: Article List URL Key + /category/... or + /post-url.
      */
     public function match(RequestInterface $request)
     {
@@ -69,17 +68,16 @@ class Router implements RouterInterface
         $pathParts = $path !== '' ? explode('/', $path) : [];
         $first = $pathParts[0] ?? '';
 
-        $storeId = null;
         try {
             $storeId = (int) $this->storeManager->getStore()->getId();
-        } catch (\Exception $e) {
-            $this->logger->error($e->getMessage());
+        } catch (\Throwable $e) {
+            $storeId = null;
         }
 
         $articleListRoute = $this->config->getArticleListRoute($storeId);
         $categoryListRoute = $this->config->getCategoryListRoute($storeId);
 
-        // Single-segment path: match configured list routes
+        // Single-segment path: match configured list routes (from store config)
         if (count($pathParts) === 1) {
             if ($first === $articleListRoute) {
                 $request->setModuleName('article')
@@ -95,8 +93,8 @@ class Router implements RouterInterface
             }
         }
 
-        // Legacy /article and /article/... paths
-        if ($first !== self::ROUTE_FRONT_NAME) {
+        // Multi-segment: first segment must match Article List URL Key (e.g. /article/category/foo, /article/post-url)
+        if ($first !== $articleListRoute) {
             return null;
         }
 
@@ -104,6 +102,20 @@ class Router implements RouterInterface
 
         if (empty($pathParts)) {
             $request->setModuleName('article')->setControllerName('index')->setActionName('index');
+            return $this->actionFactory->create(\Magento\Framework\App\Action\Forward::class);
+        }
+
+        if ($pathParts[0] === 'search' && count($pathParts) === 1) {
+            $request->setModuleName('article')
+                ->setControllerName('search')
+                ->setActionName('index');
+            return $this->actionFactory->create(\Magento\Framework\App\Action\Forward::class);
+        }
+
+        if ($pathParts[0] === 'comment' && isset($pathParts[1]) && $pathParts[1] === 'post') {
+            $request->setModuleName('article')
+                ->setControllerName('comment')
+                ->setActionName('post');
             return $this->actionFactory->create(\Magento\Framework\App\Action\Forward::class);
         }
 

@@ -12,11 +12,7 @@
                    template="Venbhas_Article::category/leftnav.phtml"/>
         </referenceContainer>
         <referenceContainer name="content">
-            <block class="Venbhas\Article\Block\Frontend\Article\ListBlock" name="article.list" template="Venbhas_Article::article/list.phtml">
-                <arguments>
-                    <argument name="list_title" xsi:type="string" translate="true">Articles</argument>
-                </arguments>
-            </block>
+            <block class="Venbhas\Article\Block\Frontend\SearchResult" name="article.search.result" template="Venbhas_Article::search/result.phtml"/>
         </referenceContainer>
         <referenceBlock name="catalog.compare.sidebar" remove="true"/>
         <referenceBlock name="wishlist_sidebar" remove="true"/>

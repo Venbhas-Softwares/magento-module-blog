@@ -5,6 +5,8 @@ namespace Venbhas\Article\Block\Frontend\Category;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
+use Magento\Store\Model\StoreManagerInterface;
+use Venbhas\Article\Model\Config;
 use Venbhas\Article\Model\ResourceModel\Category\CollectionFactory;
 
 class ListBlock extends Template
@@ -12,9 +14,22 @@ class ListBlock extends Template
     /** @var CollectionFactory */
     private $collectionFactory;
 
-    public function __construct(Context $context, CollectionFactory $collectionFactory, array $data = [])
-    {
+    /** @var Config */
+    private $config;
+
+    /** @var StoreManagerInterface */
+    private $storeManager;
+
+    public function __construct(
+        Context $context,
+        CollectionFactory $collectionFactory,
+        Config $config,
+        StoreManagerInterface $storeManager,
+        array $data = []
+    ) {
         $this->collectionFactory = $collectionFactory;
+        $this->config = $config;
+        $this->storeManager = $storeManager;
         parent::__construct($context, $data);
     }
 
@@ -26,8 +41,13 @@ class ListBlock extends Template
         return $collection;
     }
 
+    /**
+     * Category view URL (path from store config: Article List URL Key + /category/ + url_key).
+     */
     public function getCategoryUrl(string $urlKey): string
     {
-        return $this->getUrl('article/category/' . $urlKey);
+        $storeId = (int) $this->storeManager->getStore()->getId();
+        $basePath = trim($this->config->getArticleListRoute($storeId), '/');
+        return $this->getUrl('', ['_direct' => $basePath . '/category/' . $urlKey]);
     }
 }

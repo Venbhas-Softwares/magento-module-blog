@@ -48,7 +48,7 @@ class View extends Action implements HttpGetActionInterface
 
     public function execute(): ResultInterface
     {
-        $id = (int) $this->getRequest()->getParam('category_id');
+        $id = (int) $this->getRequest()->getParam('article_id');
         $urlKey = $this->getRequest()->getParam('url_key');
         $article = $this->articleFactory->create();
         if ($urlKey) {

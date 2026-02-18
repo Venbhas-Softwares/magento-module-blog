@@ -8,6 +8,9 @@
                 <comments_enabled>1</comments_enabled>
                 <article_list_route>articles</article_list_route>
                 <category_list_route>categories</category_list_route>
+                <articles_per_page>10</articles_per_page>
+                <default_sort_order>new_to_old</default_sort_order>
+                <related_products_limit>10</related_products_limit>
             </general>
             <meta_robots>
                 <category>INDEX,FOLLOW</category>

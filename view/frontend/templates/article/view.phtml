@@ -7,9 +7,22 @@ $article = $block->getArticle();
 if (!$article):
     return;
 endif;
+$updatedAt = $article->getUpdatedAt();
+$formattedDate = $updatedAt ? $block->formatDate($updatedAt, \IntlDateFormatter::MEDIUM, true) : '';
 ?>
 <div class="venbhas-article-view">
     <h1 class="article-title"><?= $escaper->escapeHtml($article->getTitle()) ?></h1>
+    <?php if ($updatedAt): ?>
+        <p class="article-updated" title="<?= $escaper->escapeHtmlAttr($formattedDate) ?>">
+            <?= $escaper->escapeHtml(__('Updated %1 ago', $block->getTimeAgo($updatedAt))) ?>
+        </p>
+    <?php endif; ?>
+    <?php if ($article->getFeaturedImage()): ?>
+        <div class="article-featured-image">
+            <img src="<?= $escaper->escapeUrl($block->getImageUrl($article->getFeaturedImage())) ?>"
+                 alt="<?= $escaper->escapeHtmlAttr($article->getTitle()) ?>">
+        </div>
+    <?php endif; ?>
     <div class="article-content">
         <?= /* @noEscape */ $article->getDescription() ?>
     </div>

@@ -1,0 +1,61 @@
+<?php
+/**
+ * @var $block \Venbhas\Article\Block\Frontend\Article\CommentForm
+ * @var \Magento\Framework\Escaper $escaper
+ */
+if (!$block->isCommentsEnabled()) {
+    return;
+}
+$article = $block->getArticle();
+if (!$article || !$article->getId()) {
+    return;
+}
+?>
+<div class="article-comment-section">
+    <h3><?= $escaper->escapeHtml(__('Leave a Comment')) ?></h3>
+    <form class="form form-article-comment"
+          action="<?= $escaper->escapeUrl($block->getPostActionUrl()) ?>"
+          method="post"
+          id="article-comment-form">
+        <?= $block->getBlockHtml('formkey') ?>
+        <input type="hidden" name="article_id" value="<?= $escaper->escapeHtmlAttr((string) $article->getId()) ?>"/>
+        <div class="field required">
+            <label class="label" for="comment-username"><span><?= $escaper->escapeHtml(__('Name')) ?></span></label>
+            <div class="control">
+                <input type="text"
+                       id="comment-username"
+                       name="user_name"
+                       class="input-text"
+                       required="required"
+                       maxlength="255"/>
+            </div>
+        </div>
+        <div class="field required">
+            <label class="label" for="comment-email"><span><?= $escaper->escapeHtml(__('Email')) ?></span></label>
+            <div class="control">
+                <input type="email"
+                       id="comment-email"
+                       name="user_email"
+                       class="input-text"
+                       required="required"
+                       maxlength="255"/>
+            </div>
+        </div>
+        <div class="field required">
+            <label class="label" for="comment-text"><span><?= $escaper->escapeHtml(__('Comment')) ?></span></label>
+            <div class="control">
+                <textarea id="comment-text"
+                          name="comment"
+                          class="input-text"
+                          rows="5"
+                          required="required"
+                          cols="50"></textarea>
+            </div>
+        </div>
+        <div class="actions-toolbar">
+            <button type="submit" class="action submit primary" title="<?= $escaper->escapeHtmlAttr(__('Submit Comment')) ?>">
+                <span><?= $escaper->escapeHtml(__('Submit Comment')) ?></span>
+            </button>
+        </div>
+    </form>
+</div>

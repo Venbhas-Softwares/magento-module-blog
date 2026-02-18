@@ -18,6 +18,14 @@ $categories = $block->getCategories();
         <!-- RIGHT COLUMN : Articles -->
         <div class="article-content">
             <?php if ($articles->getSize()): ?>
+                <div class="article-toolbar">
+                    <label for="article-sort-order" class="label"><?= $escaper->escapeHtml(__('Sort by')) ?>:</label>
+                    <select id="article-sort-order" class="article-sort-select" onchange="window.location.href=this.options[this.selectedIndex].value">
+                        <?php $currentSort = $block->getCurrentSortOrder(); foreach ($block->getSortOptions() as $value => $label): ?>
+                            <option value="<?= $escaper->escapeUrl($block->getSortUrl($value)) ?>" <?= $value === $currentSort ? ' selected' : '' ?>><?= $escaper->escapeHtml($label) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <ul class="article-list">
                     <?php foreach ($articles as $article): ?>
                         <?php

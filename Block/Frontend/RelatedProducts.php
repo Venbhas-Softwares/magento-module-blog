@@ -1,12 +1,15 @@
-<?php 
+<?php
 namespace Venbhas\Article\Block\Frontend;
 
+use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Catalog\Helper\Image;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Registry;
+use Venbhas\Article\Model\Config;
 use Venbhas\Article\Model\ResourceModel\Category\RelatedProducts as CategoryRelatedProducts;
 use Venbhas\Article\Model\ResourceModel\Article\RelatedProducts as ArticleRelatedProducts;
 
@@ -20,6 +23,8 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
     protected $imageHelper;
     protected $productRepository;
 
+    /** @var Config */
+    private $config;
 
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
@@ -30,6 +35,7 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
         CategoryRelatedProducts $relatedCategoryProducts,
         ArticleRelatedProducts $relatedArticleProducts,
         StoreManagerInterface $storeManager,
+        Config $config,
         array $data = []
     ) {
         $this->productCollectionFactory = $productCollectionFactory;
@@ -39,33 +45,72 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
         $this->relatedCategoryProducts = $relatedCategoryProducts;
         $this->relatedArticleProducts = $relatedArticleProducts;
         $this->storeManager = $storeManager;
+        $this->config = $config;
         parent::__construct($context, $data);
     }
 
-    public function getRelatedProductCollection()
+    /**
+     * Resolve related product IDs for current article or category.
+     */
+    private function getRelatedProductIds(): array
     {
         $ids = [];
-        $articleId = $this->getCurrentArticle()->getId();
-        if($articleId) {
-            $ids = $this->getArticleRelatedProductIds($articleId);
+        $article = $this->getCurrentArticle();
+        $category = $this->getCurrentCategory();
+        if ($article && $article->getId()) {
+            $ids = $this->getArticleRelatedProductIds((int) $article->getId());
+        } elseif ($category && $category->getId()) {
+            $ids = $this->getCategoryRelatedProductIds((int) $category->getId());
         } else {
-            $categoryId = $this->getCurrentCategory()->getcategoryId();
-            $ids = $this->getCategoryRelatedProductIds($categoryId);
+            $categoryId = (int) $this->getRequest()->getParam('category_id');
+            $articleId = (int) $this->getRequest()->getParam('article_id');
+            if ($articleId) {
+                $ids = $this->getArticleRelatedProductIds($articleId);
+            } elseif ($categoryId) {
+                $ids = $this->getCategoryRelatedProductIds($categoryId);
+            }
         }
+        return array_values(array_filter(array_map('intval', (array) $ids)));
+    }
 
+    /**
+     * Load related products via repository (bypasses collection store/website filters).
+     *
+     * @return Product[]
+     */
+    public function getRelatedProducts(): array
+    {
+        $ids = $this->getRelatedProductIds();
         if (empty($ids)) {
             return [];
-        
         }
-        
+        $storeId = (int) $this->storeManager->getStore()->getId();
+        $limit = $this->config->getRelatedProductsLimit($storeId);
+        $ids = array_slice($ids, 0, $limit);
+        $products = [];
+        foreach ($ids as $id) {
+            try {
+                $product = $this->productRepository->getById($id, false, $storeId);
+                if ($product && (int) $product->getStatus() === ProductStatus::STATUS_ENABLED) {
+                    $products[] = $product;
+                }
+            } catch (NoSuchEntityException $e) {
+                continue;
+            }
+        }
+        return $products;
+    }
 
+    /**
+     * @deprecated Use getRelatedProducts(). Returns empty collection for backwards compatibility.
+     */
+    public function getRelatedProductCollection()
+    {
+        $ids = $this->getRelatedProductIds();
         $collection = $this->productCollectionFactory->create();
-        $collection->addAttributeToSelect('*');
-            //->addIdFilter($ids);
-            //->addAttributeToFilter('status', 1);
-            //->addAttributeToFilter('visibility', ['in' => [2,3,4]])
-            //->setStoreId($this->storeManager->getStore()->getId());
-            $collection->getSelect()->limit(10);
+        $collection->setStoreId($this->storeManager->getStore()->getId())
+            ->addAttributeToSelect('*')
+            ->addIdFilter(empty($ids) ? [0] : $ids);
         return $collection;
     }
     public function getProductImageUrl($productId)

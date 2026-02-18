@@ -39,7 +39,8 @@ class RelatedProducts
         $select = $connection->select()
             ->from($this->resource->getTableName(self::TABLE), 'product_id')
             ->where('article_id = ?', $articleId);
-        return $connection->fetchCol($select);
+        $result = $connection->fetchCol($select);
+        return is_array($result) ? $result : [];
     }
 
     public function getProductIdsBySkus(array $skus): array

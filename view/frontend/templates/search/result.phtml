@@ -1,0 +1,48 @@
+<?php
+/**
+ * @var $block \Venbhas\Article\Block\Frontend\SearchResult
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$query = $block->getSearchQuery();
+$articles = $block->getArticleResults();
+$categories = $block->getCategoryResults();
+$hasArticles = $articles->getSize() > 0;
+$hasCategories = $categories->getSize() > 0;
+?>
+<div class="venbhas-article-search-result">
+    <h1 class="page-title"><?= $escaper->escapeHtml(__('Search results for: %1', $query ?: __('(empty)'))) ?></h1>
+    <?php if ($query === ''): ?>
+        <p><?= $escaper->escapeHtml(__('Enter a search term above.')) ?></p>
+    <?php elseif (!$hasArticles && !$hasCategories): ?>
+        <p><?= $escaper->escapeHtml(__('No articles or categories found.')) ?></p>
+    <?php else: ?>
+        <?php if ($hasCategories): ?>
+            <div class="search-section search-categories">
+                <h2><?= $escaper->escapeHtml(__('Categories')) ?></h2>
+                <ul class="article-list">
+                    <?php foreach ($categories as $category): ?>
+                        <li class="article-item">
+                            <a href="<?= $escaper->escapeUrl($block->getCategoryUrl((string) $category->getUrlKey())) ?>">
+                                <?= $escaper->escapeHtml($category->getName()) ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+        <?php if ($hasArticles): ?>
+            <div class="search-section search-articles">
+                <h2><?= $escaper->escapeHtml(__('Articles')) ?></h2>
+                <ul class="article-list">
+                    <?php foreach ($articles as $article): ?>
+                        <li class="article-item">
+                            <a href="<?= $escaper->escapeUrl($block->getArticleUrl((string) $article->getUrlKey())) ?>">
+                                <?= $escaper->escapeHtml($article->getTitle()) ?>
+                            </a>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+    <?php endif; ?>
+</div>

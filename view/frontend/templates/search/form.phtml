@@ -1,0 +1,31 @@
+<?php
+/**
+ * @var $block \Venbhas\Article\Block\Frontend\Search
+ * @var \Magento\Framework\Escaper $escaper
+ */
+?>
+<div class="block block-article-search">
+    <div class="block-title">
+        <strong><?= $escaper->escapeHtml(__('Search Articles &amp; Categories')) ?></strong>
+    </div>
+    <div class="block-content">
+        <form class="form form-article-search" action="<?= $escaper->escapeUrl($block->getSearchUrl()) ?>" method="get">
+            <div class="field search">
+                <label class="label" for="article-search"><span><?= $escaper->escapeHtml(__('Search')) ?></span></label>
+                <div class="control">
+                    <input type="text"
+                           id="article-search"
+                           name="q"
+                           value="<?= $escaper->escapeHtmlAttr($block->getRequest()->getParam('q', '')) ?>"
+                           placeholder="<?= $escaper->escapeHtmlAttr(__('Search articles and categories...')) ?>"
+                           class="input-text"/>
+                </div>
+            </div>
+            <div class="actions-toolbar">
+                <button type="submit" class="action search primary" title="<?= $escaper->escapeHtmlAttr(__('Search')) ?>">
+                    <span><?= $escaper->escapeHtml(__('Search')) ?></span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

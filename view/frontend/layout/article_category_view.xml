@@ -1,16 +1,24 @@
 <?xml version="1.0"?>
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      layout="3columns"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
         <css src="Venbhas_Article::css/article.css"/>
     </head>
     <body>
-    <referenceContainer name="sidebar.main">
+        <referenceContainer name="sidebar.main">
             <block class="Venbhas\Article\Block\Frontend\Category\ListCategory"
                    name="venbhas.article.category.leftnav"
                    template="Venbhas_Article::category/leftnav.phtml"/>
         </referenceContainer>
         <referenceContainer name="content">
             <block class="Venbhas\Article\Block\Frontend\Category\View" name="article.category.view" template="Venbhas_Article::category/view.phtml"/>
+            <block class="Venbhas\Article\Block\Frontend\RelatedProducts" name="article.category.related.products" template="Venbhas_Article::article/related_products.phtml"/>
+        </referenceContainer>
+        <referenceBlock name="catalog.compare.sidebar" remove="true"/>
+        <referenceBlock name="wishlist_sidebar" remove="true"/>
+        <referenceContainer name="sidebar.additional">
+            <block class="Venbhas\Article\Block\Frontend\Search" name="article.search.sidebar" template="Venbhas_Article::search/form.phtml"/>
         </referenceContainer>
     </body>
 </page>
