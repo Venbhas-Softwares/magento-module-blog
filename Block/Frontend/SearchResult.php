@@ -10,6 +10,9 @@ use Venbhas\Article\Model\Config;
 use Venbhas\Article\Model\ResourceModel\Article\CollectionFactory as ArticleCollectionFactory;
 use Venbhas\Article\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 
+/**
+ * Block for article/category search results.
+ */
 class SearchResult extends Template
 {
     /** @var ArticleCollectionFactory */
@@ -24,6 +27,16 @@ class SearchResult extends Template
     /** @var StoreManagerInterface */
     private $storeManager;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param ArticleCollectionFactory $articleCollectionFactory
+     * @param CategoryCollectionFactory $categoryCollectionFactory
+     * @param Config $config
+     * @param StoreManagerInterface $storeManager
+     * @param array $data
+     */
     public function __construct(
         Context $context,
         ArticleCollectionFactory $articleCollectionFactory,
@@ -39,12 +52,19 @@ class SearchResult extends Template
         parent::__construct($context, $data);
     }
 
+    /**
+     * Get search query from request.
+     *
+     * @return string
+     */
     public function getSearchQuery(): string
     {
         return trim((string) $this->getRequest()->getParam('q', ''));
     }
 
     /**
+     * Get article collection filtered by search query.
+     *
      * @return \Venbhas\Article\Model\ResourceModel\Article\Collection
      */
     public function getArticleResults()
@@ -68,6 +88,8 @@ class SearchResult extends Template
     }
 
     /**
+     * Get category collection filtered by search query.
+     *
      * @return \Venbhas\Article\Model\ResourceModel\Category\Collection
      */
     public function getCategoryResults()
@@ -89,6 +111,12 @@ class SearchResult extends Template
         return $collection;
     }
 
+    /**
+     * Get article URL by url key.
+     *
+     * @param string $urlKey
+     * @return string
+     */
     public function getArticleUrl(string $urlKey): string
     {
         $storeId = (int) $this->storeManager->getStore()->getId();
@@ -96,6 +124,12 @@ class SearchResult extends Template
         return $this->getUrl('', ['_direct' => $basePath . '/' . $urlKey]);
     }
 
+    /**
+     * Get category URL by url key.
+     *
+     * @param string $urlKey
+     * @return string
+     */
     public function getCategoryUrl(string $urlKey): string
     {
         $storeId = (int) $this->storeManager->getStore()->getId();

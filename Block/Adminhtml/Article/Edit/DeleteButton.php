@@ -5,8 +5,16 @@ namespace Venbhas\Article\Block\Adminhtml\Article\Edit;
 
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 
+/**
+ * Delete button for article edit form.
+ */
 class DeleteButton extends GenericButton implements ButtonProviderInterface
 {
+    /**
+     * Get button data.
+     *
+     * @return array
+     */
     public function getButtonData(): array
     {
         $data = [];

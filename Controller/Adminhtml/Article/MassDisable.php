@@ -12,7 +12,7 @@ use Venbhas\Article\Model\ResourceModel\Article\CollectionFactory as ArticleColl
 
 class MassDisable extends Action implements HttpPostActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::article_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::article_save';
 
     /** @var Filter */
     private $filter;
@@ -20,6 +20,13 @@ class MassDisable extends Action implements HttpPostActionInterface
     /** @var ArticleCollectionFactory */
     private $collectionFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param Filter $filter
+     * @param ArticleCollectionFactory $collectionFactory
+     */
     public function __construct(
         Context $context,
         Filter $filter,
@@ -30,6 +37,11 @@ class MassDisable extends Action implements HttpPostActionInterface
         $this->collectionFactory = $collectionFactory;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();

@@ -5,7 +5,7 @@
  */
 
 $articles   = $block->getArticles();
-$categories = $block->getCategories(); 
+$categories = $block->getCategories();
 //$listTitle  = $block->getListTitle();
 ?>
 
@@ -19,10 +19,18 @@ $categories = $block->getCategories();
         <div class="article-content">
             <?php if ($articles->getSize()): ?>
                 <div class="article-toolbar">
-                    <label for="article-sort-order" class="label"><?= $escaper->escapeHtml(__('Sort by')) ?>:</label>
-                    <select id="article-sort-order" class="article-sort-select" onchange="window.location.href=this.options[this.selectedIndex].value">
-                        <?php $currentSort = $block->getCurrentSortOrder(); foreach ($block->getSortOptions() as $value => $label): ?>
-                            <option value="<?= $escaper->escapeUrl($block->getSortUrl($value)) ?>" <?= $value === $currentSort ? ' selected' : '' ?>><?= $escaper->escapeHtml($label) ?></option>
+                    <label for="article-sort-order" class="label">
+                        <?= $escaper->escapeHtml(__('Sort by')) ?>:</label>
+                    <select id="article-sort-order" class="article-sort-select"
+                            onchange="window.location.href=this.options[this.selectedIndex].value">
+                        <?php
+                        $currentSort = $block->getCurrentSortOrder();
+                        foreach ($block->getSortOptions() as $value => $label):
+                            $selected = $value === $currentSort ? ' selected' : '';
+                            ?>
+                            <option value="<?= $escaper->escapeUrl($block->getSortUrl($value)) ?>"
+                                    <?= $escaper->escapeHtmlAttr($selected) ?>>
+                                <?= $escaper->escapeHtml($label) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -37,7 +45,8 @@ $categories = $block->getCategories();
                         );
                         ?>
                         <li class="article-item">
-                            <a href="<?= $escaper->escapeUrl($block->getArticleUrl((string) $article->getUrlKey())) ?>">
+                            <?php $articleUrl = $block->getArticleUrl((string) $article->getUrlKey()); ?>
+                            <a href="<?= $escaper->escapeUrl($articleUrl) ?>">
                                 <?= $escaper->escapeHtml($article->getTitle()) ?>
                             </a>
 
@@ -53,12 +62,12 @@ $categories = $block->getCategories();
                     <?php endforeach; ?>
                 </ul>
             <?php else: ?>
-                <p><?= __('No articles yet.') ?></p>
+                <p><?= $escaper->escapeHtml(__('No articles yet.')) ?></p>
             <?php endif; ?>
         </div>
     </div>
     <div class="article-pagination">
-        <?php echo $block->getPagerHtml(); ?>
+        <?= /* @noEscape */ $block->getPagerHtml() ?>
     </div>
 </div>
 <script>

@@ -5,8 +5,16 @@ namespace Venbhas\Article\Block\Adminhtml\Category\Edit;
 
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 
+/**
+ * Save button for category edit form.
+ */
 class SaveButton extends GenericButton implements ButtonProviderInterface
 {
+    /**
+     * Get button data.
+     *
+     * @return array
+     */
     public function getButtonData(): array
     {
         return [

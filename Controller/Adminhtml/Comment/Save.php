@@ -13,7 +13,7 @@ use Venbhas\Article\Model\ResourceModel\Comment as CommentResource;
 
 class Save extends Action implements HttpPostActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::comment_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::comment_save';
 
     /** @var CommentFactory */
     private $commentFactory;
@@ -28,6 +28,14 @@ class Save extends Action implements HttpPostActionInterface
         'comment_id', 'article_id', 'user_name', 'user_email', 'comment', 'reply', 'status',
     ];
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param CommentFactory $commentFactory
+     * @param CommentResource $commentResource
+     * @param DataPersistorInterface $dataPersistor
+     */
     public function __construct(
         Context $context,
         CommentFactory $commentFactory,
@@ -40,6 +48,11 @@ class Save extends Action implements HttpPostActionInterface
         $this->dataPersistor = $dataPersistor;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();
@@ -84,17 +97,30 @@ class Save extends Action implements HttpPostActionInterface
         }
     }
 
+    /**
+     * Get request data from POST or JSON body.
+     *
+     * @return array
+     */
     private function getRequestData(): array
     {
         $request = $this->getRequest();
         $content = $request->getContent();
-        if (!empty($content) && $request->getHeader('Content-Type') && strpos((string) $request->getHeader('Content-Type'), 'application/json') !== false) {
+        $contentType = $request->getHeader('Content-Type');
+        $isJson = $contentType && strpos((string) $contentType, 'application/json') !== false;
+        if (!empty($content) && $isJson) {
             $decoded = json_decode($content, true);
             return is_array($decoded) ? $decoded : [];
         }
         return $request->getPostValue() ?? [];
     }
 
+    /**
+     * Filter request data to allowed fields only.
+     *
+     * @param array $data
+     * @return array
+     */
     private function filterAllowedFields(array $data): array
     {
         $filtered = [];

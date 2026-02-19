@@ -15,17 +15,42 @@ use Venbhas\Article\Model\ResourceModel\Article\RelatedProducts as ArticleRelate
 
 class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
 {
+    /** @var CollectionFactory */
     protected $productCollectionFactory;
+
+    /** @var CategoryRelatedProducts */
     protected $relatedCategoryProducts;
+
+    /** @var ArticleRelatedProducts */
     protected $relatedArticleProducts;
+
+    /** @var StoreManagerInterface */
     protected $storeManager;
+
+    /** @var Registry */
     protected $registry;
+
+    /** @var Image */
     protected $imageHelper;
+
+    /** @var ProductRepository */
     protected $productRepository;
 
     /** @var Config */
     private $config;
 
+    /**
+     * @param \Magento\Catalog\Block\Product\Context $context
+     * @param CollectionFactory $productCollectionFactory
+     * @param ProductRepository $productRepository
+     * @param Image $imageHelper
+     * @param Registry $registry
+     * @param CategoryRelatedProducts $relatedCategoryProducts
+     * @param ArticleRelatedProducts $relatedArticleProducts
+     * @param StoreManagerInterface $storeManager
+     * @param Config $config
+     * @param array $data
+     */
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
@@ -51,6 +76,8 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
 
     /**
      * Resolve related product IDs for current article or category.
+     *
+     * @return int[]
      */
     private function getRelatedProductIds(): array
     {
@@ -74,7 +101,7 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
     }
 
     /**
-     * Load related products via repository (bypasses collection store/website filters).
+     * Load all related products (no limit). Config "Related Products Limit" = how many visible at once in the slider.
      *
      * @return Product[]
      */
@@ -85,8 +112,6 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
             return [];
         }
         $storeId = (int) $this->storeManager->getStore()->getId();
-        $limit = $this->config->getRelatedProductsLimit($storeId);
-        $ids = array_slice($ids, 0, $limit);
         $products = [];
         foreach ($ids as $id) {
             try {
@@ -102,7 +127,22 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
     }
 
     /**
-     * @deprecated Use getRelatedProducts(). Returns empty collection for backwards compatibility.
+     * Number of related products visible at once.
+     *
+     * @return int
+     */
+    public function getVisibleCount(): int
+    {
+        $storeId = (int) $this->storeManager->getStore()->getId();
+        $n = $this->config->getRelatedProductsLimit($storeId);
+        return $n > 0 ? $n : 4;
+    }
+
+    /**
+     * Deprecated: use getRelatedProducts() instead. Returns empty collection for backwards compatibility.
+     *
+     * @deprecated Use getRelatedProducts() instead.
+     * @see getRelatedProducts()
      */
     public function getRelatedProductCollection()
     {
@@ -113,6 +153,13 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
             ->addIdFilter(empty($ids) ? [0] : $ids);
         return $collection;
     }
+
+    /**
+     * Get product image URL by product ID.
+     *
+     * @param int $productId
+     * @return string
+     */
     public function getProductImageUrl($productId)
     {
         $imageUrl = '';
@@ -128,7 +175,12 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
         return $imageUrl;
     }
 
-
+    /**
+     * Get product price HTML for list display.
+     *
+     * @param Product $product
+     * @return string
+     */
     public function getProductPrice($product)
     {
         $priceRender = $this->getLayout()->getBlock('product.price.render.default')
@@ -150,25 +202,46 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
 
         return $price;
     }
-    
+
+    /**
+     * Get current article from registry.
+     *
+     * @return \Venbhas\Article\Model\Article|null
+     */
     public function getCurrentArticle()
     {
         return $this->registry->registry('current_article');
     }
 
+    /**
+     * Get current category from registry.
+     *
+     * @return \Venbhas\Article\Model\Category|null
+     */
     public function getCurrentCategory()
     {
         return $this->registry->registry('current_article_category');
     }
 
+    /**
+     * Get related product IDs for an article.
+     *
+     * @param int $articleId
+     * @return array
+     */
     public function getArticleRelatedProductIds($articleId): array
     {
-        return $articleId ? $this->relatedArticleProducts->getRelatedProductIds( $articleId) : [];
+        return $articleId ? $this->relatedArticleProducts->getRelatedProductIds($articleId) : [];
     }
+
+    /**
+     * Get related product IDs for a category.
+     *
+     * @param int $categoryId
+     * @return array
+     */
     public function getCategoryRelatedProductIds($categoryId): array
     {
         return $categoryId ? $this->relatedCategoryProducts->getRelatedProductIds($categoryId) : [];
     }
-
-
 }

@@ -12,7 +12,7 @@ use Venbhas\Article\Model\ResourceModel\Comment as CommentResource;
 
 class Delete extends Action implements HttpPostActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::comment_delete';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::comment_delete';
 
     /** @var CommentFactory */
     private $commentFactory;
@@ -20,6 +20,13 @@ class Delete extends Action implements HttpPostActionInterface
     /** @var CommentResource */
     private $commentResource;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param CommentFactory $commentFactory
+     * @param CommentResource $commentResource
+     */
     public function __construct(Context $context, CommentFactory $commentFactory, CommentResource $commentResource)
     {
         parent::__construct($context);
@@ -27,6 +34,11 @@ class Delete extends Action implements HttpPostActionInterface
         $this->commentResource = $commentResource;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();

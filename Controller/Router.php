@@ -36,6 +36,20 @@ class Router implements RouterInterface
     /** @var StoreManagerInterface */
     private $storeManager;
 
+    /** Request param set before Forward to avoid re-matching and 100-iteration loop */
+    private const ROUTER_FORWARDED_FLAG = '__article_router_forwarded';
+
+    /**
+     * Constructor.
+     *
+     * @param ActionFactory $actionFactory
+     * @param ArticleFactory $articleFactory
+     * @param ArticleResource $articleResource
+     * @param CategoryFactory $categoryFactory
+     * @param CategoryResource $categoryResource
+     * @param Config $config
+     * @param StoreManagerInterface $storeManager
+     */
     public function __construct(
         ActionFactory $actionFactory,
         ArticleFactory $articleFactory,
@@ -56,11 +70,19 @@ class Router implements RouterInterface
 
     /**
      * Match request using store config: Article List URL Key and Category List URL Key.
+     *
      * Single segment: list routes. Multi-segment: Article List URL Key + /category/... or + /post-url.
+     *
+     * @param RequestInterface $request
+     * @return \Magento\Framework\App\ActionInterface|null
      */
     public function match(RequestInterface $request)
     {
         if (!$this->config->isModuleEnabled()) {
+            return null;
+        }
+
+        if ($request->getParam(self::ROUTER_FORWARDED_FLAG)) {
             return null;
         }
 
@@ -80,12 +102,14 @@ class Router implements RouterInterface
         // Single-segment path: match configured list routes (from store config)
         if (count($pathParts) === 1) {
             if ($first === $articleListRoute) {
+                $request->setParam(self::ROUTER_FORWARDED_FLAG, true);
                 $request->setModuleName('article')
                     ->setControllerName('index')
                     ->setActionName('index');
                 return $this->actionFactory->create(\Magento\Framework\App\Action\Forward::class);
             }
             if ($first === $categoryListRoute) {
+                $request->setParam(self::ROUTER_FORWARDED_FLAG, true);
                 $request->setModuleName('article')
                     ->setControllerName('category')
                     ->setActionName('index');
@@ -101,21 +125,24 @@ class Router implements RouterInterface
         array_shift($pathParts);
 
         if (empty($pathParts)) {
+            $request->setParam(self::ROUTER_FORWARDED_FLAG, true);
             $request->setModuleName('article')->setControllerName('index')->setActionName('index');
             return $this->actionFactory->create(\Magento\Framework\App\Action\Forward::class);
         }
 
         if ($pathParts[0] === 'search' && count($pathParts) === 1) {
-            $request->setModuleName('article')
-                ->setControllerName('search')
-                ->setActionName('index');
+            $request->setParam(self::ROUTER_FORWARDED_FLAG, true);
+            $request->setModuleName('article')->setControllerName('search')->setActionName('index');
             return $this->actionFactory->create(\Magento\Framework\App\Action\Forward::class);
         }
 
-        if ($pathParts[0] === 'comment' && isset($pathParts[1]) && $pathParts[1] === 'post') {
+        // Forward article/comment/post to Article\Controller\Article\Comment\Post (flag avoids loop).
+        if ($pathParts[0] === 'comment') {
+            $actionName = $pathParts[1] ?? 'post';
+            $request->setParam(self::ROUTER_FORWARDED_FLAG, true);
             $request->setModuleName('article')
-                ->setControllerName('comment')
-                ->setActionName('post');
+                ->setControllerName('article_comment')
+                ->setActionName($actionName);
             return $this->actionFactory->create(\Magento\Framework\App\Action\Forward::class);
         }
 
@@ -132,6 +159,7 @@ class Router implements RouterInterface
                 
                 return null;
             }
+            $request->setParam(self::ROUTER_FORWARDED_FLAG, true);
             $request->setModuleName('article')
                 ->setControllerName('category')
                 ->setActionName('view')
@@ -146,6 +174,7 @@ class Router implements RouterInterface
         if (!$article->getId() || !$article->getData('is_active')) {
             return null;
         }
+        $request->setParam(self::ROUTER_FORWARDED_FLAG, true);
         $request->setModuleName('article')
             ->setControllerName('article')
             ->setActionName('view')

@@ -7,9 +7,14 @@ use Magento\Framework\Data\OptionSourceInterface;
 
 class Status implements OptionSourceInterface
 {
-    const STATUS_DRAFT = 0;
-    const STATUS_PUBLISHED = 1;
+    public const STATUS_DRAFT = 0;
+    public const STATUS_PUBLISHED = 1;
 
+    /**
+     * Return status options for select.
+     *
+     * @return array
+     */
     public function toOptionArray(): array
     {
         return [

@@ -7,6 +7,11 @@ use Magento\Framework\Data\OptionSourceInterface;
 
 class IsActive implements OptionSourceInterface
 {
+    /**
+     * Return enabled/disabled options for select.
+     *
+     * @return array
+     */
     public function toOptionArray(): array
     {
         return [

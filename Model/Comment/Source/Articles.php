@@ -11,11 +11,21 @@ class Articles implements OptionSourceInterface
     /** @var ArticleCollectionFactory */
     private $collectionFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param ArticleCollectionFactory $collectionFactory
+     */
     public function __construct(ArticleCollectionFactory $collectionFactory)
     {
         $this->collectionFactory = $collectionFactory;
     }
 
+    /**
+     * Return article options for select.
+     *
+     * @return array
+     */
     public function toOptionArray(): array
     {
         $options = [['value' => '', 'label' => __('-- Please Select --')]];

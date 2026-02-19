@@ -11,11 +11,21 @@ class Categories implements OptionSourceInterface
     /** @var CategoryCollectionFactory */
     private $collectionFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param CategoryCollectionFactory $collectionFactory
+     */
     public function __construct(CategoryCollectionFactory $collectionFactory)
     {
         $this->collectionFactory = $collectionFactory;
     }
 
+    /**
+     * Return category options for select.
+     *
+     * @return array
+     */
     public function toOptionArray(): array
     {
         $options = [['value' => '', 'label' => __('-- Please Select --')]];

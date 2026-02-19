@@ -89,6 +89,74 @@
     margin-top: 20px;
 }
 
+.article-comment-section .required {
+    color: #e02b27;
+}
+
+.article-comment-required-note {
+    margin: -5px 0 15px;
+    color: #666;
+    font-size: 0.95em;
+}
+
+/* Approved comments list (above the form) */
+.article-comments-list {
+    margin-top: 35px;
+    padding-top: 25px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.article-comments-list .article-comments-title {
+    margin-bottom: 15px;
+}
+
+.article-comment-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.article-comment-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.article-comment-item:last-child {
+    border-bottom: none;
+}
+
+.article-comment-meta {
+    margin-bottom: 8px;
+    font-size: 0.95em;
+}
+
+.article-comment-author {
+    font-weight: 600;
+    margin-right: 10px;
+}
+
+.article-comment-date {
+    color: #666;
+}
+
+.article-comment-text {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.article-comment-reply {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: #f5f5f5;
+    border-left: 3px solid #ccc;
+    font-size: 0.95em;
+}
+
+.article-comment-reply strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
 .block-article-search .block-content {
     padding: 15px 0;
 }
@@ -134,7 +202,8 @@
 
 .article-related-products-track {
     flex: 1;
-    overflow: hidden;
+    overflow-x: auto;
+    overflow-y: hidden;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
 }

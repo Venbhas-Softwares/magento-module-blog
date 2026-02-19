@@ -12,7 +12,7 @@ use Venbhas\Article\Model\ArticleFactory;
 
 class Edit extends Action implements HttpGetActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::article_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::article_save';
 
     /** @var PageFactory */
     private $resultPageFactory;
@@ -23,6 +23,14 @@ class Edit extends Action implements HttpGetActionInterface
     /** @var ArticleFactory */
     private $articleFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
+     * @param Registry $coreRegistry
+     * @param ArticleFactory $articleFactory
+     */
     public function __construct(
         Context $context,
         PageFactory $resultPageFactory,
@@ -35,6 +43,11 @@ class Edit extends Action implements HttpGetActionInterface
         $this->articleFactory = $articleFactory;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return \Magento\Framework\View\Result\Page|\Magento\Backend\Model\View\Result\Redirect
+     */
     public function execute()
     {
         $id = (int) $this->getRequest()->getParam('article_id');

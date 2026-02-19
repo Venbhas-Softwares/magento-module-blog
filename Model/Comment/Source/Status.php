@@ -8,6 +8,11 @@ use Venbhas\Article\Model\Comment;
 
 class Status implements OptionSourceInterface
 {
+    /**
+     * Return comment status options for select.
+     *
+     * @return array
+     */
     public function toOptionArray(): array
     {
         return [

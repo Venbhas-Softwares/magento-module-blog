@@ -12,7 +12,7 @@ use Venbhas\Article\Model\CommentFactory;
 
 class Edit extends Action implements HttpGetActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::comment_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::comment_save';
 
     /** @var PageFactory */
     private $resultPageFactory;
@@ -23,6 +23,14 @@ class Edit extends Action implements HttpGetActionInterface
     /** @var CommentFactory */
     private $commentFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
+     * @param Registry $coreRegistry
+     * @param CommentFactory $commentFactory
+     */
     public function __construct(
         Context $context,
         PageFactory $resultPageFactory,
@@ -35,6 +43,11 @@ class Edit extends Action implements HttpGetActionInterface
         $this->commentFactory = $commentFactory;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return \Magento\Framework\View\Result\Page|\Magento\Backend\Model\View\Result\Redirect
+     */
     public function execute()
     {
         $id = (int) $this->getRequest()->getParam('comment_id');

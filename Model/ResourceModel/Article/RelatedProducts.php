@@ -5,6 +5,9 @@ namespace Venbhas\Article\Model\ResourceModel\Article;
 
 use Magento\Framework\App\ResourceConnection;
 
+/**
+ * Article related products resource.
+ */
 class RelatedProducts
 {
     private const TABLE = 'venbhas_article_related_products';
@@ -12,11 +15,21 @@ class RelatedProducts
     /** @var ResourceConnection */
     private $resource;
 
+    /**
+     * @param ResourceConnection $resource
+     */
     public function __construct(ResourceConnection $resource)
     {
         $this->resource = $resource;
     }
 
+    /**
+     * Save related products for article.
+     *
+     * @param int $articleId
+     * @param array $productIds
+     * @return void
+     */
     public function saveRelatedProducts(int $articleId, array $productIds): void
     {
         $connection = $this->resource->getConnection();
@@ -33,6 +46,12 @@ class RelatedProducts
         }
     }
 
+    /**
+     * Get related product ids for article.
+     *
+     * @param int $articleId
+     * @return array
+     */
     public function getRelatedProductIds(int $articleId): array
     {
         $connection = $this->resource->getConnection();
@@ -43,6 +62,12 @@ class RelatedProducts
         return is_array($result) ? $result : [];
     }
 
+    /**
+     * Get product ids by skus.
+     *
+     * @param array $skus
+     * @return array
+     */
     public function getProductIdsBySkus(array $skus): array
     {
         if (empty($skus)) {
@@ -55,6 +80,12 @@ class RelatedProducts
         return $connection->fetchCol($select) ?: [];
     }
 
+    /**
+     * Get skus by product ids.
+     *
+     * @param array $productIds
+     * @return array
+     */
     public function getSkusByProductIds(array $productIds): array
     {
         if (empty($productIds)) {

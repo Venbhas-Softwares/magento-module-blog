@@ -12,6 +12,9 @@ use Venbhas\Article\Model\ResourceModel\Article\CollectionFactory as ArticleColl
 use Venbhas\Article\Model\ResourceModel\Category\RelatedProducts;
 use Magento\Store\Model\StoreManagerInterface;
 
+/**
+ * Block for category view page.
+ */
 class View extends Template
 {
     /** @var ArticleCollectionFactory */
@@ -29,6 +32,17 @@ class View extends Template
     /** @var Config */
     private $config;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param ArticleCollectionFactory $articleCollectionFactory
+     * @param RelatedProducts $relatedProducts
+     * @param Registry $registry
+     * @param StoreManagerInterface $storeManager
+     * @param Config $config
+     * @param array $data
+     */
     public function __construct(
         Context $context,
         ArticleCollectionFactory $articleCollectionFactory,
@@ -46,17 +60,32 @@ class View extends Template
         parent::__construct($context, $data);
     }
 
+    /**
+     * Get current category from layout data or registry.
+     *
+     * @return Category|null
+     */
     public function getCategory(): ?Category
     {
         return $this->_data['category'] ?? $this->registry->registry('current_article_category');
     }
 
+    /**
+     * Get related product IDs for the current category.
+     *
+     * @return int[]
+     */
     public function getRelatedProductIds(): array
     {
         $category = $this->getCategory();
         return $category ? $this->relatedProducts->getRelatedProductIds((int) $category->getId()) : [];
     }
 
+    /**
+     * Get articles collection for the current category (paginated).
+     *
+     * @return \Magento\Framework\Data\Collection\AbstractDb|array
+     */
     public function getArticles()
     {
         $category = $this->getCategory();
@@ -86,12 +115,20 @@ class View extends Template
         return $collection;
     }
 
+    /**
+     * Prepare layout: add pager for articles.
+     *
+     * @return $this
+     */
     protected function _prepareLayout()
     {
         if ($this->getCategory()) {
             $collection = $this->getArticles();
             if ($collection instanceof \Magento\Framework\Data\Collection\AbstractDb) {
-                $pager = $this->getLayout()->createBlock(\Magento\Theme\Block\Html\Pager::class, 'article_category.pager');
+                $pager = $this->getLayout()->createBlock(
+                    \Magento\Theme\Block\Html\Pager::class,
+                    'article_category.pager'
+                );
                 $pager->setLimit($collection->getPageSize());
                 $pager->setCollection($collection);
                 $pager->setShowPerPage(false);
@@ -101,11 +138,21 @@ class View extends Template
         return parent::_prepareLayout();
     }
 
+    /**
+     * Get pager HTML.
+     *
+     * @return string
+     */
     public function getPagerHtml(): string
     {
         return (string) $this->getChildHtml('pager');
     }
 
+    /**
+     * Get current sort order from request or config default.
+     *
+     * @return string
+     */
     public function getCurrentSortOrder(): string
     {
         $requestOrder = $this->getRequest()->getParam('order', '');
@@ -117,11 +164,22 @@ class View extends Template
         return $this->config->getDefaultSortOrder($storeId);
     }
 
+    /**
+     * Get sort options for frontend (order => label).
+     *
+     * @return array
+     */
     public function getSortOptions(): array
     {
         return $this->config->getSortOptionsForFrontend();
     }
 
+    /**
+     * Get URL for category page with given sort order.
+     *
+     * @param string $order
+     * @return string
+     */
     public function getSortUrl(string $order): string
     {
         $params = ['order' => $order];
@@ -132,6 +190,12 @@ class View extends Template
         return $this->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true, '_query' => $params]);
     }
 
+    /**
+     * Format datetime as human-readable time ago string.
+     *
+     * @param string $datetime
+     * @return string
+     */
     public function getTimeAgo($datetime)
     {
         $timestamp = strtotime($datetime);
@@ -151,9 +215,15 @@ class View extends Template
             return floor($diff / 31536000) . ' years';
         }
     }
+
+    /**
+     * Get full media URL for image path.
+     *
+     * @param string|null $image
+     * @return string|false
+     */
     public function getImageUrl($image)
     {
-        
         if (!$image) {
             return false;
         }
@@ -165,6 +235,9 @@ class View extends Template
 
     /**
      * Article detail URL (path from store config: Article List URL Key + / + url_key).
+     *
+     * @param string $urlKey
+     * @return string
      */
     public function getArticleUrl(string $urlKey): string
     {

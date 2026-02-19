@@ -10,6 +10,9 @@ use Venbhas\Article\Model\Config;
 use Venbhas\Article\Model\ResourceModel\Article\CollectionFactory;
 use Venbhas\Article\Model\ResourceModel\Category\CollectionFactory as categoryCollectionFactory;
 
+/**
+ * Block for article list page.
+ */
 class ListBlock extends Template
 {
     /** @var CollectionFactory */
@@ -24,6 +27,16 @@ class ListBlock extends Template
     /** @var StoreManagerInterface */
     private $storeManager;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param CollectionFactory $collectionFactory
+     * @param categoryCollectionFactory $categoryCollectionFactory
+     * @param Config $config
+     * @param StoreManagerInterface $storeManager
+     * @param array $data
+     */
     public function __construct(
         Context $context,
         CollectionFactory $collectionFactory,
@@ -39,6 +52,11 @@ class ListBlock extends Template
         parent::__construct($context, $data);
     }
 
+    /**
+     * Get article collection for list.
+     *
+     * @return \Magento\Framework\Data\Collection\AbstractDb
+     */
     public function getArticles()
     {
         if (!$this->hasData('articles')) {
@@ -61,6 +79,11 @@ class ListBlock extends Template
         return $this->getData('articles');
     }
 
+    /**
+     * Get current sort order from request or config.
+     *
+     * @return string
+     */
     public function getCurrentSortOrder(): string
     {
         $requestOrder = $this->getRequest()->getParam('order', '');
@@ -72,6 +95,11 @@ class ListBlock extends Template
         return $this->config->getDefaultSortOrder($storeId);
     }
 
+    /**
+     * Get sort options for frontend.
+     *
+     * @return array
+     */
     public function getSortOptions(): array
     {
         return $this->config->getSortOptionsForFrontend();
@@ -79,6 +107,9 @@ class ListBlock extends Template
 
     /**
      * URL for sort option (preserves path and pagination params).
+     *
+     * @param string $order
+     * @return string
      */
     public function getSortUrl(string $order): string
     {
@@ -90,8 +121,13 @@ class ListBlock extends Template
         return $this->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true, '_query' => $params]);
     }
 
-
-    public function getCategories(){
+    /**
+     * Get category collection for sidebar.
+     *
+     * @return \Magento\Framework\Data\Collection\AbstractDb
+     */
+    public function getCategories()
+    {
         $collection = $this->categoryCollectionFactory->create();
         $collection->addFieldToFilter('status', 1);
         $collection->setOrder('updated_at', 'desc');
@@ -100,6 +136,9 @@ class ListBlock extends Template
 
     /**
      * Article detail URL (path from store config: Article List URL Key + / + url_key).
+     *
+     * @param string $urlKey
+     * @return string
      */
     public function getArticleUrl(string $urlKey): string
     {
@@ -110,6 +149,9 @@ class ListBlock extends Template
 
     /**
      * Category view URL (path from store config: Article List URL Key + /category/ + url_key).
+     *
+     * @param \Venbhas\Article\Model\Category $category
+     * @return string
      */
     public function getCategoryUrl($category): string
     {
@@ -118,6 +160,11 @@ class ListBlock extends Template
         return $this->getUrl('', ['_direct' => $basePath . '/category/' . $category->getUrlKey()]);
     }
 
+    /**
+     * Prepare layout and add pager.
+     *
+     * @return $this
+     */
     protected function _prepareLayout()
     {
         $collection = $this->getArticles();
@@ -129,10 +176,13 @@ class ListBlock extends Template
         return parent::_prepareLayout();
     }
 
+    /**
+     * Get pager HTML.
+     *
+     * @return string
+     */
     public function getPagerHtml()
     {
         return $this->getChildHtml('pager');
     }
-
-
 }

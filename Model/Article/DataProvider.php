@@ -12,6 +12,9 @@ use Venbhas\Article\Model\ResourceModel\Article\CategoryRelation;
 use Venbhas\Article\Model\ResourceModel\Article\CollectionFactory as ArticleCollectionFactory;
 use Venbhas\Article\Model\ResourceModel\Article\RelatedProducts;
 
+/**
+ * Article form data provider.
+ */
 class DataProvider extends AbstractDataProvider
 {
     /** @var array */
@@ -32,6 +35,19 @@ class DataProvider extends AbstractDataProvider
     /** @var StoreManagerInterface */
     private $storeManager;
 
+    /**
+     * @param string $name
+     * @param string $primaryFieldName
+     * @param string $requestFieldName
+     * @param ArticleCollectionFactory $collectionFactory
+     * @param DataPersistorInterface $dataPersistor
+     * @param RelatedProducts $relatedProducts
+     * @param CategoryRelation $categoryRelation
+     * @param RequestInterface $request
+     * @param StoreManagerInterface $storeManager
+     * @param array $meta
+     * @param array $data
+     */
     public function __construct(
         string $name,
         string $primaryFieldName,
@@ -54,6 +70,12 @@ class DataProvider extends AbstractDataProvider
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
+    /**
+     * Get media URL for path.
+     *
+     * @param string $path
+     * @return string
+     */
     private function getMediaUrl(string $path): string
     {
         try {
@@ -63,6 +85,11 @@ class DataProvider extends AbstractDataProvider
         }
     }
 
+    /**
+     * Get data.
+     *
+     * @return array
+     */
     public function getData(): array
     {
         if ($this->loadedData !== [] && $this->loadedData !== null) {
@@ -112,7 +139,14 @@ class DataProvider extends AbstractDataProvider
             $data['related_products'] = $ids;
             $featuredImage = $data['featured_image'] ?? '';
             if ($featuredImage) {
-                $data['featured_image'] = [['name' => basename($featuredImage), 'path' => $featuredImage, 'url' => $this->getMediaUrl($featuredImage)]];
+                $fileName = preg_replace('#^.*[/\\\\]#', '', $featuredImage);
+                $data['featured_image'] = [
+                    [
+                        'name' => $fileName,
+                        'path' => $featuredImage,
+                        'url' => $this->getMediaUrl($featuredImage),
+                    ],
+                ];
             }
             $this->loadedData[$article->getId()] = $data;
         }

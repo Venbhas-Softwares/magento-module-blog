@@ -21,8 +21,9 @@ $hasCategories = $categories->getSize() > 0;
                 <h2><?= $escaper->escapeHtml(__('Categories')) ?></h2>
                 <ul class="article-list">
                     <?php foreach ($categories as $category): ?>
+                        <?php $catUrl = $block->getCategoryUrl((string) $category->getUrlKey()); ?>
                         <li class="article-item">
-                            <a href="<?= $escaper->escapeUrl($block->getCategoryUrl((string) $category->getUrlKey())) ?>">
+                            <a href="<?= $escaper->escapeUrl($catUrl) ?>">
                                 <?= $escaper->escapeHtml($category->getName()) ?>
                             </a>
                         </li>

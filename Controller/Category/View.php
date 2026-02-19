@@ -30,6 +30,16 @@ class View extends Action implements HttpGetActionInterface
     /** @var Registry */
     private $registry;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
+     * @param ForwardFactory $resultForwardFactory
+     * @param CategoryFactory $categoryFactory
+     * @param CategoryResource $categoryResource
+     * @param Registry $registry
+     */
     public function __construct(
         Context $context,
         PageFactory $resultPageFactory,
@@ -46,9 +56,13 @@ class View extends Action implements HttpGetActionInterface
         $this->registry = $registry;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
-        
         $id = (int) $this->getRequest()->getParam('id');
         $urlKey = $this->getRequest()->getParam('url_key');
         $category = $this->categoryFactory->create();

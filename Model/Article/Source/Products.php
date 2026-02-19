@@ -11,11 +11,21 @@ class Products implements OptionSourceInterface
     /** @var ProductCollectionFactory */
     private $collectionFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param ProductCollectionFactory $collectionFactory
+     */
     public function __construct(ProductCollectionFactory $collectionFactory)
     {
         $this->collectionFactory = $collectionFactory;
     }
 
+    /**
+     * Return product options for select.
+     *
+     * @return array
+     */
     public function toOptionArray(): array
     {
         $collection = $this->collectionFactory->create();

@@ -34,6 +34,16 @@ class View extends Template
     /** @var Image */
     private $imageHelper;
 
+    /**
+     * @param Context $context
+     * @param Registry $registry
+     * @param RelatedProducts $relatedProducts
+     * @param StoreManagerInterface $storeManager
+     * @param CollectionFactory $productCollectionFactory
+     * @param ProductRepository $productRepository
+     * @param Image $imageHelper
+     * @param array $data
+     */
     public function __construct(
         Context $context,
         Registry $registry,
@@ -53,12 +63,22 @@ class View extends Template
         parent::__construct($context, $data);
     }
 
+    /**
+     * Get current article from registry.
+     *
+     * @return Article|null
+     */
     public function getArticle(): ?Article
     {
         return $this->registry->registry('current_article');
     }
 
-    
+    /**
+     * Get human-readable time ago string from datetime.
+     *
+     * @param string $datetime
+     * @return string
+     */
     public function getTimeAgo($datetime)
     {
         $timestamp = strtotime($datetime);
@@ -78,6 +98,13 @@ class View extends Template
             return floor($diff / 31536000) . ' years';
         }
     }
+
+    /**
+     * Get media URL for image path.
+     *
+     * @param string|null $image
+     * @return string|false
+     */
     public function getImageUrl($image)
     {
         if (!$image) {
@@ -88,7 +115,4 @@ class View extends Template
             \Magento\Framework\UrlInterface::URL_TYPE_MEDIA
         ) . ltrim($image, '/');
     }
-    
-
-
 }

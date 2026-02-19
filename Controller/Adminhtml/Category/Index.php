@@ -10,17 +10,28 @@ use Magento\Framework\View\Result\PageFactory;
 
 class Index extends Action implements HttpGetActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::category';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::category';
 
     /** @var PageFactory */
     private $resultPageFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
+     */
     public function __construct(Context $context, PageFactory $resultPageFactory)
     {
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return \Magento\Framework\View\Result\Page
+     */
     public function execute()
     {
         $resultPage = $this->resultPageFactory->create();

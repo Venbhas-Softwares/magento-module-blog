@@ -7,6 +7,11 @@ use Magento\Framework\Data\OptionSourceInterface;
 
 class MetaRobots implements OptionSourceInterface
 {
+    /**
+     * Return meta robots options for select.
+     *
+     * @return array
+     */
     public function toOptionArray(): array
     {
         return [

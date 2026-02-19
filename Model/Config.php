@@ -6,6 +6,9 @@ namespace Venbhas\Article\Model;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
 
+/**
+ * Article module configuration.
+ */
 class Config
 {
     private const XML_PATH_ENABLED = 'venbhas_article/general/enabled';
@@ -21,11 +24,22 @@ class Config
     /** @var ScopeConfigInterface */
     private $scopeConfig;
 
+    /**
+     * Constructor.
+     *
+     * @param ScopeConfigInterface $scopeConfig
+     */
     public function __construct(ScopeConfigInterface $scopeConfig)
     {
         $this->scopeConfig = $scopeConfig;
     }
 
+    /**
+     * Check if module is enabled.
+     *
+     * @param int|null $storeId
+     * @return bool
+     */
     public function isModuleEnabled(?int $storeId = null): bool
     {
         return $this->scopeConfig->isSetFlag(
@@ -35,6 +49,12 @@ class Config
         );
     }
 
+    /**
+     * Check if comments are enabled.
+     *
+     * @param int|null $storeId
+     * @return bool
+     */
     public function isCommentsEnabled(?int $storeId = null): bool
     {
         return $this->scopeConfig->isSetFlag(
@@ -44,6 +64,12 @@ class Config
         );
     }
 
+    /**
+     * Get article list route.
+     *
+     * @param int|null $storeId
+     * @return string
+     */
     public function getArticleListRoute(?int $storeId = null): string
     {
         $value = $this->scopeConfig->getValue(
@@ -54,6 +80,12 @@ class Config
         return $value !== null && $value !== '' ? trim((string) $value) : 'articles';
     }
 
+    /**
+     * Get category list route.
+     *
+     * @param int|null $storeId
+     * @return string
+     */
     public function getCategoryListRoute(?int $storeId = null): string
     {
         $value = $this->scopeConfig->getValue(
@@ -64,6 +96,12 @@ class Config
         return $value !== null && $value !== '' ? trim((string) $value) : 'categories';
     }
 
+    /**
+     * Get articles per page.
+     *
+     * @param int|null $storeId
+     * @return int
+     */
     public function getArticlesPerPage(?int $storeId = null): int
     {
         $value = $this->scopeConfig->getValue(
@@ -77,6 +115,9 @@ class Config
 
     /**
      * Default sort order for article/category lists. One of: new_to_old, old_to_new, a_to_z, z_to_a
+     *
+     * @param int|null $storeId
+     * @return string
      */
     public function getDefaultSortOrder(?int $storeId = null): string
     {
@@ -89,6 +130,12 @@ class Config
         return $value && in_array($value, $valid, true) ? $value : 'new_to_old';
     }
 
+    /**
+     * Get related products limit.
+     *
+     * @param int|null $storeId
+     * @return int
+     */
     public function getRelatedProductsLimit(?int $storeId = null): int
     {
         $value = $this->scopeConfig->getValue(
@@ -101,7 +148,9 @@ class Config
     }
 
     /**
-     * Sort options for frontend dropdown [value => label]
+     * Sort options for frontend dropdown [value => label].
+     *
+     * @return array
      */
     public function getSortOptionsForFrontend(): array
     {
@@ -115,6 +164,9 @@ class Config
 
     /**
      * Return [field, direction] for collection setOrder. Field is main_table column.
+     *
+     * @param string $order Sort key (new_to_old, old_to_new, a_to_z, z_to_a)
+     * @return array{field: string, direction: string}
      */
     public function getSortOrderFieldAndDirection(string $order): array
     {
@@ -131,6 +183,12 @@ class Config
         }
     }
 
+    /**
+     * Get category meta robots value.
+     *
+     * @param int|null $storeId
+     * @return string
+     */
     public function getCategoryMetaRobots(?int $storeId = null): string
     {
         $value = $this->scopeConfig->getValue(
@@ -141,6 +199,12 @@ class Config
         return $value !== null ? (string) $value : 'INDEX,FOLLOW';
     }
 
+    /**
+     * Get post meta robots value.
+     *
+     * @param int|null $storeId
+     * @return string
+     */
     public function getPostMetaRobots(?int $storeId = null): string
     {
         $value = $this->scopeConfig->getValue(

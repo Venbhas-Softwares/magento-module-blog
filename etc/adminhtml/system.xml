@@ -43,8 +43,8 @@
                     <source_model>Venbhas\Article\Model\Config\Source\SortOrder</source_model>
                 </field>
                 <field id="related_products_limit" translate="label comment" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Related Products Limit</label>
-                    <comment>Maximum number of related products to show on article and category view pages. Use scroll to view all.</comment>
+                    <label>Related Products Visible (slider)</label>
+                    <comment>Number of related products visible at once. All related products are loaded; use the slider arrows to view the rest.</comment>
                     <validate>validate-digits validate-greater-than-zero</validate>
                 </field>
             </group>

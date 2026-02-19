@@ -12,7 +12,7 @@ use Venbhas\Article\Model\ResourceModel\Category as CategoryResource;
 
 class Delete extends Action implements HttpPostActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::category_delete';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::category_delete';
 
     /** @var CategoryFactory */
     private $categoryFactory;
@@ -20,6 +20,13 @@ class Delete extends Action implements HttpPostActionInterface
     /** @var CategoryResource */
     private $categoryResource;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param CategoryFactory $categoryFactory
+     * @param CategoryResource $categoryResource
+     */
     public function __construct(Context $context, CategoryFactory $categoryFactory, CategoryResource $categoryResource)
     {
         parent::__construct($context);
@@ -27,6 +34,11 @@ class Delete extends Action implements HttpPostActionInterface
         $this->categoryResource = $categoryResource;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();

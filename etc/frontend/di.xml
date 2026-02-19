@@ -7,7 +7,8 @@
                 <item name="article" xsi:type="array">
                     <item name="class" xsi:type="string">Venbhas\Article\Controller\Router</item>
                     <item name="disable" xsi:type="boolean">false</item>
-                    <item name="sortOrder" xsi:type="string">30</item>
+                    <!-- Run after urlrewrite (20) but before standard (30) so standard can match article/comment/post when we return null -->
+                    <item name="sortOrder" xsi:type="string">25</item>
                 </item>
             </argument>
         </arguments>

@@ -11,6 +11,9 @@ use Magento\Ui\DataProvider\AbstractDataProvider;
 use Venbhas\Article\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 use Venbhas\Article\Model\ResourceModel\Category\RelatedProducts;
 
+/**
+ * Category form data provider.
+ */
 class DataProvider extends AbstractDataProvider
 {
     /** @var array */
@@ -28,6 +31,20 @@ class DataProvider extends AbstractDataProvider
     /** @var StoreManagerInterface */
     private $storeManager;
 
+    /**
+     * Constructor.
+     *
+     * @param string $name
+     * @param string $primaryFieldName
+     * @param string $requestFieldName
+     * @param CategoryCollectionFactory $collectionFactory
+     * @param DataPersistorInterface $dataPersistor
+     * @param RelatedProducts $relatedProducts
+     * @param RequestInterface $request
+     * @param StoreManagerInterface $storeManager
+     * @param array $meta
+     * @param array $data
+     */
     public function __construct(
         string $name,
         string $primaryFieldName,
@@ -48,6 +65,12 @@ class DataProvider extends AbstractDataProvider
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
+    /**
+     * Get media URL for path.
+     *
+     * @param string $path
+     * @return string
+     */
     private function getMediaUrl(string $path): string
     {
         try {
@@ -57,6 +80,11 @@ class DataProvider extends AbstractDataProvider
         }
     }
 
+    /**
+     * Get data.
+     *
+     * @return array
+     */
     public function getData(): array
     {
         if ($this->loadedData !== [] && $this->loadedData !== null) {
@@ -100,13 +128,25 @@ class DataProvider extends AbstractDataProvider
             // related_articles is stored as comma-separated ids; multiselect options use string values
             $relatedArticlesRaw = trim((string) ($data['related_articles'] ?? ''));
             $data['related_articles'] = $relatedArticlesRaw !== ''
-                ? array_values(array_map('strval', array_filter(array_map('intval', explode(',', $relatedArticlesRaw)))))
+                ? array_values(
+                    array_map(
+                        'strval',
+                        array_filter(array_map('intval', explode(',', $relatedArticlesRaw)))
+                    )
+                )
                 : [];
             $ids = $this->relatedProducts->getRelatedProductIds((int) $category->getId());
             $data['related_products'] = $ids;
             $featuredImage = $data['featured_image'] ?? $data['featured image'] ?? '';
             if ($featuredImage) {
-                $data['featured_image'] = [['name' => basename($featuredImage), 'path' => $featuredImage, 'url' => $this->getMediaUrl($featuredImage)]];
+                $fileName = preg_replace('#^.*[/\\\\]#', '', $featuredImage);
+                $data['featured_image'] = [
+                    [
+                        'name' => $fileName,
+                        'path' => $featuredImage,
+                        'url' => $this->getMediaUrl($featuredImage),
+                    ],
+                ];
             }
             $this->loadedData[$category->getId()] = $data;
         }

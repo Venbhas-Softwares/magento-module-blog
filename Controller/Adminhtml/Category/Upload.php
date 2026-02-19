@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
 
 class Upload extends Action implements HttpPostActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::category_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::category_save';
 
     /** @var UploaderFactory */
     private $uploaderFactory;
@@ -26,6 +26,14 @@ class Upload extends Action implements HttpPostActionInterface
     /** @var LoggerInterface */
     private $logger;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param UploaderFactory $uploaderFactory
+     * @param Filesystem $filesystem
+     * @param LoggerInterface $logger
+     */
     public function __construct(
         Context $context,
         UploaderFactory $uploaderFactory,
@@ -38,6 +46,11 @@ class Upload extends Action implements HttpPostActionInterface
         $this->logger = $logger;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return \Magento\Framework\Controller\ResultInterface
+     */
     public function execute()
     {
         $result = ['error' => true, 'message' => __('File can not be uploaded.')];
@@ -52,11 +65,14 @@ class Upload extends Action implements HttpPostActionInterface
             $uploadResult = $uploader->save($path);
             if (!empty($uploadResult['file'])) {
                 $relativePath = 'venbhas/category' . '/' . $uploadResult['file'];
+                $baseMediaUrl = $this->_url->getBaseUrl(
+                    ['_type' => \Magento\Framework\UrlInterface::URL_TYPE_MEDIA]
+                );
                 $result = [
                     'error' => false,
                     'name' => $uploadResult['name'],
                     'path' => $relativePath,
-                    'url' => $this->_url->getBaseUrl(['_type' => \Magento\Framework\UrlInterface::URL_TYPE_MEDIA]) . $relativePath,
+                    'url' => $baseMediaUrl . $relativePath,
                 ];
             }
         } catch (LocalizedException $e) {

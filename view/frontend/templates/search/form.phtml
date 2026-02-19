@@ -13,16 +13,20 @@
             <div class="field search">
                 <label class="label" for="article-search"><span><?= $escaper->escapeHtml(__('Search')) ?></span></label>
                 <div class="control">
+                    <?php $q = $block->getRequest()->getParam('q', ''); ?>
                     <input type="text"
                            id="article-search"
                            name="q"
-                           value="<?= $escaper->escapeHtmlAttr($block->getRequest()->getParam('q', '')) ?>"
-                           placeholder="<?= $escaper->escapeHtmlAttr(__('Search articles and categories...')) ?>"
+                           value="<?= $escaper->escapeHtmlAttr($q) ?>"
+                           placeholder="<?= $escaper->escapeHtmlAttr(
+                               __('Search articles and categories...')
+                           ) ?>"
                            class="input-text"/>
                 </div>
             </div>
             <div class="actions-toolbar">
-                <button type="submit" class="action search primary" title="<?= $escaper->escapeHtmlAttr(__('Search')) ?>">
+                <button type="submit" class="action search primary"
+                        title="<?= $escaper->escapeHtmlAttr(__('Search')) ?>">
                     <span><?= $escaper->escapeHtml(__('Search')) ?></span>
                 </button>
             </div>

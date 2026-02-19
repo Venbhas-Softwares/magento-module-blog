@@ -1,8 +1,12 @@
 <?php
+/**
+ * @var $block \Venbhas\Article\Block\Frontend\Category\View
+ * @var \Magento\Framework\Escaper $escaper
+ */
 $category = $block->getCategory();
-
-if (!$category) return;
-
+if (!$category) {
+    return;
+}
 $articles = $block->getArticles();
 ?>
 
@@ -21,7 +25,7 @@ $articles = $block->getArticles();
         <div class="category-info">
             <?php if ($category->getDescription()): ?>
                 <div class="category-description">
-                    <?= /* @noEscape */  $category->getDescription(); ?>
+                    <?= /* @noEscape */ $category->getDescription() ?>
                 </div>
             <?php endif; ?>
         </div>
@@ -30,39 +34,52 @@ $articles = $block->getArticles();
     <!-- Articles Section -->
     <?php if ($articles && $articles->getSize()): ?>
         <div class="category-articles">
-            <h2><?= __('Articles') ?></h2>
+            <h2><?= $escaper->escapeHtml(__('Articles')) ?></h2>
             <div class="article-toolbar">
-                <label for="category-article-sort" class="label"><?= $escaper->escapeHtml(__('Sort by')) ?>:</label>
-                <select id="category-article-sort" class="article-sort-select" onchange="window.location.href=this.options[this.selectedIndex].value">
-                    <?php $currentSort = $block->getCurrentSortOrder(); foreach ($block->getSortOptions() as $value => $label): ?>
-                        <option value="<?= $escaper->escapeUrl($block->getSortUrl($value)) ?>" <?= $value === $currentSort ? ' selected' : '' ?>><?= $escaper->escapeHtml($label) ?></option>
+                <label for="category-article-sort" class="label">
+                    <?= $escaper->escapeHtml(__('Sort by')) ?>:</label>
+                <select id="category-article-sort" class="article-sort-select"
+                        onchange="window.location.href=this.options[this.selectedIndex].value">
+                    <?php
+                    $currentSort = $block->getCurrentSortOrder();
+                    foreach ($block->getSortOptions() as $value => $label):
+                        $selected = $value === $currentSort ? ' selected' : '';
+                        ?>
+                        <option value="<?= $escaper->escapeUrl($block->getSortUrl($value)) ?>"
+                                <?= $escaper->escapeHtmlAttr($selected) ?>>
+                            <?= $escaper->escapeHtml($label) ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
             <ul class="article-list">
-                <?php foreach ($articles as $article): 
+                <?php foreach ($articles as $article):
                     $updatedAt = $article->getUpdatedAt();
-                    $formattedDate = $block->formatDate($updatedAt, \IntlDateFormatter::MEDIUM, true);
+                    $formattedDate = $block->formatDate(
+                        $updatedAt,
+                        \IntlDateFormatter::MEDIUM,
+                        true
+                    );
                     $timeAgo = $block->getTimeAgo($updatedAt);
-                ?>
+                    $artUrl = $block->getArticleUrl($article->getUrlKey());
+                    ?>
                     <li class="article-item">
-                        <a href="<?= $escaper->escapeUrl($block->getArticleUrl($article->getUrlKey())) ?>">
+                        <a href="<?= $escaper->escapeUrl($artUrl) ?>">
                             <?= $escaper->escapeHtml($article->getTitle()) ?>
                         </a>
 
                         <div class="article-meta"
                              title="<?= $escaper->escapeHtml($formattedDate) ?>">
-                            <?= __('Updated %1 ago', $timeAgo) ?>
+                            <?= $escaper->escapeHtml(__('Updated %1 ago', $timeAgo)) ?>
                         </div>
 
                         <div class="article-hover">
-                            <?=/* @noEscape */ $article->getShortDescription() ?>
+                            <?= /* @noEscape */ $article->getShortDescription() ?>
                         </div>
                     </li>
                 <?php endforeach; ?>
             </ul>
             <div class="article-pagination">
-                <?= $block->getPagerHtml() ?>
+                <?= /* @noEscape */ $block->getPagerHtml() ?>
             </div>
         </div>
     <?php endif; ?>

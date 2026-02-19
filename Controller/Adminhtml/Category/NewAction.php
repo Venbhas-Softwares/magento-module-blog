@@ -10,8 +10,13 @@ use Magento\Framework\Controller\ResultInterface;
 
 class NewAction extends Action implements HttpGetActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::category_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::category_save';
 
+    /**
+     * Execute action.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
         return $this->resultRedirectFactory->create()->setPath('*/*/edit');

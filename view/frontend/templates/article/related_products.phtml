@@ -8,38 +8,55 @@ if (empty($products)) {
     return;
 }
 ?>
+<?php
+$visibleCount = (int) $block->getVisibleCount();
+$visibleCount = $visibleCount > 0 ? $visibleCount : 4;
+?>
 <div class="article-related-products">
     <h3><?= $escaper->escapeHtml(__('Related Products')) ?></h3>
-    <div class="article-related-products-slider">
-        <button type="button" class="action article-related-slider-prev" aria-label="<?= $escaper->escapeHtmlAttr(__('Previous')) ?>">&larr;</button>
+    <div class="article-related-products-slider"
+         data-visible-count="<?= $escaper->escapeHtmlAttr((string) $visibleCount) ?>">
+        <button type="button" class="action article-related-slider-prev"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Previous')) ?>">&larr;</button>
         <div class="article-related-products-track">
             <ol class="products list items product-items">
                 <?php foreach ($products as $_product): ?>
+                    <?php $productUrl = $_product->getProductUrl(); ?>
                     <li class="item product product-item">
                         <div class="product-item-info">
-                            <a href="<?= $escaper->escapeUrl($_product->getProductUrl()) ?>"
+                            <a href="<?= $escaper->escapeUrl($productUrl) ?>"
                                class="product photo product-item-photo">
-                                <img src="<?= $escaper->escapeUrl($block->getProductImageUrl((int) $_product->getId())) ?>" alt="<?= $escaper->escapeHtml($_product->getName()) ?>" />
+                                <?php $imgUrl = $block->getProductImageUrl((int) $_product->getId()); ?>
+                                <img src="<?= $escaper->escapeUrl($imgUrl) ?>"
+                                     alt="<?= $escaper->escapeHtml($_product->getName()) ?>"/>
                             </a>
                             <div class="product details product-item-details">
                                 <strong class="product name product-item-name">
-                                    <a href="<?= $escaper->escapeUrl($_product->getProductUrl()) ?>">
+                                    <a href="<?= $escaper->escapeUrl($productUrl) ?>">
                                         <?= $escaper->escapeHtml($_product->getName()) ?>
                                     </a>
                                 </strong>
-                                <?= $block->getProductPrice($_product) ?>
+                                <?= /* @noEscape */ $block->getProductPrice($_product) ?>
                             </div>
                         </div>
                     </li>
                 <?php endforeach; ?>
             </ol>
         </div>
-        <button type="button" class="action article-related-slider-next" aria-label="<?= $escaper->escapeHtmlAttr(__('Next')) ?>">&rarr;</button>
+        <button type="button" class="action article-related-slider-next"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Next')) ?>">
+            &rarr;</button>
     </div>
 </div>
 <script>
-require(['jquery', 'Venbhas_Article/js/article-related-slider'], function ($, slider) {
-    slider({ selector: '.article-related-products-slider' });
+require(['jquery', 'domReady!', 'Venbhas_Article/js/article-related-slider'], function ($, _, slider) {
+    var el = document.querySelector('.article-related-products-slider');
+    var attr = el && el.getAttribute('data-visible-count');
+    var visibleCount = attr ? parseInt(attr, 10) : 4;
+    slider({
+        selector: '.article-related-products-slider',
+        visibleCount: isNaN(visibleCount) ? 4 : Math.max(1, visibleCount)
+    });
 });
 </script>
 

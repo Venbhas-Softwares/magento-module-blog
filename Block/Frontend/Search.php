@@ -8,6 +8,9 @@ use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Model\StoreManagerInterface;
 use Venbhas\Article\Model\Config;
 
+/**
+ * Block for article/category search form.
+ */
 class Search extends Template
 {
     /** @var Config */
@@ -16,6 +19,14 @@ class Search extends Template
     /** @var StoreManagerInterface */
     private $storeManager;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param Config $config
+     * @param StoreManagerInterface $storeManager
+     * @param array $data
+     */
     public function __construct(
         Context $context,
         Config $config,
@@ -29,6 +40,8 @@ class Search extends Template
 
     /**
      * URL for article/category search results (GET with q=).
+     *
+     * @return string
      */
     public function getSearchUrl(): string
     {

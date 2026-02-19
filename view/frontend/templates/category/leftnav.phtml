@@ -1,13 +1,18 @@
 <?php
+/**
+ * @var $block \Venbhas\Article\Block\Frontend\Category\ListCategory
+ * @var \Magento\Framework\Escaper $escaper
+ */
 $categories = $block->getCategoryCollection();
 ?>
 
 <div class="article-category-leftnav">
-    <h3><?= __('Categories') ?></h3>
+    <h3><?= $escaper->escapeHtml(__('Categories')) ?></h3>
     <ul>
         <?php foreach ($categories as $cat): ?>
+            <?php $catUrl = $block->getCategoryUrl($cat); ?>
             <li>
-                <a href="<?= $escaper->escapeUrl($block->getCategoryUrl($cat)) ?>">
+                <a href="<?= $escaper->escapeUrl($catUrl) ?>">
                     <?= $escaper->escapeHtml($cat->getName()) ?>
                 </a>
             </li>

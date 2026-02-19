@@ -11,8 +11,8 @@ use Magento\Ui\Component\Listing\Columns\Column;
 
 class CategoryActions extends Column
 {
-    const URL_PATH_EDIT = 'venbhas_article/category/edit';
-    const URL_PATH_DELETE = 'venbhas_article/category/delete';
+    public const URL_PATH_EDIT = 'venbhas_article/category/edit';
+    public const URL_PATH_DELETE = 'venbhas_article/category/delete';
 
     /** @var UrlInterface */
     private $urlBuilder;
@@ -20,6 +20,16 @@ class CategoryActions extends Column
     /** @var Escaper */
     private $escaper;
 
+    /**
+     * Constructor.
+     *
+     * @param ContextInterface $context
+     * @param UiComponentFactory $uiComponentFactory
+     * @param UrlInterface $urlBuilder
+     * @param Escaper $escaper
+     * @param array $components
+     * @param array $data
+     */
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
@@ -33,19 +43,33 @@ class CategoryActions extends Column
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
+    /**
+     * Prepare data source for actions column.
+     *
+     * @param array $dataSource
+     * @return array
+     */
     public function prepareDataSource(array $dataSource): array
     {
         if (isset($dataSource['data']['items'])) {
             foreach ($dataSource['data']['items'] as & $item) {
                 if (isset($item['category_id'])) {
                     $name = $this->escaper->escapeHtml($item['name'] ?? '');
+                    $editUrl = $this->urlBuilder->getUrl(
+                        self::URL_PATH_EDIT,
+                        ['category_id' => $item['category_id']]
+                    );
+                    $deleteUrl = $this->urlBuilder->getUrl(
+                        self::URL_PATH_DELETE,
+                        ['category_id' => $item['category_id']]
+                    );
                     $item[$this->getData('name')] = [
                         'edit' => [
-                            'href' => $this->urlBuilder->getUrl(self::URL_PATH_EDIT, ['category_id' => $item['category_id']]),
+                            'href' => $editUrl,
                             'label' => __('Edit'),
                         ],
                         'delete' => [
-                            'href' => $this->urlBuilder->getUrl(self::URL_PATH_DELETE, ['category_id' => $item['category_id']]),
+                            'href' => $deleteUrl,
                             'label' => __('Delete'),
                             'confirm' => [
                                 'title' => __('Delete %1', $name),

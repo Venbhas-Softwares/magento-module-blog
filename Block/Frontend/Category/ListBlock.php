@@ -9,6 +9,9 @@ use Magento\Store\Model\StoreManagerInterface;
 use Venbhas\Article\Model\Config;
 use Venbhas\Article\Model\ResourceModel\Category\CollectionFactory;
 
+/**
+ * Block for category list.
+ */
 class ListBlock extends Template
 {
     /** @var CollectionFactory */
@@ -20,6 +23,15 @@ class ListBlock extends Template
     /** @var StoreManagerInterface */
     private $storeManager;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param CollectionFactory $collectionFactory
+     * @param Config $config
+     * @param StoreManagerInterface $storeManager
+     * @param array $data
+     */
     public function __construct(
         Context $context,
         CollectionFactory $collectionFactory,
@@ -33,6 +45,11 @@ class ListBlock extends Template
         parent::__construct($context, $data);
     }
 
+    /**
+     * Get category collection.
+     *
+     * @return \Magento\Framework\Data\Collection\AbstractDb
+     */
     public function getCategories()
     {
         $collection = $this->collectionFactory->create();
@@ -43,6 +60,9 @@ class ListBlock extends Template
 
     /**
      * Category view URL (path from store config: Article List URL Key + /category/ + url_key).
+     *
+     * @param string $urlKey
+     * @return string
      */
     public function getCategoryUrl(string $urlKey): string
     {

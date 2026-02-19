@@ -16,7 +16,7 @@ use Venbhas\Article\Model\ResourceModel\Article\RelatedProducts;
 
 class Save extends Action implements HttpPostActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::article_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::article_save';
 
     /** @var ArticleFactory */
     private $articleFactory;
@@ -36,6 +36,23 @@ class Save extends Action implements HttpPostActionInterface
     /** @var AuthSession */
     private $authSession;
 
+    /** @var string[] Allowed article table columns for setData (author is set from logged-in admin) */
+    private const ALLOWED_FIELDS = [
+        'article_id', 'title', 'url_key', 'meta_title', 'meta_description', 'meta_keywords',
+        'meta_robots', 'description', 'short_description', 'featured_image', 'status',
+    ];
+
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param ArticleFactory $articleFactory
+     * @param ArticleResource $articleResource
+     * @param RelatedProducts $relatedProducts
+     * @param CategoryRelation $categoryRelation
+     * @param DataPersistorInterface $dataPersistor
+     * @param AuthSession $authSession
+     */
     public function __construct(
         Context $context,
         ArticleFactory $articleFactory,
@@ -54,12 +71,11 @@ class Save extends Action implements HttpPostActionInterface
         $this->authSession = $authSession;
     }
 
-    /** @var string[] Allowed article table columns for setData (author is set from logged-in admin) */
-    private const ALLOWED_FIELDS = [
-        'article_id', 'title', 'url_key', 'meta_title', 'meta_description', 'meta_keywords',
-        'meta_robots', 'description', 'short_description', 'featured_image', 'status',
-    ];
-
+    /**
+     * Execute action.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();
@@ -109,21 +125,35 @@ class Save extends Action implements HttpPostActionInterface
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
             $this->dataPersistor->set('venbhas_article', $data);
-            return $resultRedirect->setPath($id ? '*/*/edit' : '*/*/new', $id ? ['article_id' => $id] : []);
+            $path = $id ? '*/*/edit' : '*/*/new';
+            $params = $id ? ['article_id' => $id] : [];
+            return $resultRedirect->setPath($path, $params);
         }
     }
 
+    /**
+     * Get request data from POST or JSON body.
+     *
+     * @return array
+     */
     private function getRequestData(): array
     {
         $request = $this->getRequest();
         $content = $request->getContent();
-        if (!empty($content) && $request->getHeader('Content-Type') && strpos($request->getHeader('Content-Type'), 'application/json') !== false) {
+        $contentType = $request->getHeader('Content-Type');
+        if (!empty($content) && $contentType && strpos((string) $contentType, 'application/json') !== false) {
             $decoded = json_decode($content, true);
             return is_array($decoded) ? $decoded : [];
         }
         return $request->getPostValue() ?? [];
     }
 
+    /**
+     * Filter request data to allowed fields only.
+     *
+     * @param array $data
+     * @return array
+     */
     private function filterAllowedFields(array $data): array
     {
         $filtered = [];
@@ -140,11 +170,23 @@ class Save extends Action implements HttpPostActionInterface
         return $filtered;
     }
 
+    /**
+     * Generate URL key from title.
+     *
+     * @param string $title
+     * @return string
+     */
     private function generateUrlKey(string $title): string
     {
         return strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $title), '-'));
     }
 
+    /**
+     * Resolve category id from form data.
+     *
+     * @param array $data
+     * @return int
+     */
     private function resolveCategoryId(array $data): int
     {
         $raw = $data['category_id'] ?? null;
@@ -154,6 +196,12 @@ class Save extends Action implements HttpPostActionInterface
         return (int) ($raw ?: 0);
     }
 
+    /**
+     * Resolve related product ids from form data.
+     *
+     * @param array $data
+     * @return array
+     */
     private function resolveRelatedProductIds(array $data): array
     {
         if (!empty($data['related_products']) && is_array($data['related_products'])) {
@@ -166,11 +214,22 @@ class Save extends Action implements HttpPostActionInterface
         return [];
     }
 
+    /**
+     * Get product ids by skus.
+     *
+     * @param array $skus
+     * @return array
+     */
     private function getProductIdsBySkus(array $skus): array
     {
         return $this->relatedProducts->getProductIdsBySkus($skus);
     }
 
+    /**
+     * Get logged-in admin user id.
+     *
+     * @return int|null
+     */
     private function getLoggedInAdminUserId(): ?int
     {
         $user = $this->authSession->getUser();

@@ -14,7 +14,7 @@ use Venbhas\Article\Model\ResourceModel\Category\RelatedProducts;
 
 class Save extends Action implements HttpPostActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::category_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::category_save';
 
     /** @var CategoryFactory */
     private $categoryFactory;
@@ -34,6 +34,15 @@ class Save extends Action implements HttpPostActionInterface
         'featured_image', 'meta_title', 'meta_keywords', 'meta_description', 'meta_robots',
     ];
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param CategoryFactory $categoryFactory
+     * @param CategoryResource $categoryResource
+     * @param RelatedProducts $relatedProducts
+     * @param DataPersistorInterface $dataPersistor
+     */
     public function __construct(
         Context $context,
         CategoryFactory $categoryFactory,
@@ -48,6 +57,11 @@ class Save extends Action implements HttpPostActionInterface
         $this->dataPersistor = $dataPersistor;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();
@@ -95,21 +109,36 @@ class Save extends Action implements HttpPostActionInterface
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
             $this->dataPersistor->set('venbhas_article_category', $data);
-            return $resultRedirect->setPath($id ? '*/*/edit' : '*/*/new', $id ? ['category_id' => $id] : []);
+            $path = $id ? '*/*/edit' : '*/*/new';
+            $params = $id ? ['category_id' => $id] : [];
+            return $resultRedirect->setPath($path, $params);
         }
     }
 
+    /**
+     * Get request data from POST or JSON body.
+     *
+     * @return array
+     */
     private function getRequestData(): array
     {
         $request = $this->getRequest();
         $content = $request->getContent();
-        if (!empty($content) && $request->getHeader('Content-Type') && strpos((string) $request->getHeader('Content-Type'), 'application/json') !== false) {
+        $contentType = $request->getHeader('Content-Type');
+        $isJson = $contentType && strpos((string) $contentType, 'application/json') !== false;
+        if (!empty($content) && $isJson) {
             $decoded = json_decode($content, true);
             return is_array($decoded) ? $decoded : [];
         }
         return $request->getPostValue() ?? [];
     }
 
+    /**
+     * Filter request data to allowed fields only.
+     *
+     * @param array $data
+     * @return array
+     */
     private function filterAllowedFields(array $data): array
     {
         $filtered = [];
@@ -126,6 +155,12 @@ class Save extends Action implements HttpPostActionInterface
         return $filtered;
     }
 
+    /**
+     * Resolve related article ids from form data.
+     *
+     * @param array $data
+     * @return array
+     */
     private function resolveRelatedArticleIds(array $data): array
     {
         if (!empty($data['related_articles']) && is_array($data['related_articles'])) {
@@ -134,6 +169,12 @@ class Save extends Action implements HttpPostActionInterface
         return [];
     }
 
+    /**
+     * Resolve related product ids from form data.
+     *
+     * @param array $data
+     * @return array
+     */
     private function resolveRelatedProductIds(array $data): array
     {
         if (!empty($data['related_products']) && is_array($data['related_products'])) {

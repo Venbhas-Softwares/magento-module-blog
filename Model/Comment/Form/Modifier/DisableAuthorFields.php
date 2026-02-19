@@ -7,6 +7,9 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Ui\DataProvider\Modifier\ModifierInterface;
 
+/**
+ * Disable author fields when editing comment.
+ */
 class DisableAuthorFields implements ModifierInterface
 {
     /** @var RequestInterface */
@@ -15,12 +18,24 @@ class DisableAuthorFields implements ModifierInterface
     /** @var ArrayManager */
     private $arrayManager;
 
+    /**
+     * Constructor.
+     *
+     * @param RequestInterface $request
+     * @param ArrayManager $arrayManager
+     */
     public function __construct(RequestInterface $request, ArrayManager $arrayManager)
     {
         $this->request = $request;
         $this->arrayManager = $arrayManager;
     }
 
+    /**
+     * Modify meta to disable author fields when editing.
+     *
+     * @param array $meta
+     * @return array
+     */
     public function modifyMeta(array $meta): array
     {
         $commentId = (int) $this->request->getParam('comment_id');
@@ -62,6 +77,12 @@ class DisableAuthorFields implements ModifierInterface
         return $meta;
     }
 
+    /**
+     * Modify data (no change).
+     *
+     * @param array $data
+     * @return array
+     */
     public function modifyData(array $data): array
     {
         return $data;

@@ -12,7 +12,7 @@ use Venbhas\Article\Model\ResourceModel\Article as ArticleResource;
 
 class Delete extends Action implements HttpPostActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::article_delete';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::article_delete';
 
     /** @var ArticleFactory */
     private $articleFactory;
@@ -20,6 +20,13 @@ class Delete extends Action implements HttpPostActionInterface
     /** @var ArticleResource */
     private $articleResource;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param ArticleFactory $articleFactory
+     * @param ArticleResource $articleResource
+     */
     public function __construct(Context $context, ArticleFactory $articleFactory, ArticleResource $articleResource)
     {
         parent::__construct($context);
@@ -27,6 +34,11 @@ class Delete extends Action implements HttpPostActionInterface
         $this->articleResource = $articleResource;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();

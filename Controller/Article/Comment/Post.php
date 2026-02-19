@@ -17,26 +17,38 @@ use Venbhas\Article\Model\ResourceModel\Article as ArticleResource;
 class Post extends Action implements HttpPostActionInterface
 {
     /** @var RedirectFactory */
-    private $resultRedirectFactory;
+    protected $resultRedirectFactory;
 
     /** @var ManagerInterface */
-    private $messageManager;
+    protected $messageManager;
 
     /** @var CommentFactory */
-    private $commentFactory;
+    protected $commentFactory;
 
     /** @var Config */
-    private $config;
+    protected $config;
 
     /** @var StoreManagerInterface */
-    private $storeManager;
+    protected $storeManager;
 
     /** @var ArticleResource */
-    private $articleResource;
+    protected $articleResource;
 
     /** @var \Venbhas\Article\Model\ArticleFactory */
-    private $articleFactory;
+    protected $articleFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param RedirectFactory $resultRedirectFactory
+     * @param ManagerInterface $messageManager
+     * @param CommentFactory $commentFactory
+     * @param Config $config
+     * @param StoreManagerInterface $storeManager
+     * @param ArticleResource $articleResource
+     * @param \Venbhas\Article\Model\ArticleFactory $articleFactory
+     */
     public function __construct(
         Context $context,
         RedirectFactory $resultRedirectFactory,
@@ -57,6 +69,11 @@ class Post extends Action implements HttpPostActionInterface
         $this->articleFactory = $articleFactory;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return \Magento\Framework\Controller\Result\Redirect
+     */
     public function execute()
     {
         $request = $this->getRequest();
@@ -101,6 +118,12 @@ class Post extends Action implements HttpPostActionInterface
         return $this->getRedirectToArticle($articleId);
     }
 
+    /**
+     * Get redirect result to article page.
+     *
+     * @param int $articleId
+     * @return \Magento\Framework\Controller\Result\Redirect
+     */
     private function getRedirectToArticle(int $articleId)
     {
         $redirect = $this->resultRedirectFactory->create();

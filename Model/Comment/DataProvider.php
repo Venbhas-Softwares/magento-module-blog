@@ -10,6 +10,9 @@ use Venbhas\Article\Model\Comment as CommentModel;
 use Venbhas\Article\Model\Comment\Form\Modifier\DisableAuthorFields;
 use Venbhas\Article\Model\ResourceModel\Comment\CollectionFactory as CommentCollectionFactory;
 
+/**
+ * Comment form data provider.
+ */
 class DataProvider extends AbstractDataProvider
 {
     /** @var array */
@@ -24,6 +27,19 @@ class DataProvider extends AbstractDataProvider
     /** @var DisableAuthorFields */
     private $disableAuthorFieldsModifier;
 
+    /**
+     * Constructor.
+     *
+     * @param string $name
+     * @param string $primaryFieldName
+     * @param string $requestFieldName
+     * @param CommentCollectionFactory $collectionFactory
+     * @param DataPersistorInterface $dataPersistor
+     * @param RequestInterface $request
+     * @param DisableAuthorFields $disableAuthorFieldsModifier
+     * @param array $meta
+     * @param array $data
+     */
     public function __construct(
         string $name,
         string $primaryFieldName,
@@ -42,11 +58,21 @@ class DataProvider extends AbstractDataProvider
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
+    /**
+     * Get meta with author fields disabled when editing.
+     *
+     * @return array
+     */
     public function getMeta(): array
     {
         return $this->disableAuthorFieldsModifier->modifyMeta(parent::getMeta());
     }
 
+    /**
+     * Get data.
+     *
+     * @return array
+     */
     public function getData(): array
     {
         if ($this->loadedData !== [] && $this->loadedData !== null) {

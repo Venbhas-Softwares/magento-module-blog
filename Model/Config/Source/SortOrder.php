@@ -12,6 +12,11 @@ class SortOrder implements OptionSourceInterface
     public const A_TO_Z = 'a_to_z';
     public const Z_TO_A = 'z_to_a';
 
+    /**
+     * Return sort order options for select.
+     *
+     * @return array
+     */
     public function toOptionArray(): array
     {
         return [

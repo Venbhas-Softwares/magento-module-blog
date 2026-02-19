@@ -12,7 +12,7 @@ use Venbhas\Article\Model\ResourceModel\Category\CollectionFactory as CategoryCo
 
 class MassDelete extends Action implements HttpPostActionInterface
 {
-    const ADMIN_RESOURCE = 'Venbhas_Article::category_delete';
+    public const ADMIN_RESOURCE = 'Venbhas_Article::category_delete';
 
     /** @var Filter */
     private $filter;
@@ -20,6 +20,13 @@ class MassDelete extends Action implements HttpPostActionInterface
     /** @var CategoryCollectionFactory */
     private $collectionFactory;
 
+    /**
+     * Constructor.
+     *
+     * @param Context $context
+     * @param Filter $filter
+     * @param CategoryCollectionFactory $collectionFactory
+     */
     public function __construct(
         Context $context,
         Filter $filter,
@@ -30,6 +37,11 @@ class MassDelete extends Action implements HttpPostActionInterface
         $this->collectionFactory = $collectionFactory;
     }
 
+    /**
+     * Execute action.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();

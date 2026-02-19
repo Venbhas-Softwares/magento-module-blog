@@ -1,0 +1,37 @@
+<?php
+/**
+ * @var $block \Venbhas\Article\Block\Frontend\Article\CommentList
+ * @var \Magento\Framework\Escaper $escaper
+ */
+if (!$block->isCommentsEnabled()) {
+    return;
+}
+$comments = $block->getApprovedComments();
+if (empty($comments)) {
+    return;
+}
+?>
+<div class="article-comments-list block">
+    <h3 class="article-comments-title"><?= $escaper->escapeHtml(__('Comments')) ?></h3>
+    <ol class="article-comment-items">
+        <?php foreach ($comments as $comment): ?>
+            <li class="article-comment-item">
+                <div class="article-comment-meta">
+                    <span class="article-comment-author">
+                        <?= $escaper->escapeHtml($comment->getUserName()) ?></span>
+                    <span class="article-comment-date">
+                        <?= $escaper->escapeHtml(
+                            $block->formatCommentDate($comment->getCreatedAt())
+                        ) ?></span>
+                </div>
+                <div class="article-comment-text"><?= $escaper->escapeHtml($comment->getComment()) ?></div>
+                <?php if ($comment->getReply() && trim((string) $comment->getReply()) !== ''): ?>
+                    <div class="article-comment-reply">
+                        <strong><?= $escaper->escapeHtml(__('Reply')) ?>:</strong>
+                        <span><?= $escaper->escapeHtml($comment->getReply()) ?></span>
+                    </div>
+                <?php endif; ?>
+            </li>
+        <?php endforeach; ?>
+    </ol>
+</div>

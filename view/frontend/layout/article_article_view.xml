@@ -21,6 +21,9 @@
             <block class="Venbhas\Article\Block\Frontend\Article\View"
                    name="article.view"
                    template="Venbhas_Article::article/view.phtml"/>
+            <block class="Venbhas\Article\Block\Frontend\Article\CommentList"
+                   name="article.comment.list"
+                   template="Venbhas_Article::article/comment/list.phtml"/>
             <block class="Venbhas\Article\Block\Frontend\Article\CommentForm"
                    name="article.comment.form"
                    template="Venbhas_Article::article/comment/form.phtml"/>
