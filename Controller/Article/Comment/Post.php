@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Article\Comment;
+namespace Venbhas\Blog\Controller\Article\Comment;
 
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Action\Action;
@@ -10,9 +10,9 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Venbhas\Article\Model\CommentFactory;
-use Venbhas\Article\Model\Config;
-use Venbhas\Article\Model\ResourceModel\Article as ArticleResource;
+use Venbhas\Blog\Model\CommentFactory;
+use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Model\ResourceModel\Article as ArticleResource;
 
 class Post extends Action implements HttpPostActionInterface
 {
@@ -34,7 +34,7 @@ class Post extends Action implements HttpPostActionInterface
     /** @var ArticleResource */
     protected $articleResource;
 
-    /** @var \Venbhas\Article\Model\ArticleFactory */
+    /** @var \Venbhas\Blog\Model\ArticleFactory */
     protected $articleFactory;
 
     /**
@@ -47,7 +47,7 @@ class Post extends Action implements HttpPostActionInterface
      * @param Config $config
      * @param StoreManagerInterface $storeManager
      * @param ArticleResource $articleResource
-     * @param \Venbhas\Article\Model\ArticleFactory $articleFactory
+     * @param \Venbhas\Blog\Model\ArticleFactory $articleFactory
      */
     public function __construct(
         Context $context,
@@ -57,7 +57,7 @@ class Post extends Action implements HttpPostActionInterface
         Config $config,
         StoreManagerInterface $storeManager,
         ArticleResource $articleResource,
-        \Venbhas\Article\Model\ArticleFactory $articleFactory
+        \Venbhas\Blog\Model\ArticleFactory $articleFactory
     ) {
         parent::__construct($context);
         $this->resultRedirectFactory = $resultRedirectFactory;
@@ -108,7 +108,7 @@ class Post extends Action implements HttpPostActionInterface
             $comment->setUserName($userName);
             $comment->setUserEmail($userEmail);
             $comment->setComment($commentText);
-            $comment->setStatus(\Venbhas\Article\Model\Comment::STATUS_PENDING);
+            $comment->setStatus(\Venbhas\Blog\Model\Comment::STATUS_PENDING);
             $comment->save();
             $this->messageManager->addSuccessMessage(__('Your comment has been submitted and is awaiting moderation.'));
         } catch (\Throwable $e) {

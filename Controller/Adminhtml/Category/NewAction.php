@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Category;
+namespace Venbhas\Blog\Controller\Adminhtml\Category;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -10,7 +10,7 @@ use Magento\Framework\Controller\ResultInterface;
 
 class NewAction extends Action implements HttpGetActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::category_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::category_save';
 
     /**
      * Execute action.

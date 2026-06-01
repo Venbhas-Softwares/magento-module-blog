@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Category;
+namespace Venbhas\Blog\Controller\Adminhtml\Category;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -10,7 +10,7 @@ use Magento\Framework\View\Result\PageFactory;
 
 class Index extends Action implements HttpGetActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::category';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::category';
 
     /** @var PageFactory */
     private $resultPageFactory;
@@ -35,8 +35,8 @@ class Index extends Action implements HttpGetActionInterface
     public function execute()
     {
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->setActiveMenu('Venbhas_Article::category_manage');
-        $resultPage->getConfig()->getTitle()->prepend(__('Article Categories'));
+        $resultPage->setActiveMenu('Venbhas_Blog::category_manage');
+        $resultPage->getConfig()->getTitle()->prepend(__('Categories'));
         return $resultPage;
     }
 }

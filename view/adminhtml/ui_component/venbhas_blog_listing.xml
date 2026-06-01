@@ -2,7 +2,7 @@
 <listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
-            <item name="provider" xsi:type="string">venbhas_article_listing.venbhas_article_listing_data_source</item>
+            <item name="provider" xsi:type="string">venbhas_blog_listing.venbhas_blog_listing_data_source</item>
         </item>
     </argument>
     <settings>
@@ -13,20 +13,20 @@
                 <label translate="true">Add New Article</label>
             </button>
         </buttons>
-        <spinner>venbhas_article_columns</spinner>
+        <spinner>venbhas_blog_columns</spinner>
         <deps>
-            <dep>venbhas_article_listing.venbhas_article_listing_data_source</dep>
+            <dep>venbhas_blog_listing.venbhas_blog_listing_data_source</dep>
         </deps>
     </settings>
-    <dataSource name="venbhas_article_listing_data_source" component="Magento_Ui/js/grid/provider">
+    <dataSource name="venbhas_blog_listing_data_source" component="Magento_Ui/js/grid/provider">
         <settings>
             <storageConfig>
                 <param name="indexField" xsi:type="string">article_id</param>
             </storageConfig>
             <updateUrl path="mui/index/render"/>
         </settings>
-        <aclResource>Venbhas_Article::article</aclResource>
-        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="venbhas_article_listing_data_source">
+        <aclResource>Venbhas_Blog::article</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="venbhas_blog_listing_data_source">
             <settings>
                 <requestFieldName>id</requestFieldName>
                 <primaryFieldName>article_id</primaryFieldName>
@@ -38,41 +38,41 @@
         <columnsControls name="columns_controls"/>
         <filterSearch name="fulltext"/>
         <filters name="listing_filters"/>
+        <massaction name="listing_massaction">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="indexField" xsi:type="string">article_id</item>
+                </item>
+            </argument>
+            <action name="delete">
+                <settings>
+                    <confirm>
+                        <message translate="true">Are you sure you want to delete selected articles?</message>
+                        <title translate="true">Delete selected</title>
+                    </confirm>
+                    <url path="blog/article/massDelete"/>
+                    <type>delete</type>
+                    <label translate="true">Delete</label>
+                </settings>
+            </action>
+            <action name="enable">
+                <settings>
+                    <url path="blog/article/massEnable"/>
+                    <type>enable</type>
+                    <label translate="true">Enable</label>
+                </settings>
+            </action>
+            <action name="disable">
+                <settings>
+                    <url path="blog/article/massDisable"/>
+                    <type>disable</type>
+                    <label translate="true">Disable</label>
+                </settings>
+            </action>
+        </massaction>
         <paging name="listing_paging"/>
     </listingToolbar>
-    <massaction name="listing_massaction">
-        <argument name="data" xsi:type="array">
-            <item name="config" xsi:type="array">
-                <item name="indexField" xsi:type="string">article_id</item>
-            </item>
-        </argument>
-        <action name="delete">
-            <settings>
-                <confirm>
-                    <message translate="true">Are you sure you want to delete selected articles?</message>
-                    <title translate="true">Delete selected</title>
-                </confirm>
-                <url path="venbhas_article/article/massDelete"/>
-                <type>delete</type>
-                <label translate="true">Delete</label>
-            </settings>
-        </action>
-        <action name="enable">
-            <settings>
-                <url path="venbhas_article/article/massEnable"/>
-                <type>enable</type>
-                <label translate="true">Enable</label>
-            </settings>
-        </action>
-        <action name="disable">
-            <settings>
-                <url path="venbhas_article/article/massDisable"/>
-                <type>disable</type>
-                <label translate="true">Disable</label>
-            </settings>
-        </action>
-    </massaction>
-    <columns name="venbhas_article_columns">
+    <columns name="venbhas_blog_columns">
         <selectionsColumn name="ids" sortOrder="0">
             <settings>
                 <indexField>article_id</indexField>
@@ -99,35 +99,27 @@
         </column>
         <column name="status" sortOrder="40" component="Magento_Ui/js/grid/columns/select">
             <settings>
-                <options class="Venbhas\Article\Model\Article\Source\Status"/>
+                <options class="Venbhas\Blog\Model\Article\Source\Status"/>
                 <filter>select</filter>
                 <dataType>select</dataType>
                 <label translate="true">Status</label>
-            </settings>
-        </column>
-        <column name="is_active" sortOrder="50" component="Magento_Ui/js/grid/columns/select">
-            <settings>
-                <options class="Venbhas\Article\Model\Source\IsActive"/>
-                <filter>select</filter>
-                <dataType>select</dataType>
-                <label translate="true">Active</label>
             </settings>
         </column>
         <column name="created_at" sortOrder="60" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
             <settings>
                 <filter>dateRange</filter>
                 <dataType>date</dataType>
-                <label translate="true">Created</label>
+                <label translate="true">Created at</label>
             </settings>
         </column>
         <column name="updated_at" sortOrder="70" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
             <settings>
                 <filter>dateRange</filter>
                 <dataType>date</dataType>
-                <label translate="true">Updated</label>
+                <label translate="true">Updated at</label>
             </settings>
         </column>
-        <actionsColumn name="actions" sortOrder="90" class="Venbhas\Article\Ui\Component\Listing\Column\ArticleActions">
+        <actionsColumn name="actions" sortOrder="90" class="Venbhas\Blog\Ui\Component\Listing\Column\ArticleActions">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
                     <item name="sortOrder" xsi:type="number">90</item>

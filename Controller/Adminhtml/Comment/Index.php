@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Comment;
+namespace Venbhas\Blog\Controller\Adminhtml\Comment;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -10,7 +10,7 @@ use Magento\Framework\View\Result\PageFactory;
 
 class Index extends Action implements HttpGetActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::comment';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::comment';
 
     /** @var PageFactory */
     private $resultPageFactory;
@@ -35,8 +35,8 @@ class Index extends Action implements HttpGetActionInterface
     public function execute()
     {
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->setActiveMenu('Venbhas_Article::comment_manage');
-        $resultPage->getConfig()->getTitle()->prepend(__('Article Comments'));
+        $resultPage->setActiveMenu('Venbhas_Blog::comment_manage');
+        $resultPage->getConfig()->getTitle()->prepend(__('Comments'));
         return $resultPage;
     }
 }

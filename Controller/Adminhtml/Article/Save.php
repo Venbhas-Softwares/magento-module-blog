@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Article;
+namespace Venbhas\Blog\Controller\Adminhtml\Article;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -9,14 +9,15 @@ use Magento\Backend\Model\Auth\Session as AuthSession;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Venbhas\Article\Model\ArticleFactory;
-use Venbhas\Article\Model\ResourceModel\Article as ArticleResource;
-use Venbhas\Article\Model\ResourceModel\Article\CategoryRelation;
-use Venbhas\Article\Model\ResourceModel\Article\RelatedProducts;
+use Venbhas\Blog\Model\ArticleFactory;
+use Venbhas\Blog\Model\ResourceModel\Article as ArticleResource;
+use Venbhas\Blog\Model\ResourceModel\Article\CategoryRelation;
+use Venbhas\Blog\Model\ResourceModel\Article\RelatedProducts;
+use Venbhas\Blog\Ui\DataProvider\Form\Modifier\RelatedProducts as RelatedProductsModifier;
 
 class Save extends Action implements HttpPostActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::article_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::article_save';
 
     /** @var ArticleFactory */
     private $articleFactory;
@@ -89,6 +90,10 @@ class Save extends Action implements HttpPostActionInterface
             $data = array_merge($data, $data['data']);
             unset($data['data']);
         }
+
+        if (!empty($data['use_config_meta_robots'])) {
+            $data['meta_robots'] = null;
+        }
         $id = (int) ($data['article_id'] ?? 0);
         $model = $this->articleFactory->create();
         if ($id) {
@@ -99,7 +104,20 @@ class Save extends Action implements HttpPostActionInterface
             }
         }
         if (empty($data['url_key']) && !empty($data['title'])) {
-            $data['url_key'] = $this->generateUrlKey((string) $data['title']);
+            $data['url_key'] = $this->generateUniqueUrlKey((string) $data['title'], $id);
+        }
+        $urlKey = trim((string) ($data['url_key'] ?? ''));
+        if ($urlKey !== '') {
+            $existingId = $this->articleResource->getIdByUrlKey($urlKey);
+            if ($existingId !== null && $existingId !== $id) {
+                $this->messageManager->addErrorMessage(
+                    __('URL key "%1" is already in use. Please choose a different URL key.', $urlKey)
+                );
+                $this->dataPersistor->set('venbhas_blog', $data);
+                $path = $id ? '*/*/edit' : '*/*/new';
+                $params = $id ? ['article_id' => $id] : [];
+                return $resultRedirect->setPath($path, $params);
+            }
         }
         $articleData = $this->filterAllowedFields($data);
         if (empty($id) && isset($articleData['article_id'])) {
@@ -124,7 +142,7 @@ class Save extends Action implements HttpPostActionInterface
             return $resultRedirect->setPath('*/*/');
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
-            $this->dataPersistor->set('venbhas_article', $data);
+            $this->dataPersistor->set('venbhas_blog', $data);
             $path = $id ? '*/*/edit' : '*/*/new';
             $params = $id ? ['article_id' => $id] : [];
             return $resultRedirect->setPath($path, $params);
@@ -182,6 +200,32 @@ class Save extends Action implements HttpPostActionInterface
     }
 
     /**
+     * Generate a unique URL key from title.
+     *
+     * @param string $title
+     * @param int $excludeId
+     * @return string
+     */
+    private function generateUniqueUrlKey(string $title, int $excludeId = 0): string
+    {
+        $baseUrlKey = $this->generateUrlKey($title);
+        if ($baseUrlKey === '') {
+            return $baseUrlKey;
+        }
+
+        $urlKey = $baseUrlKey;
+        $suffix = 1;
+        while (true) {
+            $existingId = $this->articleResource->getIdByUrlKey($urlKey);
+            if ($existingId === null || $existingId === $excludeId) {
+                return $urlKey;
+            }
+            $urlKey = $baseUrlKey . '-' . $suffix;
+            $suffix++;
+        }
+    }
+
+    /**
      * Resolve category id from form data.
      *
      * @param array $data
@@ -204,6 +248,17 @@ class Save extends Action implements HttpPostActionInterface
      */
     private function resolveRelatedProductIds(array $data): array
     {
+        if (!empty($data['links'][RelatedProductsModifier::DATA_SCOPE_RELATED])
+            && is_array($data['links'][RelatedProductsModifier::DATA_SCOPE_RELATED])
+        ) {
+            $ids = [];
+            foreach ($data['links'][RelatedProductsModifier::DATA_SCOPE_RELATED] as $item) {
+                if (is_array($item) && !empty($item['id'])) {
+                    $ids[] = (int) $item['id'];
+                }
+            }
+            return array_values(array_filter($ids));
+        }
         if (!empty($data['related_products']) && is_array($data['related_products'])) {
             return array_values(array_filter(array_map('intval', $data['related_products'])));
         }

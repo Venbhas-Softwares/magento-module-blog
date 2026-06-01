@@ -2,33 +2,33 @@
 <form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
     <argument name="data" xsi:type="array">
         <item name="js_config" xsi:type="array">
-            <item name="provider" xsi:type="string">venbhas_article_comment_form.venbhas_article_comment_form_data_source</item>
+            <item name="provider" xsi:type="string">venbhas_blog_comment_form.venbhas_blog_comment_form_data_source</item>
         </item>
         <item name="label" xsi:type="string" translate="true">Comment Information</item>
         <item name="template" xsi:type="string">templates/form/collapsible</item>
     </argument>
     <settings>
         <buttons>
-            <button name="save" class="Venbhas\Article\Block\Adminhtml\Comment\Edit\SaveButton"/>
-            <button name="delete" class="Venbhas\Article\Block\Adminhtml\Comment\Edit\DeleteButton"/>
-            <button name="back" class="Venbhas\Article\Block\Adminhtml\Comment\Edit\BackButton"/>
+            <button name="save" class="Venbhas\Blog\Block\Adminhtml\Comment\Edit\SaveButton"/>
+            <button name="delete" class="Venbhas\Blog\Block\Adminhtml\Comment\Edit\DeleteButton"/>
+            <button name="back" class="Venbhas\Blog\Block\Adminhtml\Comment\Edit\BackButton"/>
         </buttons>
-        <namespace>venbhas_article_comment_form</namespace>
+        <namespace>venbhas_blog_comment_form</namespace>
         <dataScope>data</dataScope>
         <deps>
-            <dep>venbhas_article_comment_form.venbhas_article_comment_form_data_source</dep>
+            <dep>venbhas_blog_comment_form.venbhas_blog_comment_form_data_source</dep>
         </deps>
     </settings>
-    <dataSource name="venbhas_article_comment_form_data_source">
+    <dataSource name="venbhas_blog_comment_form_data_source">
         <argument name="data" xsi:type="array">
             <item name="js_config" xsi:type="array">
                 <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
             </item>
         </argument>
         <settings>
-            <submitUrl path="venbhas_article/comment/save"/>
+            <submitUrl path="blog/comment/save"/>
         </settings>
-        <dataProvider class="Venbhas\Article\Model\Comment\DataProvider" name="venbhas_article_comment_form_data_source">
+        <dataProvider class="Venbhas\Blog\Model\Comment\DataProvider" name="venbhas_blog_comment_form_data_source">
             <settings>
                 <requestFieldName>comment_id</requestFieldName>
                 <primaryFieldName>comment_id</primaryFieldName>
@@ -51,12 +51,11 @@
                 <dataType>text</dataType>
                 <label translate="true">Article</label>
                 <dataScope>article_id</dataScope>
-                    <disabled>true</disabled>
             </settings>
             <formElements>
                 <select>
                     <settings>
-                        <options class="Venbhas\Article\Model\Comment\Source\Articles"/>
+                        <options class="Venbhas\Blog\Model\Comment\Source\Articles"/>
                     </settings>
                 </select>
             </formElements>
@@ -94,7 +93,7 @@
             <formElements>
                 <select>
                     <settings>
-                        <options class="Venbhas\Article\Model\Comment\Source\Status"/>
+                        <options class="Venbhas\Blog\Model\Comment\Source\Status"/>
                     </settings>
                 </select>
             </formElements>
@@ -103,7 +102,7 @@
     <fieldset name="content" sortOrder="15">
         <settings>
             <collapsible>false</collapsible>
-            <label translate="true">Content</label>
+            <label translate="true">Messages</label>
         </settings>
         <field name="comment" formElement="textarea">
             <settings>

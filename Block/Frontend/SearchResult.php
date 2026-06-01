@@ -1,14 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Block\Frontend;
+namespace Venbhas\Blog\Block\Frontend;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Model\StoreManagerInterface;
-use Venbhas\Article\Model\Config;
-use Venbhas\Article\Model\ResourceModel\Article\CollectionFactory as ArticleCollectionFactory;
-use Venbhas\Article\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
+use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Model\ResourceModel\Article\CollectionFactory as ArticleCollectionFactory;
+use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 
 /**
  * Block for article/category search results.
@@ -65,7 +65,7 @@ class SearchResult extends Template
     /**
      * Get article collection filtered by search query.
      *
-     * @return \Venbhas\Article\Model\ResourceModel\Article\Collection
+     * @return \Venbhas\Blog\Model\ResourceModel\Article\Collection
      */
     public function getArticleResults()
     {
@@ -74,8 +74,7 @@ class SearchResult extends Template
             return $this->articleCollectionFactory->create()->addFieldToFilter('article_id', 0);
         }
         $collection = $this->articleCollectionFactory->create();
-        $collection->addFieldToFilter('is_active', 1)
-            ->addFieldToFilter('status', 1)
+        $collection->addFieldToFilter('status', 1)
             ->addFieldToFilter(
                 ['title', 'short_description'],
                 [
@@ -90,7 +89,7 @@ class SearchResult extends Template
     /**
      * Get category collection filtered by search query.
      *
-     * @return \Venbhas\Article\Model\ResourceModel\Category\Collection
+     * @return \Venbhas\Blog\Model\ResourceModel\Category\Collection
      */
     public function getCategoryResults()
     {

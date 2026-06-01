@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Article;
+namespace Venbhas\Blog\Controller\Article;
 
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\Action;
@@ -10,8 +10,8 @@ use Magento\Framework\Controller\Result\ForwardFactory;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
-use Venbhas\Article\Model\ArticleFactory;
-use Venbhas\Article\Model\ResourceModel\Article as ArticleResource;
+use Venbhas\Blog\Model\ArticleFactory;
+use Venbhas\Blog\Model\ResourceModel\Article as ArticleResource;
 
 class View extends Action implements HttpGetActionInterface
 {
@@ -71,7 +71,7 @@ class View extends Action implements HttpGetActionInterface
         } elseif ($id) {
             $this->articleResource->load($article, $id);
         }
-        if (!$article->getId() || !$article->getIsActive()) {
+        if (!$article->getId() || (int) $article->getData('status') !== 1) {
             $resultForward = $this->resultForwardFactory->create();
             return $resultForward->forward('noroute');
         }

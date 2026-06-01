@@ -1,5 +1,5 @@
 <?php
-namespace Venbhas\Article\Block\Frontend;
+namespace Venbhas\Blog\Block\Frontend;
 
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
@@ -9,9 +9,9 @@ use Magento\Catalog\Helper\Image;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Framework\Registry;
-use Venbhas\Article\Model\Config;
-use Venbhas\Article\Model\ResourceModel\Category\RelatedProducts as CategoryRelatedProducts;
-use Venbhas\Article\Model\ResourceModel\Article\RelatedProducts as ArticleRelatedProducts;
+use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Model\ResourceModel\Category\RelatedProducts as CategoryRelatedProducts;
+use Venbhas\Blog\Model\ResourceModel\Article\RelatedProducts as ArticleRelatedProducts;
 
 class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
 {
@@ -206,7 +206,7 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
     /**
      * Get current article from registry.
      *
-     * @return \Venbhas\Article\Model\Article|null
+     * @return \Venbhas\Blog\Model\Article|null
      */
     public function getCurrentArticle()
     {
@@ -216,7 +216,7 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
     /**
      * Get current category from registry.
      *
-     * @return \Venbhas\Article\Model\Category|null
+     * @return \Venbhas\Blog\Model\Category|null
      */
     public function getCurrentCategory()
     {

@@ -1,6 +1,6 @@
 {
-    "name": "venbhas/module-article",
-    "description": "Magento 2 Article module - manage articles, categories, and comments with frontend display and search.",
+    "name": "venbhas/module-blog",
+    "description": "Magento 2 Blog module - manage articles, categories, and comments with frontend display and search.",
     "type": "magento2-module",
     "version": "1.0.0",
     "license": [
@@ -25,7 +25,7 @@
             "registration.php"
         ],
         "psr-4": {
-            "Venbhas\\Article\\": ""
+            "Venbhas\\Blog\\": ""
         }
     }
 }

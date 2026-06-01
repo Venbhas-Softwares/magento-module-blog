@@ -1,37 +1,91 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Form\Modifier\ArticleRelatedProducts"
+                 type="Venbhas\Blog\Ui\DataProvider\Form\Modifier\RelatedProducts">
+        <arguments>
+            <argument name="relatedProductsResource" xsi:type="object">Venbhas\Blog\Model\ResourceModel\Article\RelatedProducts</argument>
+            <argument name="scopeName" xsi:type="string">venbhas_blog_form.venbhas_blog_form</argument>
+            <argument name="entityIdField" xsi:type="string">article_id</argument>
+            <argument name="sectionContent" xsi:type="string">Related products are shown to customers in addition to the item the customer is looking at.</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Form\Modifier\CategoryRelatedProducts"
+                 type="Venbhas\Blog\Ui\DataProvider\Form\Modifier\RelatedProducts">
+        <arguments>
+            <argument name="relatedProductsResource" xsi:type="object">Venbhas\Blog\Model\ResourceModel\Category\RelatedProducts</argument>
+            <argument name="scopeName" xsi:type="string">venbhas_blog_category_form.venbhas_blog_category_form</argument>
+            <argument name="entityIdField" xsi:type="string">category_id</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Article\Form\Modifier\Pool"
+                 type="Magento\Ui\DataProvider\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="related_products" xsi:type="array">
+                    <item name="class" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Form\Modifier\ArticleRelatedProducts</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Category\Form\Modifier\Pool"
+                 type="Magento\Ui\DataProvider\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="related_products" xsi:type="array">
+                    <item name="class" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Form\Modifier\CategoryRelatedProducts</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Venbhas\Blog\Model\Article\DataProvider">
+        <arguments>
+            <argument name="pool" xsi:type="object">Venbhas\Blog\Ui\DataProvider\Article\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+    <type name="Venbhas\Blog\Model\Category\DataProvider">
+        <arguments>
+            <argument name="pool" xsi:type="object">Venbhas\Blog\Ui\DataProvider\Category\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+
+    <!-- Admin grids: register collections for UI data sources -->
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Article\Listing\Collection" type="Venbhas\Blog\Model\ResourceModel\Article\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">venbhas_article</argument>
+            <argument name="eventPrefix" xsi:type="string">venbhas_blog_article_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">article_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Venbhas\Blog\Model\ResourceModel\Article</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Category\Listing\Collection" type="Venbhas\Blog\Model\ResourceModel\Category\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">venbhas_article_category</argument>
+            <argument name="eventPrefix" xsi:type="string">venbhas_blog_category_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">category_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Venbhas\Blog\Model\ResourceModel\Category</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Comment\Listing\Collection" type="Venbhas\Blog\Model\ResourceModel\Comment\Grid\Collection">
+        <arguments>
+            <argument name="mainTable" xsi:type="string">venbhas_article_comment</argument>
+            <argument name="eventPrefix" xsi:type="string">venbhas_blog_comment_grid_collection</argument>
+            <argument name="eventObject" xsi:type="string">comment_collection</argument>
+            <argument name="resourceModel" xsi:type="string">Venbhas\Blog\Model\ResourceModel\Comment</argument>
+        </arguments>
+    </virtualType>
+
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>
             <argument name="collections" xsi:type="array">
-                <item name="venbhas_article_listing_data_source" xsi:type="string">Venbhas\Article\Model\ResourceModel\Article\Grid\Collection</item>
-                <item name="venbhas_article_category_listing_data_source" xsi:type="string">Venbhas\Article\Model\ResourceModel\Category\Grid\Collection</item>
-                <item name="venbhas_article_comment_listing_data_source" xsi:type="string">Venbhas\Article\Model\ResourceModel\Comment\Grid\Collection</item>
+                <item name="venbhas_blog_listing_data_source" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Article\Listing\Collection</item>
+                <item name="venbhas_blog_category_listing_data_source" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Category\Listing\Collection</item>
+                <item name="venbhas_blog_comment_listing_data_source" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Comment\Listing\Collection</item>
             </argument>
-        </arguments>
-    </type>
-    <type name="Venbhas\Article\Model\ResourceModel\Article\Grid\Collection">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">venbhas_article</argument>
-            <argument name="eventPrefix" xsi:type="string">venbhas_article_grid_collection</argument>
-            <argument name="eventObject" xsi:type="string">article_grid_collection</argument>
-            <argument name="resourceModel" xsi:type="string">Venbhas\Article\Model\ResourceModel\Article</argument>
-        </arguments>
-    </type>
-    <type name="Venbhas\Article\Model\ResourceModel\Category\Grid\Collection">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">venbhas_article_category</argument>
-            <argument name="eventPrefix" xsi:type="string">venbhas_article_category_grid_collection</argument>
-            <argument name="eventObject" xsi:type="string">category_grid_collection</argument>
-            <argument name="resourceModel" xsi:type="string">Venbhas\Article\Model\ResourceModel\Category</argument>
-        </arguments>
-    </type>
-    <type name="Venbhas\Article\Model\ResourceModel\Comment\Grid\Collection">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">venbhas_article_comment</argument>
-            <argument name="eventPrefix" xsi:type="string">venbhas_article_comment_grid_collection</argument>
-            <argument name="eventObject" xsi:type="string">comment_grid_collection</argument>
-            <argument name="resourceModel" xsi:type="string">Venbhas\Article\Model\ResourceModel\Comment</argument>
         </arguments>
     </type>
 </config>

@@ -1,14 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\ResourceModel\Category;
+namespace Venbhas\Blog\Model\ResourceModel\Category;
 
 use Magento\Framework\App\ResourceConnection;
+use Venbhas\Blog\Model\ResourceModel\RelatedProductsResourceInterface;
 
 /**
  * Category related products resource.
  */
-class RelatedProducts
+class RelatedProducts implements RelatedProductsResourceInterface
 {
     private const TABLE = 'venbhas_article_category_related_products';
 

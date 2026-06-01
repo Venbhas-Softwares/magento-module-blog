@@ -1,16 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\Article;
+namespace Venbhas\Blog\Model\Article;
 
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
-use Venbhas\Article\Model\ResourceModel\Article\CategoryRelation;
-use Venbhas\Article\Model\ResourceModel\Article\CollectionFactory as ArticleCollectionFactory;
-use Venbhas\Article\Model\ResourceModel\Article\RelatedProducts;
+use Magento\Ui\DataProvider\Modifier\ModifierInterface;
+use Magento\Ui\DataProvider\Modifier\PoolInterface;
+use Venbhas\Blog\Model\ResourceModel\Article\CategoryRelation;
+use Venbhas\Blog\Model\ResourceModel\Article\CollectionFactory as ArticleCollectionFactory;
 
 /**
  * Article form data provider.
@@ -23,8 +24,8 @@ class DataProvider extends AbstractDataProvider
     /** @var DataPersistorInterface */
     private $dataPersistor;
 
-    /** @var RelatedProducts */
-    private $relatedProducts;
+    /** @var PoolInterface */
+    private $pool;
 
     /** @var CategoryRelation */
     private $categoryRelation;
@@ -41,7 +42,7 @@ class DataProvider extends AbstractDataProvider
      * @param string $requestFieldName
      * @param ArticleCollectionFactory $collectionFactory
      * @param DataPersistorInterface $dataPersistor
-     * @param RelatedProducts $relatedProducts
+     * @param PoolInterface $pool
      * @param CategoryRelation $categoryRelation
      * @param RequestInterface $request
      * @param StoreManagerInterface $storeManager
@@ -54,7 +55,7 @@ class DataProvider extends AbstractDataProvider
         string $requestFieldName,
         ArticleCollectionFactory $collectionFactory,
         DataPersistorInterface $dataPersistor,
-        RelatedProducts $relatedProducts,
+        PoolInterface $pool,
         CategoryRelation $categoryRelation,
         RequestInterface $request,
         StoreManagerInterface $storeManager,
@@ -63,7 +64,7 @@ class DataProvider extends AbstractDataProvider
     ) {
         $this->collection = $collectionFactory->create();
         $this->dataPersistor = $dataPersistor;
-        $this->relatedProducts = $relatedProducts;
+        $this->pool = $pool;
         $this->categoryRelation = $categoryRelation;
         $this->request = $request;
         $this->storeManager = $storeManager;
@@ -97,7 +98,7 @@ class DataProvider extends AbstractDataProvider
         }
 
         $id = $this->request->getParam($this->getRequestFieldName());
-        $persistorData = $this->dataPersistor->get('venbhas_article');
+        $persistorData = $this->dataPersistor->get('venbhas_blog');
 
         // New record (no id): return defaults so form renders - use both '' and 0 for key compatibility
         if (!$id) {
@@ -115,42 +116,60 @@ class DataProvider extends AbstractDataProvider
                     'meta_keywords' => '',
                     'meta_description' => '',
                     'meta_robots' => '',
+                    'use_config_meta_robots' => 1,
                     'category_id' => '',
-                    'related_products' => [],
-                    'related_product_skus' => '',
                 ];
             if (!empty($persistorData)) {
-                $this->dataPersistor->clear('venbhas_article');
+                $this->dataPersistor->clear('venbhas_blog');
             }
             $this->loadedData[''] = $defaults;
             $this->loadedData[0] = $defaults;
-            return $this->loadedData;
+        } else {
+            // Edit: load single record
+            $this->collection->addFieldToFilter($this->getPrimaryFieldName(), (int) $id);
+            $items = $this->collection->getItems();
+
+            foreach ($items as $article) {
+                $data = $article->getData();
+                $categoryId = $this->categoryRelation->getCategoryIdByArticleId((int) $article->getId());
+                $data['category_id'] = $categoryId !== null ? (string) $categoryId : '';
+                $metaRobots = trim((string) ($data['meta_robots'] ?? ''));
+                $data['use_config_meta_robots'] = $metaRobots === '' ? 1 : 0;
+                $featuredImage = $data['featured_image'] ?? '';
+                if ($featuredImage) {
+                    $fileName = preg_replace('#^.*[/\\\\]#', '', $featuredImage);
+                    $data['featured_image'] = [
+                        [
+                            'name' => $fileName,
+                            'path' => $featuredImage,
+                            'url' => $this->getMediaUrl($featuredImage),
+                        ],
+                    ];
+                }
+                $this->loadedData[$article->getId()] = $data;
+            }
         }
 
-        // Edit: load single record
-        $this->collection->addFieldToFilter($this->getPrimaryFieldName(), (int) $id);
-        $items = $this->collection->getItems();
-
-        foreach ($items as $article) {
-            $data = $article->getData();
-            $categoryId = $this->categoryRelation->getCategoryIdByArticleId((int) $article->getId());
-            $data['category_id'] = $categoryId !== null ? (string) $categoryId : '';
-            $ids = $this->relatedProducts->getRelatedProductIds((int) $article->getId());
-            $data['related_products'] = $ids;
-            $featuredImage = $data['featured_image'] ?? '';
-            if ($featuredImage) {
-                $fileName = preg_replace('#^.*[/\\\\]#', '', $featuredImage);
-                $data['featured_image'] = [
-                    [
-                        'name' => $fileName,
-                        'path' => $featuredImage,
-                        'url' => $this->getMediaUrl($featuredImage),
-                    ],
-                ];
-            }
-            $this->loadedData[$article->getId()] = $data;
+        /** @var ModifierInterface $modifier */
+        foreach ($this->pool->getModifiersInstances() as $modifier) {
+            $this->loadedData = $modifier->modifyData($this->loadedData);
         }
 
         return $this->loadedData;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMeta(): array
+    {
+        $meta = parent::getMeta();
+
+        /** @var ModifierInterface $modifier */
+        foreach ($this->pool->getModifiersInstances() as $modifier) {
+            $meta = $modifier->modifyMeta($meta);
+        }
+
+        return $meta;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Block\Adminhtml\Category\Edit;
+namespace Venbhas\Blog\Block\Adminhtml\Category\Edit;
 
 use Magento\Backend\Block\Widget\Context;
 

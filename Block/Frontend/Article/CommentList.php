@@ -1,15 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Block\Frontend\Article;
+namespace Venbhas\Blog\Block\Frontend\Article;
 
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
-use Venbhas\Article\Model\Comment;
-use Venbhas\Article\Model\Config;
-use Venbhas\Article\Model\ResourceModel\Comment\Collection;
-use Venbhas\Article\Model\ResourceModel\Comment\CollectionFactory as CommentCollectionFactory;
+use Venbhas\Blog\Model\Comment;
+use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Model\ResourceModel\Comment\Collection;
+use Venbhas\Blog\Model\ResourceModel\Comment\CollectionFactory as CommentCollectionFactory;
 
 class CommentList extends Template
 {

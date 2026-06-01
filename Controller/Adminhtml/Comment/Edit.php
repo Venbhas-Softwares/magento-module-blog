@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Comment;
+namespace Venbhas\Blog\Controller\Adminhtml\Comment;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
-use Venbhas\Article\Model\CommentFactory;
+use Venbhas\Blog\Model\CommentFactory;
 
 class Edit extends Action implements HttpGetActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::comment_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::comment_save';
 
     /** @var PageFactory */
     private $resultPageFactory;
@@ -59,9 +59,9 @@ class Edit extends Action implements HttpGetActionInterface
                 return $this->resultRedirectFactory->create()->setPath('*/*/');
             }
         }
-        $this->coreRegistry->register('venbhas_article_comment', $model);
+        $this->coreRegistry->register('venbhas_blog_comment', $model);
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->setActiveMenu('Venbhas_Article::comment_manage');
+        $resultPage->setActiveMenu('Venbhas_Blog::comment_manage');
         $resultPage->getConfig()->getTitle()->prepend(
             $model->getId() ? __('Edit Comment') : __('New Comment')
         );

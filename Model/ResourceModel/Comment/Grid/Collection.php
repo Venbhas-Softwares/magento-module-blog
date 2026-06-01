@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\ResourceModel\Comment\Grid;
+namespace Venbhas\Blog\Model\ResourceModel\Comment\Grid;
 
 use Magento\Framework\Api\Search\SearchResultInterface;
 use Magento\Framework\Api\Search\AggregationInterface;
-use Venbhas\Article\Model\ResourceModel\Comment\Collection as CommentCollection;
+use Venbhas\Blog\Model\ResourceModel\Comment\Collection as CommentCollection;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;
@@ -63,6 +63,24 @@ class Collection extends CommentCollection implements SearchResultInterface
         $this->_eventObject = $eventObject;
         $this->_init($this->model, $this->resourceModel);
         $this->setMainTable($mainTable);
+    }
+
+    /**
+     * Initialize select and join article title for grid display.
+     *
+     * @return $this
+     */
+    protected function _initSelect()
+    {
+        parent::_initSelect();
+
+        $this->getSelect()->joinLeft(
+            ['article' => $this->getTable('venbhas_article')],
+            'main_table.article_id = article.article_id',
+            ['article_title' => 'title']
+        );
+
+        return $this;
     }
 
     /**

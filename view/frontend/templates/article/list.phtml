@@ -1,39 +1,18 @@
 <?php
 /**
- * @var $block \Venbhas\Article\Block\Frontend\Article\ListBlock
+ * @var $block \Venbhas\Blog\Block\Frontend\Article\ListBlock
  * @var \Magento\Framework\Escaper $escaper
  */
 
 $articles   = $block->getArticles();
 $categories = $block->getCategories();
-//$listTitle  = $block->getListTitle();
 ?>
 
 <div class="venbhas-article-wrapper">
-
     <div class="article-layout">
-
-       
-
-        <!-- RIGHT COLUMN : Articles -->
         <div class="article-content">
             <?php if ($articles->getSize()): ?>
-                <div class="article-toolbar">
-                    <label for="article-sort-order" class="label">
-                        <?= $escaper->escapeHtml(__('Sort by')) ?>:</label>
-                    <select id="article-sort-order" class="article-sort-select"
-                            onchange="window.location.href=this.options[this.selectedIndex].value">
-                        <?php
-                        $currentSort = $block->getCurrentSortOrder();
-                        foreach ($block->getSortOptions() as $value => $label):
-                            $selected = $value === $currentSort ? ' selected' : '';
-                            ?>
-                            <option value="<?= $escaper->escapeUrl($block->getSortUrl($value)) ?>"
-                                    <?= $escaper->escapeHtmlAttr($selected) ?>>
-                                <?= $escaper->escapeHtml($label) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
+                <?= $block->getToolbarHtml() ?>
                 <ul class="article-list">
                     <?php foreach ($articles as $article): ?>
                         <?php
@@ -53,21 +32,20 @@ $categories = $block->getCategories();
                             <span class="article-updated"
                                   title="<?= $escaper->escapeHtmlAttr($formattedDate) ?>"
                                   data-date="<?= $escaper->escapeHtmlAttr($updatedAt) ?>">
-                                <!-- JS will convert this -->
                             </span>
                             <?php if ($article->getShortDescription()): ?>
-                                <p><?= $escaper->escapeHtml($article->getShortDescription()) ?></p>
+                                <div class="article-short-description">
+                                    <?= /* @noEscape */ $article->getShortDescription() ?>
+                                </div>
                             <?php endif; ?>
                         </li>
                     <?php endforeach; ?>
                 </ul>
+                <?= $block->getBottomToolbarHtml() ?>
             <?php else: ?>
                 <p><?= $escaper->escapeHtml(__('No articles yet.')) ?></p>
             <?php endif; ?>
         </div>
-    </div>
-    <div class="article-pagination">
-        <?= /* @noEscape */ $block->getPagerHtml() ?>
     </div>
 </div>
 <script>

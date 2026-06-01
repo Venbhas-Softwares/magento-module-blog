@@ -1,20 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Block\Frontend\Article;
+namespace Venbhas\Blog\Block\Frontend\Article;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Model\StoreManagerInterface;
-use Venbhas\Article\Model\Config;
-use Venbhas\Article\Model\ResourceModel\Article\CollectionFactory;
-use Venbhas\Article\Model\ResourceModel\Category\CollectionFactory as categoryCollectionFactory;
+use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Model\ResourceModel\Article\CollectionFactory;
+use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory as categoryCollectionFactory;
 
 /**
  * Block for article list page.
  */
-class ListBlock extends Template
+class ListBlock extends Template implements ToolbarAwareInterface
 {
+    use ToolbarAwareTrait;
     /** @var CollectionFactory */
     private $collectionFactory;
 
@@ -61,15 +62,11 @@ class ListBlock extends Template
     {
         if (!$this->hasData('articles')) {
             $page  = (int) $this->getRequest()->getParam('p', 1);
-            $storeId = (int) $this->storeManager->getStore()->getId();
-            $limit = (int) $this->getRequest()->getParam('limit', $this->config->getArticlesPerPage($storeId));
-            $order = $this->getCurrentSortOrder();
+            $limit = $this->getPageLimit();
 
             $collection = $this->collectionFactory->create();
-            $collection->addFieldToFilter('is_active', 1);
             $collection->addFieldToFilter('status', 1);
-            $sort = $this->config->getSortOrderFieldAndDirection($order);
-            $collection->setOrder($sort['field'], $sort['direction']);
+            $this->applyToolbarSort($collection);
 
             $collection->setCurPage($page);
             $collection->setPageSize($limit);
@@ -106,22 +103,6 @@ class ListBlock extends Template
     }
 
     /**
-     * URL for sort option (preserves path and pagination params).
-     *
-     * @param string $order
-     * @return string
-     */
-    public function getSortUrl(string $order): string
-    {
-        $params = ['order' => $order];
-        $p = $this->getRequest()->getParam('p');
-        if ($p !== null && (int) $p > 1) {
-            $params['p'] = (int) $p;
-        }
-        return $this->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true, '_query' => $params]);
-    }
-
-    /**
      * Get category collection for sidebar.
      *
      * @return \Magento\Framework\Data\Collection\AbstractDb
@@ -150,7 +131,7 @@ class ListBlock extends Template
     /**
      * Category view URL (path from store config: Article List URL Key + /category/ + url_key).
      *
-     * @param \Venbhas\Article\Model\Category $category
+     * @param \Venbhas\Blog\Model\Category $category
      * @return string
      */
     public function getCategoryUrl($category): string
@@ -161,28 +142,10 @@ class ListBlock extends Template
     }
 
     /**
-     * Prepare layout and add pager.
-     *
-     * @return $this
+     * @return \Magento\Framework\Data\Collection\AbstractDb
      */
-    protected function _prepareLayout()
+    protected function getToolbarCollection()
     {
-        $collection = $this->getArticles();
-        $pager = $this->getLayout()->createBlock(\Magento\Theme\Block\Html\Pager::class, 'articles_list.pager');
-        $pager->setLimit($collection->getPageSize());
-        $pager->setCollection($collection);
-        $pager->setShowPerPage(false);
-        $this->setChild('pager', $pager);
-        return parent::_prepareLayout();
-    }
-
-    /**
-     * Get pager HTML.
-     *
-     * @return string
-     */
-    public function getPagerHtml()
-    {
-        return $this->getChildHtml('pager');
+        return $this->getArticles();
     }
 }

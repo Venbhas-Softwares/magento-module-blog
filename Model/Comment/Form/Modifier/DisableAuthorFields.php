@@ -1,8 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\Comment\Form\Modifier;
+namespace Venbhas\Blog\Model\Comment\Form\Modifier;
 
+use Magento\Framework\Escaper;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Stdlib\ArrayManager;
 use Magento\Ui\DataProvider\Modifier\ModifierInterface;
@@ -18,16 +19,21 @@ class DisableAuthorFields implements ModifierInterface
     /** @var ArrayManager */
     private $arrayManager;
 
+    /** @var Escaper */
+    private $escaper;
+
     /**
      * Constructor.
      *
      * @param RequestInterface $request
      * @param ArrayManager $arrayManager
+     * @param Escaper $escaper
      */
-    public function __construct(RequestInterface $request, ArrayManager $arrayManager)
+    public function __construct(RequestInterface $request, ArrayManager $arrayManager, Escaper $escaper)
     {
         $this->request = $request;
         $this->arrayManager = $arrayManager;
+        $this->escaper = $escaper;
     }
 
     /**
@@ -43,27 +49,34 @@ class DisableAuthorFields implements ModifierInterface
             return $meta;
         }
 
-        // Remove editable Article, User Name, User Email from form when editing (marked fields in screenshot)
-        $meta = $this->arrayManager->remove('general/children/article_id', $meta);
-        $meta = $this->arrayManager->remove('general/children/user_name', $meta);
-        $meta = $this->arrayManager->remove('general/children/user_email', $meta);
+        // When editing: show article as a link (instead of a disabled select or hidden field).
+        $meta = $this->removeFieldByName($meta, 'user_name');
+        $meta = $this->removeFieldByName($meta, 'user_email');
+        $meta = $this->removeFieldByName($meta, 'article_link');
 
-        // Hidden field to preserve article_id on submit
-        $hiddenArticleId = [
+        $articleLinkField = [
             'arguments' => [
                 'data' => [
                     'config' => [
                         'componentType' => 'field',
                         'formElement' => 'input',
                         'dataType' => 'text',
-                        'dataScope' => 'article_id',
-                        'visible' => false,
+                        'label' => __('Article'),
+                        'dataScope' => 'article_link',
                         'sortOrder' => 19,
+                        'disabled' => true,
+                        'template' => 'ui/form/field',
+                        'elementTmpl' => 'ui/form/element/html',
                     ],
                 ],
             ],
         ];
-        $meta = $this->arrayManager->set('general/children/article_id_hidden', $meta, $hiddenArticleId);
+        // Prefer inserting into the "general" fieldset if it exists, otherwise fall back to top-level.
+        $generalChildrenPath = $this->arrayManager->findPath('general', $meta, null, 'children');
+        $targetPath = $generalChildrenPath
+            ? $generalChildrenPath . '/children/article_link'
+            : 'general/children/article_link';
+        $meta = $this->arrayManager->set($targetPath, $meta, $articleLinkField);
 
         // Comment: keep single Comment field but make it disabled when editing
         foreach (['/arguments/data/config', '/data/config'] as $suffix) {
@@ -75,6 +88,12 @@ class DisableAuthorFields implements ModifierInterface
         }
 
         return $meta;
+    }
+
+    private function removeFieldByName(array $meta, string $fieldName): array
+    {
+        $path = $this->arrayManager->findPath($fieldName, $meta, null, 'children');
+        return $path ? $this->arrayManager->remove($path, $meta) : $meta;
     }
 
     /**

@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Article;
+namespace Venbhas\Blog\Controller\Adminhtml\Article;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
-use Venbhas\Article\Model\ArticleFactory;
+use Venbhas\Blog\Model\ArticleFactory;
 
 class Edit extends Action implements HttpGetActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::article_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::article_save';
 
     /** @var PageFactory */
     private $resultPageFactory;
@@ -59,9 +59,9 @@ class Edit extends Action implements HttpGetActionInterface
                 return $this->resultRedirectFactory->create()->setPath('*/*/');
             }
         }
-        $this->coreRegistry->register('venbhas_article', $model);
+        $this->coreRegistry->register('venbhas_blog', $model);
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->setActiveMenu('Venbhas_Article::article_manage');
+        $resultPage->setActiveMenu('Venbhas_Blog::article_manage');
         $resultPage->getConfig()->getTitle()->prepend(
             $model->getId() ? __('Edit Article "%1"', $model->getTitle()) : __('New Article')
         );

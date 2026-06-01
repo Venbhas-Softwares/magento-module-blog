@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Ui\Component\Listing\Column;
+namespace Venbhas\Blog\Ui\Component\Listing\Column;
 
 use Magento\Framework\Escaper;
 use Magento\Framework\UrlInterface;
@@ -11,8 +11,8 @@ use Magento\Ui\Component\Listing\Columns\Column;
 
 class CommentActions extends Column
 {
-    public const URL_PATH_EDIT = 'venbhas_article/comment/edit';
-    public const URL_PATH_DELETE = 'venbhas_article/comment/delete';
+    public const URL_PATH_EDIT = 'blog/comment/edit';
+    public const URL_PATH_DELETE = 'blog/comment/delete';
 
     /** @var UrlInterface */
     private $urlBuilder;

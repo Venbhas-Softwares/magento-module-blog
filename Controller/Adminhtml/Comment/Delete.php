@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Comment;
+namespace Venbhas\Blog\Controller\Adminhtml\Comment;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Venbhas\Article\Model\CommentFactory;
-use Venbhas\Article\Model\ResourceModel\Comment as CommentResource;
+use Venbhas\Blog\Model\CommentFactory;
+use Venbhas\Blog\Model\ResourceModel\Comment as CommentResource;
 
 class Delete extends Action implements HttpPostActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::comment_delete';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::comment_delete';
 
     /** @var CommentFactory */
     private $commentFactory;

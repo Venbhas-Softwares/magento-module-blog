@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\Config\Source;
+namespace Venbhas\Blog\Model\Config\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;
 

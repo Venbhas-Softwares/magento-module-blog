@@ -20,9 +20,9 @@
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="category_id"/>
         </constraint>
-        <index referenceId="VENBHAS_ARTICLE_CATEGORY_URL_KEY" indexType="btree">
+        <constraint xsi:type="unique" referenceId="VENBHAS_ARTICLE_CATEGORY_URL_KEY_UNQ">
             <column name="url_key"/>
-        </index>
+        </constraint>
     </table>
 
     <table name="venbhas_article" resource="default" engine="innodb" comment="Article Table">
@@ -34,19 +34,18 @@
         <column xsi:type="text" name="meta_keywords" nullable="true" comment="Meta Keywords"/>
         <column xsi:type="varchar" name="meta_robots" nullable="true" length="255" comment="Content Heading"/>
         <column xsi:type="mediumtext" name="description" nullable="false" comment="Content"/>
-        <column xsi:type="varchar" name="short_description" nullable="false" length="500" comment="Short Content"/>
+        <column xsi:type="text" name="short_description" nullable="false" comment="Short Content"/>
         <column xsi:type="varchar" name="featured_image" nullable="true" length="255" comment="Featured Image"/>
-        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" default="1" comment="Is Active"/>
-        <column xsi:type="smallint" name="status" unsigned="true" nullable="false" default="1" comment="status 0=draft 1=published 2=archived"/>
+        <column xsi:type="smallint" name="status" unsigned="true" nullable="false" default="0" comment="status 0=draft 1=published 2=archived"/>
         <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Creation Time"/>
         <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Update Time"/>
         <column xsi:type="int" name="author" nullable="true" comment="Author"/>
         <constraint xsi:type="primary" referenceId="PRIMARY">
             <column name="article_id"/>
         </constraint>
-        <index referenceId="VENBHAS_ARTICLE_URL_KEY" indexType="btree">
+        <constraint xsi:type="unique" referenceId="VENBHAS_ARTICLE_URL_KEY_UNQ">
             <column name="url_key"/>
-        </index>
+        </constraint>
     </table>
 
     <table name="venbhas_article_category_relation" resource="default" engine="innodb" comment="Article to Category Relation">

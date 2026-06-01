@@ -1,15 +1,16 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\Category;
+namespace Venbhas\Blog\Model\Category;
 
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
-use Venbhas\Article\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
-use Venbhas\Article\Model\ResourceModel\Category\RelatedProducts;
+use Magento\Ui\DataProvider\Modifier\ModifierInterface;
+use Magento\Ui\DataProvider\Modifier\PoolInterface;
+use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 
 /**
  * Category form data provider.
@@ -22,8 +23,8 @@ class DataProvider extends AbstractDataProvider
     /** @var DataPersistorInterface */
     private $dataPersistor;
 
-    /** @var RelatedProducts */
-    private $relatedProducts;
+    /** @var PoolInterface */
+    private $pool;
 
     /** @var RequestInterface */
     private $request;
@@ -39,7 +40,7 @@ class DataProvider extends AbstractDataProvider
      * @param string $requestFieldName
      * @param CategoryCollectionFactory $collectionFactory
      * @param DataPersistorInterface $dataPersistor
-     * @param RelatedProducts $relatedProducts
+     * @param PoolInterface $pool
      * @param RequestInterface $request
      * @param StoreManagerInterface $storeManager
      * @param array $meta
@@ -51,7 +52,7 @@ class DataProvider extends AbstractDataProvider
         string $requestFieldName,
         CategoryCollectionFactory $collectionFactory,
         DataPersistorInterface $dataPersistor,
-        RelatedProducts $relatedProducts,
+        PoolInterface $pool,
         RequestInterface $request,
         StoreManagerInterface $storeManager,
         array $meta = [],
@@ -59,7 +60,7 @@ class DataProvider extends AbstractDataProvider
     ) {
         $this->collection = $collectionFactory->create();
         $this->dataPersistor = $dataPersistor;
-        $this->relatedProducts = $relatedProducts;
+        $this->pool = $pool;
         $this->request = $request;
         $this->storeManager = $storeManager;
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
@@ -92,7 +93,7 @@ class DataProvider extends AbstractDataProvider
         }
 
         $id = $this->request->getParam($this->getRequestFieldName());
-        $persistorData = $this->dataPersistor->get('venbhas_article_category');
+        $persistorData = $this->dataPersistor->get('venbhas_blog_category');
 
         if (!$id) {
             $defaults = !empty($persistorData)
@@ -108,49 +109,68 @@ class DataProvider extends AbstractDataProvider
                     'meta_keywords' => '',
                     'meta_description' => '',
                     'meta_robots' => '',
+                    'use_config_meta_robots' => 1,
                     'featured_image' => '',
-                    'related_products' => [],
                     'related_articles' => [],
                 ];
             if (!empty($persistorData)) {
-                $this->dataPersistor->clear('venbhas_article_category');
+                $this->dataPersistor->clear('venbhas_blog_category');
             }
             $this->loadedData[''] = $defaults;
             $this->loadedData[0] = $defaults;
-            return $this->loadedData;
+        } else {
+            $this->collection->addFieldToFilter($this->getPrimaryFieldName(), (int) $id);
+            $items = $this->collection->getItems();
+
+            foreach ($items as $category) {
+                $data = $category->getData();
+                $metaRobots = trim((string) ($data['meta_robots'] ?? ''));
+                $data['use_config_meta_robots'] = $metaRobots === '' ? 1 : 0;
+                // related_articles is stored as comma-separated ids; multiselect options use string values
+                $relatedArticlesRaw = trim((string) ($data['related_articles'] ?? ''));
+                $data['related_articles'] = $relatedArticlesRaw !== ''
+                    ? array_values(
+                        array_map(
+                            'strval',
+                            array_filter(array_map('intval', explode(',', $relatedArticlesRaw)))
+                        )
+                    )
+                    : [];
+                $featuredImage = $data['featured_image'] ?? $data['featured image'] ?? '';
+                if ($featuredImage) {
+                    $fileName = preg_replace('#^.*[/\\\\]#', '', $featuredImage);
+                    $data['featured_image'] = [
+                        [
+                            'name' => $fileName,
+                            'path' => $featuredImage,
+                            'url' => $this->getMediaUrl($featuredImage),
+                        ],
+                    ];
+                }
+                $this->loadedData[$category->getId()] = $data;
+            }
         }
 
-        $this->collection->addFieldToFilter($this->getPrimaryFieldName(), (int) $id);
-        $items = $this->collection->getItems();
-
-        foreach ($items as $category) {
-            $data = $category->getData();
-            // related_articles is stored as comma-separated ids; multiselect options use string values
-            $relatedArticlesRaw = trim((string) ($data['related_articles'] ?? ''));
-            $data['related_articles'] = $relatedArticlesRaw !== ''
-                ? array_values(
-                    array_map(
-                        'strval',
-                        array_filter(array_map('intval', explode(',', $relatedArticlesRaw)))
-                    )
-                )
-                : [];
-            $ids = $this->relatedProducts->getRelatedProductIds((int) $category->getId());
-            $data['related_products'] = $ids;
-            $featuredImage = $data['featured_image'] ?? $data['featured image'] ?? '';
-            if ($featuredImage) {
-                $fileName = preg_replace('#^.*[/\\\\]#', '', $featuredImage);
-                $data['featured_image'] = [
-                    [
-                        'name' => $fileName,
-                        'path' => $featuredImage,
-                        'url' => $this->getMediaUrl($featuredImage),
-                    ],
-                ];
-            }
-            $this->loadedData[$category->getId()] = $data;
+        /** @var ModifierInterface $modifier */
+        foreach ($this->pool->getModifiersInstances() as $modifier) {
+            $this->loadedData = $modifier->modifyData($this->loadedData);
         }
 
         return $this->loadedData;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getMeta(): array
+    {
+        $meta = parent::getMeta();
+
+        /** @var ModifierInterface $modifier */
+        foreach ($this->pool->getModifiersInstances() as $modifier) {
+            $meta = $modifier->modifyMeta($meta);
+        }
+
+        return $meta;
     }
 }

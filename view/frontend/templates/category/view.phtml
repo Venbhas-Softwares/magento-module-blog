@@ -1,6 +1,6 @@
 <?php
 /**
- * @var $block \Venbhas\Article\Block\Frontend\Category\View
+ * @var $block \Venbhas\Blog\Block\Frontend\Category\View
  * @var \Magento\Framework\Escaper $escaper
  */
 $category = $block->getCategory();
@@ -12,9 +12,7 @@ $articles = $block->getArticles();
 
 <div class="venbhas-article-category-view">
 <h1><?= $escaper->escapeHtml($category->getName()) ?></h1>
-    <!-- Category Header Section -->
     <div class="category-header">
-    
         <div class="category-image">
             <?php if ($category->getFeaturedImage()): ?>
                 <img src="<?= $escaper->escapeUrl($block->getImageUrl($category->getFeaturedImage())) ?>"
@@ -31,26 +29,10 @@ $articles = $block->getArticles();
         </div>
     </div>
 
-    <!-- Articles Section -->
     <?php if ($articles && $articles->getSize()): ?>
         <div class="category-articles">
             <h2><?= $escaper->escapeHtml(__('Articles')) ?></h2>
-            <div class="article-toolbar">
-                <label for="category-article-sort" class="label">
-                    <?= $escaper->escapeHtml(__('Sort by')) ?>:</label>
-                <select id="category-article-sort" class="article-sort-select"
-                        onchange="window.location.href=this.options[this.selectedIndex].value">
-                    <?php
-                    $currentSort = $block->getCurrentSortOrder();
-                    foreach ($block->getSortOptions() as $value => $label):
-                        $selected = $value === $currentSort ? ' selected' : '';
-                        ?>
-                        <option value="<?= $escaper->escapeUrl($block->getSortUrl($value)) ?>"
-                                <?= $escaper->escapeHtmlAttr($selected) ?>>
-                            <?= $escaper->escapeHtml($label) ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+            <?= $block->getToolbarHtml() ?>
             <ul class="article-list">
                 <?php foreach ($articles as $article):
                     $updatedAt = $article->getUpdatedAt();
@@ -78,9 +60,7 @@ $articles = $block->getArticles();
                     </li>
                 <?php endforeach; ?>
             </ul>
-            <div class="article-pagination">
-                <?= /* @noEscape */ $block->getPagerHtml() ?>
-            </div>
+            <?= $block->getBottomToolbarHtml() ?>
         </div>
     <?php endif; ?>
 

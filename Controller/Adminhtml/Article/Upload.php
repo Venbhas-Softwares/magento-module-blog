@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Article;
+namespace Venbhas\Blog\Controller\Adminhtml\Article;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
 
 class Upload extends Action implements HttpPostActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::article_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::article_save';
 
     /** @var UploaderFactory */
     private $uploaderFactory;
@@ -55,7 +55,7 @@ class Upload extends Action implements HttpPostActionInterface
     {
         $result = ['error' => true, 'message' => __('File cannot be uploaded.')];
 
-    // This must match the dataScope in your UI component
+        // This must match the dataScope in the UI component
         $fileId = $this->getRequest()->getParam('param_name', 'featured_image');
 
         try {
@@ -70,12 +70,14 @@ class Upload extends Action implements HttpPostActionInterface
             $uploadResult = $uploader->save($path);
 
             if (!empty($uploadResult['file'])) {
-                $relativePath = 'venbhas/category' . $uploadResult['file']; // include dispersion path
+                $relativePath = 'venbhas/article' . '/' . ltrim((string) $uploadResult['file'], '/');
                 $baseMediaUrl = $this->_url->getBaseUrl(
                     ['_type' => \Magento\Framework\UrlInterface::URL_TYPE_MEDIA]
                 );
                 $result = [
+                    'error' => false,
                     'name' => $uploadResult['name'],
+                    'path' => $relativePath,
                     'url' => $baseMediaUrl . $relativePath,
                 ];
             }

@@ -1,14 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\Comment;
+namespace Venbhas\Blog\Model\Comment;
 
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\ResourceConnection;
+use Magento\Framework\Escaper;
+use Magento\Framework\UrlInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
-use Venbhas\Article\Model\Comment as CommentModel;
-use Venbhas\Article\Model\Comment\Form\Modifier\DisableAuthorFields;
-use Venbhas\Article\Model\ResourceModel\Comment\CollectionFactory as CommentCollectionFactory;
+use Venbhas\Blog\Model\Comment as CommentModel;
+use Venbhas\Blog\Model\Comment\Form\Modifier\DisableAuthorFields;
+use Venbhas\Blog\Model\ResourceModel\Comment\CollectionFactory as CommentCollectionFactory;
 
 /**
  * Comment form data provider.
@@ -27,6 +30,17 @@ class DataProvider extends AbstractDataProvider
     /** @var DisableAuthorFields */
     private $disableAuthorFieldsModifier;
 
+    /** @var ResourceConnection */
+    private $resourceConnection;
+
+    /** @var UrlInterface */
+    private $urlBuilder;
+
+    /** @var Escaper */
+    private $escaper;
+
+    private const ARTICLE_EDIT_URL = 'blog/article/edit';
+
     /**
      * Constructor.
      *
@@ -37,6 +51,9 @@ class DataProvider extends AbstractDataProvider
      * @param DataPersistorInterface $dataPersistor
      * @param RequestInterface $request
      * @param DisableAuthorFields $disableAuthorFieldsModifier
+     * @param ResourceConnection $resourceConnection
+     * @param UrlInterface $urlBuilder
+     * @param Escaper $escaper
      * @param array $meta
      * @param array $data
      */
@@ -48,6 +65,9 @@ class DataProvider extends AbstractDataProvider
         DataPersistorInterface $dataPersistor,
         RequestInterface $request,
         DisableAuthorFields $disableAuthorFieldsModifier,
+        ResourceConnection $resourceConnection,
+        UrlInterface $urlBuilder,
+        Escaper $escaper,
         array $meta = [],
         array $data = []
     ) {
@@ -55,6 +75,9 @@ class DataProvider extends AbstractDataProvider
         $this->dataPersistor = $dataPersistor;
         $this->request = $request;
         $this->disableAuthorFieldsModifier = $disableAuthorFieldsModifier;
+        $this->resourceConnection = $resourceConnection;
+        $this->urlBuilder = $urlBuilder;
+        $this->escaper = $escaper;
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
@@ -80,7 +103,7 @@ class DataProvider extends AbstractDataProvider
         }
 
         $id = $this->request->getParam($this->getRequestFieldName());
-        $persistorData = $this->dataPersistor->get('venbhas_article_comment');
+        $persistorData = $this->dataPersistor->get('venbhas_blog_comment');
 
         if (!$id) {
             $defaults = !empty($persistorData)
@@ -95,7 +118,7 @@ class DataProvider extends AbstractDataProvider
                     'status' => CommentModel::STATUS_PENDING,
                 ];
             if (!empty($persistorData)) {
-                $this->dataPersistor->clear('venbhas_article_comment');
+                $this->dataPersistor->clear('venbhas_blog_comment');
             }
             $this->loadedData[''] = $defaults;
             $this->loadedData[0] = $defaults;
@@ -105,9 +128,43 @@ class DataProvider extends AbstractDataProvider
         $this->collection->addFieldToFilter($this->getPrimaryFieldName(), (int) $id);
         foreach ($this->collection->getItems() as $comment) {
             $row = $comment->getData();
+            $row['article_link'] = $this->buildArticleLinkHtml((int) ($row['article_id'] ?? 0));
             $this->loadedData[$comment->getId()] = $row;
         }
 
         return $this->loadedData;
+    }
+
+    private function buildArticleLinkHtml(int $articleId): string
+    {
+        if ($articleId <= 0) {
+            return '';
+        }
+
+        $title = $this->fetchArticleTitle($articleId);
+        $label = $this->escaper->escapeHtml($title !== '' ? $title : (string) $articleId);
+        $url = $this->urlBuilder->getUrl(self::ARTICLE_EDIT_URL, ['article_id' => $articleId]);
+
+        return sprintf(
+            '<a href="%s" target="_blank" rel="noopener noreferrer">%s</a>',
+            $this->escaper->escapeUrl($url),
+            $label
+        );
+    }
+
+    private function fetchArticleTitle(int $articleId): string
+    {
+        try {
+            $connection = $this->resourceConnection->getConnection();
+            $table = $this->resourceConnection->getTableName('venbhas_article');
+            $select = $connection->select()
+                ->from($table, ['title'])
+                ->where('article_id = ?', $articleId)
+                ->limit(1);
+            $title = $connection->fetchOne($select);
+            return is_string($title) ? $title : '';
+        } catch (\Throwable $e) {
+            return '';
+        }
     }
 }

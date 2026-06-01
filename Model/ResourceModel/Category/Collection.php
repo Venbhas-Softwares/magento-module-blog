@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\ResourceModel\Category;
+namespace Venbhas\Blog\Model\ResourceModel\Category;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
-use Venbhas\Article\Model\Category;
-use Venbhas\Article\Model\ResourceModel\Category as CategoryResource;
+use Venbhas\Blog\Model\Category;
+use Venbhas\Blog\Model\ResourceModel\Category as CategoryResource;
 
 /**
  * Category collection.

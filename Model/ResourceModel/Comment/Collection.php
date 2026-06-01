@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\ResourceModel\Comment;
+namespace Venbhas\Blog\Model\ResourceModel\Comment;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
-use Venbhas\Article\Model\Comment;
-use Venbhas\Article\Model\ResourceModel\Comment as CommentResource;
+use Venbhas\Blog\Model\Comment;
+use Venbhas\Blog\Model\ResourceModel\Comment as CommentResource;
 
 /**
  * Comment collection.

@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Block\Frontend;
+namespace Venbhas\Blog\Block\Frontend;
 
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Model\StoreManagerInterface;
-use Venbhas\Article\Model\Config;
+use Venbhas\Blog\Model\Config;
 
 /**
  * Block for article/category search form.

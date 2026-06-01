@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="venbhas_blog_fix_url_key_indexes" xsi:type="object">Venbhas\Blog\Console\Command\FixUrlKeyIndexes</item>
+            </argument>
+        </arguments>
+    </type>
+</config>

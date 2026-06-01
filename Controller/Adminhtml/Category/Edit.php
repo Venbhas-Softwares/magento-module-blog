@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Category;
+namespace Venbhas\Blog\Controller\Adminhtml\Category;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
-use Venbhas\Article\Model\CategoryFactory;
+use Venbhas\Blog\Model\CategoryFactory;
 
 class Edit extends Action implements HttpGetActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::category_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::category_save';
 
     /** @var PageFactory */
     private $resultPageFactory;
@@ -59,9 +59,9 @@ class Edit extends Action implements HttpGetActionInterface
                 return $this->resultRedirectFactory->create()->setPath('*/*/');
             }
         }
-        $this->coreRegistry->register('venbhas_article_category', $model);
+        $this->coreRegistry->register('venbhas_blog_category', $model);
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->setActiveMenu('Venbhas_Article::category_manage');
+        $resultPage->setActiveMenu('Venbhas_Blog::category_manage');
         $resultPage->getConfig()->getTitle()->prepend(
             $model->getId() ? __('Edit Category "%1"', $model->getName()) : __('New Category')
         );

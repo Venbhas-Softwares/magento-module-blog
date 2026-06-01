@@ -3,7 +3,7 @@
     <update handle="editor"/>
     <body>
         <referenceContainer name="content">
-            <uiComponent name="venbhas_article_category_form"/>
+            <uiComponent name="venbhas_blog_category_form"/>
         </referenceContainer>
     </body>
 </page>

@@ -1,17 +1,17 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller;
+namespace Venbhas\Blog\Controller;
 
 use Magento\Framework\App\ActionFactory;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\RouterInterface;
 use Magento\Store\Model\StoreManagerInterface;
-use Venbhas\Article\Model\ArticleFactory;
-use Venbhas\Article\Model\CategoryFactory;
-use Venbhas\Article\Model\Config;
-use Venbhas\Article\Model\ResourceModel\Article as ArticleResource;
-use Venbhas\Article\Model\ResourceModel\Category as CategoryResource;
+use Venbhas\Blog\Model\ArticleFactory;
+use Venbhas\Blog\Model\CategoryFactory;
+use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Model\ResourceModel\Article as ArticleResource;
+use Venbhas\Blog\Model\ResourceModel\Category as CategoryResource;
 
 class Router implements RouterInterface
 {
@@ -171,7 +171,7 @@ class Router implements RouterInterface
         $urlKey = implode('/', $pathParts);
         $article = $this->articleFactory->create();
         $this->articleResource->load($article, $urlKey, 'url_key');
-        if (!$article->getId() || !$article->getData('is_active')) {
+        if (!$article->getId() || (int) $article->getData('status') !== 1) {
             return null;
         }
         $request->setParam(self::ROUTER_FORWARDED_FLAG, true);

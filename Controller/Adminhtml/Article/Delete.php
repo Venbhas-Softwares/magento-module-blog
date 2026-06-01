@@ -1,18 +1,18 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Article;
+namespace Venbhas\Blog\Controller\Adminhtml\Article;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Venbhas\Article\Model\ArticleFactory;
-use Venbhas\Article\Model\ResourceModel\Article as ArticleResource;
+use Venbhas\Blog\Model\ArticleFactory;
+use Venbhas\Blog\Model\ResourceModel\Article as ArticleResource;
 
 class Delete extends Action implements HttpPostActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::article_delete';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::article_delete';
 
     /** @var ArticleFactory */
     private $articleFactory;

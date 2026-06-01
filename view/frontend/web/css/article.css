@@ -11,26 +11,60 @@
     width: 75%;
 }
 
-.article-toolbar {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.article-toolbar .label {
-    font-weight: 600;
-}
-
-.article-sort-select {
-    padding: 6px 10px;
-    min-width: 140px;
-}
-
 .category-list,
 .article-list {
     list-style: none;
     padding: 0;
+}
+
+.toolbar.toolbar-products {
+    position: relative;
+    margin: 15px 0;
+    min-height: 32px;
+}
+
+.toolbar.toolbar-products .pages {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative;
+    width: auto;
+    float: left;
+    z-index: 1;
+}
+
+.toolbar.toolbar-products .pages .items {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.toolbar.toolbar-products .pages .item {
+    display: inline-block;
+}
+
+.toolbar.toolbar-products .pages .page,
+.toolbar.toolbar-products .pages .action {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    text-decoration: none;
+    color: #333;
+    background: #fff;
+}
+
+.toolbar.toolbar-products .pages .item.current .page {
+    background: #1979c3;
+    border-color: #1979c3;
+    color: #fff;
+}
+
+.toolbar.toolbar-products .field.limiter {
+    float: right;
 }
 
 .article-item {
@@ -181,6 +215,16 @@
 .venbhas-article-search-result .search-section h2 {
     margin-bottom: 10px;
     font-size: 1.2em;
+}
+
+.venbhas-article-search-result .article-list--horizontal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+}
+
+.venbhas-article-search-result .article-list--horizontal .article-item {
+    margin-bottom: 0;
 }
 
 .article-related-products {

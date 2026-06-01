@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\ResourceModel;
+namespace Venbhas\Blog\Model\ResourceModel;
 
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
@@ -24,7 +24,7 @@ class Article extends AbstractDb
      * Ensure the model gets the new article_id after insert (fixes FK on related_products).
      *
      * @param \Magento\Framework\Model\AbstractModel $object
-     * @return \Venbhas\Article\Model\ResourceModel\Article
+     * @return \Venbhas\Blog\Model\ResourceModel\Article
      */
     protected function _afterSave(\Magento\Framework\Model\AbstractModel $object)
     {
@@ -33,5 +33,23 @@ class Article extends AbstractDb
             $object->setId($this->getConnection()->lastInsertId($this->getMainTable()));
         }
         return $this;
+    }
+
+    /**
+     * Get article id by url key.
+     *
+     * @param string $urlKey
+     * @return int|null
+     */
+    public function getIdByUrlKey(string $urlKey): ?int
+    {
+        $connection = $this->getConnection();
+        $select = $connection->select()
+            ->from($this->getMainTable(), 'article_id')
+            ->where('url_key = ?', $urlKey)
+            ->limit(1);
+        $id = $connection->fetchOne($select);
+
+        return $id !== false ? (int) $id : null;
     }
 }

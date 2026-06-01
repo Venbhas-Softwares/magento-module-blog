@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model;
+namespace Venbhas\Blog\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
@@ -11,15 +11,15 @@ use Magento\Store\Model\ScopeInterface;
  */
 class Config
 {
-    private const XML_PATH_ENABLED = 'venbhas_article/general/enabled';
-    private const XML_PATH_COMMENTS_ENABLED = 'venbhas_article/general/comments_enabled';
-    private const XML_PATH_ARTICLE_LIST_ROUTE = 'venbhas_article/general/article_list_route';
-    private const XML_PATH_CATEGORY_LIST_ROUTE = 'venbhas_article/general/category_list_route';
-    private const XML_PATH_ARTICLES_PER_PAGE = 'venbhas_article/general/articles_per_page';
-    private const XML_PATH_DEFAULT_SORT_ORDER = 'venbhas_article/general/default_sort_order';
-    private const XML_PATH_RELATED_PRODUCTS_LIMIT = 'venbhas_article/general/related_products_limit';
-    private const XML_PATH_META_ROBOTS_CATEGORY = 'venbhas_article/meta_robots/category';
-    private const XML_PATH_META_ROBOTS_POST = 'venbhas_article/meta_robots/post';
+    private const XML_PATH_ENABLED = 'venbhas_blog/general/enabled';
+    private const XML_PATH_COMMENTS_ENABLED = 'venbhas_blog/general/comments_enabled';
+    private const XML_PATH_ARTICLE_LIST_ROUTE = 'venbhas_blog/general/article_list_route';
+    private const XML_PATH_CATEGORY_LIST_ROUTE = 'venbhas_blog/general/category_list_route';
+    private const XML_PATH_ARTICLES_PER_PAGE = 'venbhas_blog/general/articles_per_page';
+    private const XML_PATH_DEFAULT_SORT_ORDER = 'venbhas_blog/general/default_sort_order';
+    private const XML_PATH_RELATED_PRODUCTS_LIMIT = 'venbhas_blog/general/related_products_limit';
+    private const XML_PATH_META_ROBOTS_CATEGORY = 'venbhas_blog/meta_robots/category';
+    private const XML_PATH_META_ROBOTS_POST = 'venbhas_blog/meta_robots/post';
 
     /** @var ScopeConfigInterface */
     private $scopeConfig;
@@ -114,6 +114,28 @@ class Config
     }
 
     /**
+     * Page size options for the article list limiter (value => label value).
+     *
+     * @param int|null $storeId
+     * @return array<int, int>
+     */
+    public function getAvailablePageLimits(?int $storeId = null): array
+    {
+        $default = $this->getArticlesPerPage($storeId);
+        $values = array_unique(array_filter([$default, 10, 20, 50], static function ($value) {
+            return (int) $value > 0;
+        }));
+        sort($values, SORT_NUMERIC);
+
+        $limits = [];
+        foreach ($values as $value) {
+            $limits[(int) $value] = (int) $value;
+        }
+
+        return $limits;
+    }
+
+    /**
      * Default sort order for article/category lists. One of: new_to_old, old_to_new, a_to_z, z_to_a
      *
      * @param int|null $storeId
@@ -177,6 +199,27 @@ class Config
                 return ['field' => 'title', 'direction' => 'ASC'];
             case 'z_to_a':
                 return ['field' => 'title', 'direction' => 'DESC'];
+            case 'new_to_old':
+            default:
+                return ['field' => 'updated_at', 'direction' => 'DESC'];
+        }
+    }
+
+    /**
+     * Return [field, direction] for category collection setOrder.
+     *
+     * @param string $order Sort key (new_to_old, old_to_new, a_to_z, z_to_a)
+     * @return array{field: string, direction: string}
+     */
+    public function getCategorySortOrderFieldAndDirection(string $order): array
+    {
+        switch ($order) {
+            case 'old_to_new':
+                return ['field' => 'updated_at', 'direction' => 'ASC'];
+            case 'a_to_z':
+                return ['field' => 'name', 'direction' => 'ASC'];
+            case 'z_to_a':
+                return ['field' => 'name', 'direction' => 'DESC'];
             case 'new_to_old':
             default:
                 return ['field' => 'updated_at', 'direction' => 'DESC'];

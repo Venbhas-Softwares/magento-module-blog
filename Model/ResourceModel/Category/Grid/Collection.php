@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\ResourceModel\Category\Grid;
+namespace Venbhas\Blog\Model\ResourceModel\Category\Grid;
 
 use Magento\Framework\Api\Search\SearchResultInterface;
 use Magento\Framework\Api\Search\AggregationInterface;
-use Venbhas\Article\Model\ResourceModel\Category\Collection as CategoryCollection;
+use Venbhas\Blog\Model\ResourceModel\Category\Collection as CategoryCollection;
 use Magento\Framework\Data\Collection\Db\FetchStrategyInterface;
 use Magento\Framework\Data\Collection\EntityFactoryInterface;
 use Magento\Framework\DB\Adapter\AdapterInterface;

@@ -249,7 +249,7 @@ Rules:
 * validates email format
 * saves a `Comment` row with status **pending**
 
-  * `\\Venbhas\\Article\\Model\\Comment::STATUS\_PENDING`
+  * `\\Venbhas\\Blog\\Model\\Comment::STATUS\_PENDING`
 * redirects back to the article URL using:
 
   * store config `article\_list\_route` + `article.url\_key`

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Category;
+namespace Venbhas\Blog\Controller\Adminhtml\Category;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -15,7 +15,7 @@ use Psr\Log\LoggerInterface;
 
 class Upload extends Action implements HttpPostActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::category_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::category_save';
 
     /** @var UploaderFactory */
     private $uploaderFactory;
@@ -64,7 +64,7 @@ class Upload extends Action implements HttpPostActionInterface
             $path = $mediaDir->getAbsolutePath('venbhas/category');
             $uploadResult = $uploader->save($path);
             if (!empty($uploadResult['file'])) {
-                $relativePath = 'venbhas/category' . '/' . $uploadResult['file'];
+                $relativePath = 'venbhas/category' . '/' . ltrim((string) $uploadResult['file'], '/');
                 $baseMediaUrl = $this->_url->getBaseUrl(
                     ['_type' => \Magento\Framework\UrlInterface::URL_TYPE_MEDIA]
                 );

@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Model\Article\Source;
+namespace Venbhas\Blog\Model\Article\Source;
 
 use Magento\Framework\Data\OptionSourceInterface;
-use Venbhas\Article\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
+use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 
 class Categories implements OptionSourceInterface
 {

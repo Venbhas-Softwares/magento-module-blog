@@ -1,20 +1,21 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Category;
+namespace Venbhas\Blog\Controller\Adminhtml\Category;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Venbhas\Article\Model\CategoryFactory;
-use Venbhas\Article\Model\ResourceModel\Category as CategoryResource;
-use Venbhas\Article\Model\ResourceModel\Category\RelatedProducts;
+use Venbhas\Blog\Model\CategoryFactory;
+use Venbhas\Blog\Model\ResourceModel\Category as CategoryResource;
+use Venbhas\Blog\Model\ResourceModel\Category\RelatedProducts;
+use Venbhas\Blog\Ui\DataProvider\Form\Modifier\RelatedProducts as RelatedProductsModifier;
 
 class Save extends Action implements HttpPostActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::category_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::category_save';
 
     /** @var CategoryFactory */
     private $categoryFactory;
@@ -74,6 +75,10 @@ class Save extends Action implements HttpPostActionInterface
             $data = array_merge($data, $data['data']);
             unset($data['data']);
         }
+
+        if (!empty($data['use_config_meta_robots'])) {
+            $data['meta_robots'] = null;
+        }
         $id = (int) ($data['category_id'] ?? 0);
         $model = $this->categoryFactory->create();
         if ($id) {
@@ -84,7 +89,20 @@ class Save extends Action implements HttpPostActionInterface
             }
         }
         if (empty($data['url_key']) && !empty($data['name'])) {
-            $data['url_key'] = strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', (string) $data['name']), '-'));
+            $data['url_key'] = $this->generateUniqueUrlKey((string) $data['name'], $id);
+        }
+        $urlKey = trim((string) ($data['url_key'] ?? ''));
+        if ($urlKey !== '') {
+            $existingId = $this->categoryResource->getIdByUrlKey($urlKey);
+            if ($existingId !== null && $existingId !== $id) {
+                $this->messageManager->addErrorMessage(
+                    __('URL key "%1" is already in use. Please choose a different URL key.', $urlKey)
+                );
+                $this->dataPersistor->set('venbhas_blog_category', $data);
+                $path = $id ? '*/*/edit' : '*/*/new';
+                $params = $id ? ['category_id' => $id] : [];
+                return $resultRedirect->setPath($path, $params);
+            }
         }
         $categoryData = $this->filterAllowedFields($data);
         if (empty($id) && isset($categoryData['category_id'])) {
@@ -108,7 +126,7 @@ class Save extends Action implements HttpPostActionInterface
             return $resultRedirect->setPath('*/*/');
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
-            $this->dataPersistor->set('venbhas_article_category', $data);
+            $this->dataPersistor->set('venbhas_blog_category', $data);
             $path = $id ? '*/*/edit' : '*/*/new';
             $params = $id ? ['category_id' => $id] : [];
             return $resultRedirect->setPath($path, $params);
@@ -177,6 +195,17 @@ class Save extends Action implements HttpPostActionInterface
      */
     private function resolveRelatedProductIds(array $data): array
     {
+        if (!empty($data['links'][RelatedProductsModifier::DATA_SCOPE_RELATED])
+            && is_array($data['links'][RelatedProductsModifier::DATA_SCOPE_RELATED])
+        ) {
+            $ids = [];
+            foreach ($data['links'][RelatedProductsModifier::DATA_SCOPE_RELATED] as $item) {
+                if (is_array($item) && !empty($item['id'])) {
+                    $ids[] = (int) $item['id'];
+                }
+            }
+            return array_values(array_filter($ids));
+        }
         if (!empty($data['related_products']) && is_array($data['related_products'])) {
             return array_values(array_filter(array_map('intval', $data['related_products'])));
         }
@@ -185,5 +214,42 @@ class Save extends Action implements HttpPostActionInterface
             return $this->relatedProducts->getProductIdsBySkus($skus);
         }
         return [];
+    }
+
+    /**
+     * Generate URL key from name.
+     *
+     * @param string $name
+     * @return string
+     */
+    private function generateUrlKey(string $name): string
+    {
+        return strtolower(trim(preg_replace('/[^a-zA-Z0-9]+/', '-', $name), '-'));
+    }
+
+    /**
+     * Generate a unique URL key from name.
+     *
+     * @param string $name
+     * @param int $excludeId
+     * @return string
+     */
+    private function generateUniqueUrlKey(string $name, int $excludeId = 0): string
+    {
+        $baseUrlKey = $this->generateUrlKey($name);
+        if ($baseUrlKey === '') {
+            return $baseUrlKey;
+        }
+
+        $urlKey = $baseUrlKey;
+        $suffix = 1;
+        while (true) {
+            $existingId = $this->categoryResource->getIdByUrlKey($urlKey);
+            if ($existingId === null || $existingId === $excludeId) {
+                return $urlKey;
+            }
+            $urlKey = $baseUrlKey . '-' . $suffix;
+            $suffix++;
+        }
     }
 }

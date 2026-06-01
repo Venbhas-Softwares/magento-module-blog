@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Block\Frontend\Article;
+namespace Venbhas\Blog\Block\Frontend\Article;
 
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
-use Venbhas\Article\Model\Article;
-use Venbhas\Article\Model\ResourceModel\Article\RelatedProducts;
+use Venbhas\Blog\Model\Article;
+use Venbhas\Blog\Model\ResourceModel\Article\RelatedProducts;
 use Magento\Store\Model\StoreManagerInterface;
 use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Model\ProductRepository;
@@ -114,5 +114,23 @@ class View extends Template
         return $this->storeManager->getStore()->getBaseUrl(
             \Magento\Framework\UrlInterface::URL_TYPE_MEDIA
         ) . ltrim($image, '/');
+    }
+
+    /**
+     * Prepare layout: set page and meta title from article meta title or title.
+     *
+     * @return $this
+     */
+    protected function _prepareLayout()
+    {
+        $article = $this->getArticle();
+        if ($article && $article->getId()) {
+            $metaTitle = trim((string) $article->getMetaTitle());
+            $title = $metaTitle !== '' ? $metaTitle : (string) $article->getTitle();
+            $this->pageConfig->getTitle()->set($title);
+            $this->pageConfig->setMetaTitle($title);
+        }
+
+        return parent::_prepareLayout();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * @var $block \Venbhas\Article\Block\Frontend\RelatedProducts
+ * @var $block \Venbhas\Blog\Block\Frontend\RelatedProducts
  * @var \Magento\Framework\Escaper $escaper
  */
 $products = $block->getRelatedProducts();
@@ -49,7 +49,7 @@ $visibleCount = $visibleCount > 0 ? $visibleCount : 4;
     </div>
 </div>
 <script>
-require(['jquery', 'domReady!', 'Venbhas_Article/js/article-related-slider'], function ($, _, slider) {
+require(['jquery', 'domReady!', 'Venbhas_Blog/js/article-related-slider'], function ($, _, slider) {
     var el = document.querySelector('.article-related-products-slider');
     var attr = el && el.getAttribute('data-visible-count');
     var visibleCount = attr ? parseInt(attr, 10) : 4;

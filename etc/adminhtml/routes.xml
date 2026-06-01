@@ -2,8 +2,8 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
     <router id="admin">
-        <route id="venbhas_article" frontName="venbhas_article">
-            <module name="Venbhas_Article" before="Magento_Backend"/>
+        <route id="blog" frontName="blog">
+            <module name="Venbhas_Blog" before="Magento_Backend"/>
         </route>
     </router>
 </config>

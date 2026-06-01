@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Article;
+namespace Venbhas\Blog\Controller\Adminhtml\Article;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
@@ -10,7 +10,7 @@ use Magento\Framework\View\Result\PageFactory;
 
 class Index extends Action implements HttpGetActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::article';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::article';
 
     /** @var PageFactory */
     private $resultPageFactory;
@@ -35,7 +35,7 @@ class Index extends Action implements HttpGetActionInterface
     public function execute()
     {
         $resultPage = $this->resultPageFactory->create();
-        $resultPage->setActiveMenu('Venbhas_Article::article_manage');
+        $resultPage->setActiveMenu('Venbhas_Blog::article_manage');
         $resultPage->getConfig()->getTitle()->prepend(__('Articles'));
         return $resultPage;
     }

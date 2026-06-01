@@ -1,13 +1,13 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Block\Frontend\Article;
+namespace Venbhas\Blog\Block\Frontend\Article;
 
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
-use Venbhas\Article\Model\Article;
-use Venbhas\Article\Model\Config;
+use Venbhas\Blog\Model\Article;
+use Venbhas\Blog\Model\Config;
 
 class CommentForm extends Template
 {

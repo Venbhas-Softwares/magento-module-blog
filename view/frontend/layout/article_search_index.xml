@@ -3,21 +3,21 @@
       layout="3columns"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <css src="Venbhas_Article::css/article.css"/>
+        <css src="Venbhas_Blog::css/article.css"/>
     </head>
     <body>
         <referenceContainer name="sidebar.main">
-            <block class="Venbhas\Article\Block\Frontend\Category\ListCategory"
+            <block class="Venbhas\Blog\Block\Frontend\Category\ListCategory"
                    name="venbhas.article.category.leftnav"
-                   template="Venbhas_Article::category/leftnav.phtml"/>
+                   template="Venbhas_Blog::category/leftnav.phtml"/>
         </referenceContainer>
         <referenceContainer name="content">
-            <block class="Venbhas\Article\Block\Frontend\SearchResult" name="article.search.result" template="Venbhas_Article::search/result.phtml"/>
+            <block class="Venbhas\Blog\Block\Frontend\SearchResult" name="article.search.result" template="Venbhas_Blog::search/result.phtml"/>
         </referenceContainer>
         <referenceBlock name="catalog.compare.sidebar" remove="true"/>
         <referenceBlock name="wishlist_sidebar" remove="true"/>
         <referenceContainer name="sidebar.additional">
-            <block class="Venbhas\Article\Block\Frontend\Search" name="article.search.sidebar" template="Venbhas_Article::search/form.phtml"/>
+            <block class="Venbhas\Blog\Block\Frontend\Search" name="article.search.sidebar" template="Venbhas_Blog::search/form.phtml"/>
         </referenceContainer>
     </body>
 </page>

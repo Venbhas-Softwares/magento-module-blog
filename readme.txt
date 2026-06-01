@@ -1,4 +1,4 @@
-Venbhas Article Module
+Venbhas Blog Module
 ======================
 
 DESCRIPTION
@@ -15,9 +15,9 @@ REQUIREMENTS
 
 INSTALLATION
 ------------
-1. Copy the module to app/code/Venbhas/Article (or install via Composer).
+1. Copy the module to app/code/Venbhas/Blog (or install via Composer).
 2. Enable the module:
-   php bin/magento module:enable Venbhas_Article
+   php bin/magento module:enable Venbhas_Blog
 3. Run setup upgrade:
    php bin/magento setup:upgrade
 4. Compile and deploy (if needed):
@@ -26,9 +26,9 @@ INSTALLATION
 
 ADMIN FEATURES
 --------------
-- Articles: Content Management > Venbhas Article > Articles
-- Categories: Content Management > Venbhas Article > Categories
-- Comments: Content Management > Venbhas Article > Comments
+- Articles: Content Management > Blog > Articles
+- Categories: Content Management > Blog > Categories
+- Comments: Content Management > Blog > Comments
 
 FRONTEND
 --------

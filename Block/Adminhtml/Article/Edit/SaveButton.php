@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Block\Adminhtml\Article\Edit;
+namespace Venbhas\Blog\Block\Adminhtml\Article\Edit;
 
 use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
 
@@ -25,7 +25,7 @@ class SaveButton extends GenericButton implements ButtonProviderInterface
                     'buttonAdapter' => [
                         'actions' => [
                             [
-                                'targetName' => 'venbhas_article_form.venbhas_article_form',
+                                'targetName' => 'venbhas_blog_form.venbhas_blog_form',
                                 'actionName' => 'save',
                                 'params' => [false],
                             ],

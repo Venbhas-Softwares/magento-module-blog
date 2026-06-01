@@ -1,19 +1,19 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Adminhtml\Comment;
+namespace Venbhas\Blog\Controller\Adminhtml\Comment;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Controller\ResultInterface;
-use Venbhas\Article\Model\CommentFactory;
-use Venbhas\Article\Model\ResourceModel\Comment as CommentResource;
+use Venbhas\Blog\Model\CommentFactory;
+use Venbhas\Blog\Model\ResourceModel\Comment as CommentResource;
 
 class Save extends Action implements HttpPostActionInterface
 {
-    public const ADMIN_RESOURCE = 'Venbhas_Article::comment_save';
+    public const ADMIN_RESOURCE = 'Venbhas_Blog::comment_save';
 
     /** @var CommentFactory */
     private $commentFactory;
@@ -92,7 +92,7 @@ class Save extends Action implements HttpPostActionInterface
             return $resultRedirect->setPath('*/*/');
         } catch (\Exception $e) {
             $this->messageManager->addErrorMessage($e->getMessage());
-            $this->dataPersistor->set('venbhas_article_comment', $data);
+            $this->dataPersistor->set('venbhas_blog_comment', $data);
             return $resultRedirect->setPath('*/*/edit', $id ? ['comment_id' => $id] : []);
         }
     }

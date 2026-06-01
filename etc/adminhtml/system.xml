@@ -5,11 +5,11 @@
         <tab id="venbhas" translate="label" sortOrder="400">
             <label>Venbhas</label>
         </tab>
-        <section id="venbhas_article" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+        <section id="venbhas_blog" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
             <class>separator-top</class>
-            <label>Article</label>
+            <label>Blog</label>
             <tab>venbhas</tab>
-            <resource>Venbhas_Article::config</resource>
+            <resource>Venbhas_Blog::config</resource>
             <group id="general" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>General</label>
                 <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -40,7 +40,7 @@
                 <field id="default_sort_order" translate="label comment" type="select" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default Sort Order</label>
                     <comment>Default sort for article listing and category view pages. Customers can change sort via the sort dropdown on the page.</comment>
-                    <source_model>Venbhas\Article\Model\Config\Source\SortOrder</source_model>
+                    <source_model>Venbhas\Blog\Model\Config\Source\SortOrder</source_model>
                 </field>
                 <field id="related_products_limit" translate="label comment" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Related Products Visible (slider)</label>
@@ -52,14 +52,14 @@
                 <label>Robots (Meta Robots)</label>
                 <comment>Default meta robots key for category and post pages. Can be overridden per category or per article.</comment>
                 <field id="category" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Category Robots</label>
+                    <label>Default Category Robots</label>
                     <comment>Robots key for category listing pages (e.g. INDEX, FOLLOW).</comment>
-                    <source_model>Venbhas\Article\Model\Config\Source\MetaRobots</source_model>
+                    <source_model>Venbhas\Blog\Model\Config\Source\MetaRobots</source_model>
                 </field>
                 <field id="post" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Article Robots</label>
+                    <label>Default Article Robots</label>
                     <comment>Robots key for article detail pages.</comment>
-                    <source_model>Venbhas\Article\Model\Config\Source\MetaRobots</source_model>
+                    <source_model>Venbhas\Blog\Model\Config\Source\MetaRobots</source_model>
                 </field>
             </group>
         </section>

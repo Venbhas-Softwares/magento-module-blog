@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Controller\Category;
+namespace Venbhas\Blog\Controller\Category;
 
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\Action;
@@ -10,8 +10,8 @@ use Magento\Framework\Controller\Result\ForwardFactory;
 use Magento\Framework\Controller\ResultInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
-use Venbhas\Article\Model\CategoryFactory;
-use Venbhas\Article\Model\ResourceModel\Category as CategoryResource;
+use Venbhas\Blog\Model\CategoryFactory;
+use Venbhas\Blog\Model\ResourceModel\Category as CategoryResource;
 
 class View extends Action implements HttpGetActionInterface
 {

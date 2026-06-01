@@ -1,22 +1,25 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Article\Block\Frontend\Category;
+namespace Venbhas\Blog\Block\Frontend\Category;
 
 use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
-use Venbhas\Article\Model\Category;
-use Venbhas\Article\Model\Config;
-use Venbhas\Article\Model\ResourceModel\Article\CollectionFactory as ArticleCollectionFactory;
-use Venbhas\Article\Model\ResourceModel\Category\RelatedProducts;
+use Venbhas\Blog\Block\Frontend\Article\ToolbarAwareInterface;
+use Venbhas\Blog\Block\Frontend\Article\ToolbarAwareTrait;
+use Venbhas\Blog\Model\Category;
+use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Model\ResourceModel\Article\CollectionFactory as ArticleCollectionFactory;
+use Venbhas\Blog\Model\ResourceModel\Category\RelatedProducts;
 use Magento\Store\Model\StoreManagerInterface;
 
 /**
  * Block for category view page.
  */
-class View extends Template
+class View extends Template implements ToolbarAwareInterface
 {
+    use ToolbarAwareTrait;
     /** @var ArticleCollectionFactory */
     private $articleCollectionFactory;
 
@@ -96,19 +99,16 @@ class View extends Template
             return $this->getData('articles');
         }
         $page  = (int) $this->getRequest()->getParam('p', 1);
-        $storeId = (int) $this->storeManager->getStore()->getId();
-        $limit = (int) $this->getRequest()->getParam('limit', $this->config->getArticlesPerPage($storeId));
-        $order = $this->getCurrentSortOrder();
+        $limit = $this->getPageLimit();
 
         $collection = $this->articleCollectionFactory->create();
-        $collection->addFieldToFilter('is_active', 1);
+        $collection->addFieldToFilter('status', 1);
         $collection->join(
             ['rel' => 'venbhas_article_category_relation'],
             'main_table.article_id = rel.article_id AND rel.category_id = ' . (int) $category->getId(),
             []
         );
-        $sort = $this->config->getSortOrderFieldAndDirection($order);
-        $collection->setOrder($sort['field'], $sort['direction']);
+        $this->applyToolbarSort($collection);
         $collection->setCurPage($page);
         $collection->setPageSize($limit);
         $this->setData('articles', $collection);
@@ -116,36 +116,21 @@ class View extends Template
     }
 
     /**
-     * Prepare layout: add pager for articles.
+     * Prepare layout: set category meta title.
      *
      * @return $this
      */
     protected function _prepareLayout()
     {
         if ($this->getCategory()) {
-            $collection = $this->getArticles();
-            if ($collection instanceof \Magento\Framework\Data\Collection\AbstractDb) {
-                $pager = $this->getLayout()->createBlock(
-                    \Magento\Theme\Block\Html\Pager::class,
-                    'article_category.pager'
-                );
-                $pager->setLimit($collection->getPageSize());
-                $pager->setCollection($collection);
-                $pager->setShowPerPage(false);
-                $this->setChild('pager', $pager);
-            }
+            $category = $this->getCategory();
+            $metaTitle = trim((string) $category->getMetaTitle());
+            $title = $metaTitle !== '' ? $metaTitle : (string) $category->getName();
+            $this->pageConfig->getTitle()->set($title);
+            $this->pageConfig->setMetaTitle($title);
+
         }
         return parent::_prepareLayout();
-    }
-
-    /**
-     * Get pager HTML.
-     *
-     * @return string
-     */
-    public function getPagerHtml(): string
-    {
-        return (string) $this->getChildHtml('pager');
     }
 
     /**
@@ -175,19 +160,11 @@ class View extends Template
     }
 
     /**
-     * Get URL for category page with given sort order.
-     *
-     * @param string $order
-     * @return string
+     * @return \Magento\Framework\Data\Collection\AbstractDb|array
      */
-    public function getSortUrl(string $order): string
+    protected function getToolbarCollection()
     {
-        $params = ['order' => $order];
-        $p = $this->getRequest()->getParam('p');
-        if ($p !== null && (int) $p > 1) {
-            $params['p'] = (int) $p;
-        }
-        return $this->getUrl('*/*/*', ['_current' => true, '_use_rewrite' => true, '_query' => $params]);
+        return $this->getArticles();
     }
 
     /**

@@ -3,22 +3,32 @@
       layout="3columns"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <head>
-        <css src="Venbhas_Article::css/article.css"/>
+        <css src="Venbhas_Blog::css/article.css"/>
     </head>
     <body>
         <referenceContainer name="sidebar.main">
-            <block class="Venbhas\Article\Block\Frontend\Category\ListCategory"
+            <block class="Venbhas\Blog\Block\Frontend\Category\ListCategory"
                    name="venbhas.article.category.leftnav"
-                   template="Venbhas_Article::category/leftnav.phtml"/>
+                   template="Venbhas_Blog::category/leftnav.phtml"/>
         </referenceContainer>
         <referenceContainer name="content">
-            <block class="Venbhas\Article\Block\Frontend\Category\View" name="article.category.view" template="Venbhas_Article::category/view.phtml"/>
-            <block class="Venbhas\Article\Block\Frontend\RelatedProducts" name="article.category.related.products" template="Venbhas_Article::article/related_products.phtml"/>
+            <block class="Venbhas\Blog\Block\Frontend\Category\View" name="article.category.view" template="Venbhas_Blog::category/view.phtml" cacheable="false">
+                <arguments>
+                    <argument name="toolbar_block_name" xsi:type="string">article_category_list_toolbar</argument>
+                </arguments>
+                <block class="Venbhas\Blog\Block\Frontend\Article\Toolbar" name="article_category_list_toolbar" template="Venbhas_Blog::article/list/toolbar.phtml" cacheable="false">
+                    <arguments>
+                        <argument name="pager_block_name" xsi:type="string">article_category_list_toolbar_pager</argument>
+                    </arguments>
+                    <block class="Venbhas\Blog\Block\Frontend\Article\Pager" name="article_category_list_toolbar_pager"/>
+                </block>
+            </block>
+            <block class="Venbhas\Blog\Block\Frontend\RelatedProducts" name="article.category.related.products" template="Venbhas_Blog::article/related_products.phtml"/>
         </referenceContainer>
         <referenceBlock name="catalog.compare.sidebar" remove="true"/>
         <referenceBlock name="wishlist_sidebar" remove="true"/>
         <referenceContainer name="sidebar.additional">
-            <block class="Venbhas\Article\Block\Frontend\Search" name="article.search.sidebar" template="Venbhas_Article::search/form.phtml"/>
+            <block class="Venbhas\Blog\Block\Frontend\Search" name="article.search.sidebar" template="Venbhas_Blog::search/form.phtml"/>
         </referenceContainer>
     </body>
 </page>
