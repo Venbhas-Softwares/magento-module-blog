@@ -17,9 +17,10 @@ class Status implements OptionSourceInterface
      */
     public function toOptionArray(): array
     {
+        // String values required: JS treats integer 0 as falsy and breaks the admin select binding.
         return [
-            ['value' => self::STATUS_DRAFT, 'label' => __('Draft')],
-            ['value' => self::STATUS_PUBLISHED, 'label' => __('Published')],
+            ['value' => (string) self::STATUS_DRAFT, 'label' => __('Draft')],
+            ['value' => (string) self::STATUS_PUBLISHED, 'label' => __('Published')],
         ];
     }
 }

@@ -10,7 +10,9 @@ use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Controller\ResultInterface;
 use Venbhas\Blog\Model\CategoryFactory;
 use Venbhas\Blog\Model\ResourceModel\Category as CategoryResource;
+use Venbhas\Blog\Model\ResourceModel\Article\CategoryRelation;
 use Venbhas\Blog\Model\ResourceModel\Category\RelatedProducts;
+use Venbhas\Blog\Ui\DataProvider\Form\Modifier\RelatedArticles as RelatedArticlesModifier;
 use Venbhas\Blog\Ui\DataProvider\Form\Modifier\RelatedProducts as RelatedProductsModifier;
 
 class Save extends Action implements HttpPostActionInterface
@@ -26,12 +28,15 @@ class Save extends Action implements HttpPostActionInterface
     /** @var RelatedProducts */
     private $relatedProducts;
 
+    /** @var CategoryRelation */
+    private $categoryRelation;
+
     /** @var DataPersistorInterface */
     private $dataPersistor;
 
-    /** @var string[] Allowed category table columns for setData (related_articles set from form array) */
+    /** @var string[] Allowed category table columns for setData */
     private const ALLOWED_FIELDS = [
-        'category_id', 'name', 'url_key', 'status', 'description', 'short_description',
+        'category_id', 'parent_id', 'name', 'url_key', 'status', 'description', 'short_description',
         'featured_image', 'meta_title', 'meta_keywords', 'meta_description', 'meta_robots',
     ];
 
@@ -42,6 +47,7 @@ class Save extends Action implements HttpPostActionInterface
      * @param CategoryFactory $categoryFactory
      * @param CategoryResource $categoryResource
      * @param RelatedProducts $relatedProducts
+     * @param CategoryRelation $categoryRelation
      * @param DataPersistorInterface $dataPersistor
      */
     public function __construct(
@@ -49,12 +55,14 @@ class Save extends Action implements HttpPostActionInterface
         CategoryFactory $categoryFactory,
         CategoryResource $categoryResource,
         RelatedProducts $relatedProducts,
+        CategoryRelation $categoryRelation,
         DataPersistorInterface $dataPersistor
     ) {
         parent::__construct($context);
         $this->categoryFactory = $categoryFactory;
         $this->categoryResource = $categoryResource;
         $this->relatedProducts = $relatedProducts;
+        $this->categoryRelation = $categoryRelation;
         $this->dataPersistor = $dataPersistor;
     }
 
@@ -108,14 +116,17 @@ class Save extends Action implements HttpPostActionInterface
         if (empty($id) && isset($categoryData['category_id'])) {
             unset($categoryData['category_id']);
         }
-        // related_articles: form sends array; DB column is text (comma-separated ids)
-        $articleIds = $this->resolveRelatedArticleIds($data);
-        $categoryData['related_articles'] = $articleIds !== [] ? implode(',', $articleIds) : null;
+        if (!isset($categoryData['parent_id']) && $this->getRequest()->has('parent')) {
+            $categoryData['parent_id'] = (int) $this->getRequest()->getParam('parent');
+        }
+        $categoryData['parent_id'] = max(0, (int) ($categoryData['parent_id'] ?? 0));
+        $articleIds = $this->resolveCategoryArticleIds($data);
         $model->setData($categoryData);
         try {
             $this->categoryResource->save($model);
             $categoryId = (int) $model->getId();
             if ($categoryId > 0) {
+                $this->categoryRelation->saveCategoryArticles($categoryId, $articleIds);
                 $productIds = $this->resolveRelatedProductIds($data);
                 $this->relatedProducts->saveRelatedProducts($categoryId, $productIds);
             }
@@ -174,13 +185,24 @@ class Save extends Action implements HttpPostActionInterface
     }
 
     /**
-     * Resolve related article ids from form data.
+     * Resolve article ids assigned to category from grid form data.
      *
      * @param array $data
-     * @return array
+     * @return int[]
      */
-    private function resolveRelatedArticleIds(array $data): array
+    private function resolveCategoryArticleIds(array $data): array
     {
+        if (!empty($data['links'][RelatedArticlesModifier::DATA_SCOPE_CATEGORY_ARTICLE])
+            && is_array($data['links'][RelatedArticlesModifier::DATA_SCOPE_CATEGORY_ARTICLE])
+        ) {
+            $ids = [];
+            foreach ($data['links'][RelatedArticlesModifier::DATA_SCOPE_CATEGORY_ARTICLE] as $item) {
+                if (is_array($item) && !empty($item['id'])) {
+                    $ids[] = (int) $item['id'];
+                }
+            }
+            return array_values(array_filter($ids));
+        }
         if (!empty($data['related_articles']) && is_array($data['related_articles'])) {
             return array_values(array_filter(array_map('intval', $data['related_articles'])));
         }

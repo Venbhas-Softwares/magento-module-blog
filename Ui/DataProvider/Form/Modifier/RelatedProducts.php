@@ -104,9 +104,9 @@ class RelatedProducts implements ModifierInterface
         $this->relatedProductsResource = $relatedProductsResource;
         $this->scopeName = $scopeName;
         $this->entityIdField = $entityIdField;
-        $this->sectionContent = __(
-            $sectionContent ?: 'Related products are shown to customers in addition to the item the customer is looking at.'
-        );
+        $defaultSectionContent = 'Related products are shown to customers '
+            . 'in addition to the item the customer is looking at.';
+        $this->sectionContent = __($sectionContent ?: $defaultSectionContent);
     }
 
     /**
@@ -217,6 +217,8 @@ class RelatedProducts implements ModifierInterface
     }
 
     /**
+     * Lazy-load catalog price modifier for product grid cells.
+     *
      * @return Price
      */
     private function getPriceModifier(): Price
@@ -229,6 +231,8 @@ class RelatedProducts implements ModifierInterface
     }
 
     /**
+     * Build UI config for the related-products picker button.
+     *
      * @param Phrase $content
      * @param Phrase $buttonTitle
      * @return array
@@ -280,6 +284,8 @@ class RelatedProducts implements ModifierInterface
     }
 
     /**
+     * Build modal UI config for product assignment.
+     *
      * @param Phrase $title
      * @return array
      */
@@ -357,6 +363,8 @@ class RelatedProducts implements ModifierInterface
     }
 
     /**
+     * Build dynamic-rows grid config for assigned products.
+     *
      * @return array
      */
     private function getGrid(): array
@@ -417,6 +425,8 @@ class RelatedProducts implements ModifierInterface
     }
 
     /**
+     * Define columns for the related-products dynamic grid.
+     *
      * @return array
      */
     private function fillMeta(): array
@@ -476,6 +486,8 @@ class RelatedProducts implements ModifierInterface
     }
 
     /**
+     * Build a text column definition for the related-products grid.
+     *
      * @param string $dataScope
      * @param bool $fit
      * @param Phrase $label

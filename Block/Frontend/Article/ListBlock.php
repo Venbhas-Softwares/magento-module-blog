@@ -8,6 +8,7 @@ use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Model\StoreManagerInterface;
 use Venbhas\Blog\Model\Config;
 use Venbhas\Blog\Model\ResourceModel\Article\CollectionFactory;
+use Venbhas\Blog\Block\Frontend\ModuleEnabledTrait;
 use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory as categoryCollectionFactory;
 
 /**
@@ -15,6 +16,7 @@ use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory as categoryColle
  */
 class ListBlock extends Template implements ToolbarAwareInterface
 {
+    use ModuleEnabledTrait;
     use ToolbarAwareTrait;
     /** @var CollectionFactory */
     private $collectionFactory;
@@ -142,6 +144,8 @@ class ListBlock extends Template implements ToolbarAwareInterface
     }
 
     /**
+     * Return the article collection for the list toolbar.
+     *
      * @return \Magento\Framework\Data\Collection\AbstractDb
      */
     protected function getToolbarCollection()

@@ -53,6 +53,13 @@ class Delete extends Action implements HttpPostActionInterface
             $this->messageManager->addErrorMessage(__('This category no longer exists.'));
             return $resultRedirect->setPath('*/*/');
         }
+        if ((int) $model->getData('children_count') > 0) {
+            $this->messageManager->addErrorMessage(
+                __('Cannot delete category with subcategories. Delete or move subcategories first.')
+            );
+            return $resultRedirect->setPath('*/*/edit', ['category_id' => $id]);
+        }
+
         try {
             $this->categoryResource->delete($model);
             $this->messageManager->addSuccessMessage(__('The category has been deleted.'));

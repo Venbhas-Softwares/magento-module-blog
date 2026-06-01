@@ -13,6 +13,9 @@ class Category extends AbstractModel
 {
     public const CACHE_TAG = 'venbhas_blog_category';
 
+    /** Virtual root node id for admin category tree */
+    public const TREE_ROOT_ID = 0;
+
     /** @var string */
     protected $_cacheTag = self::CACHE_TAG;
 
@@ -27,5 +30,20 @@ class Category extends AbstractModel
     protected function _construct()
     {
         $this->_init(CategoryResource::class);
+    }
+
+    /**
+     * Get path ids including this category.
+     *
+     * @return int[]
+     */
+    public function getPathIds(): array
+    {
+        $path = trim((string) $this->getData('path'));
+        if ($path === '') {
+            return $this->getId() ? [(int) $this->getId()] : [];
+        }
+
+        return array_values(array_filter(array_map('intval', explode('/', $path))));
     }
 }

@@ -6,6 +6,7 @@ namespace Venbhas\Blog\Block\Frontend\Article;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\View\Element\Template\Context;
 use Magento\Theme\Block\Html\Pager as ThemePager;
+use Venbhas\Blog\Block\Frontend\ModuleEnabledTrait;
 use Venbhas\Blog\Model\Config;
 
 /**
@@ -13,6 +14,7 @@ use Venbhas\Blog\Model\Config;
  */
 class Pager extends ThemePager
 {
+    use ModuleEnabledTrait;
     /** @var string */
     protected $_template = 'Venbhas_Blog::article/list/toolbar/pager.phtml';
 
@@ -20,6 +22,8 @@ class Pager extends ThemePager
     private $config;
 
     /**
+     * Initialize blog pager block.
+     *
      * @param Context $context
      * @param Config $config
      * @param array $data
@@ -34,6 +38,8 @@ class Pager extends ThemePager
     }
 
     /**
+     * Build pager URLs using blog frontend routes.
+     *
      * @param array $params
      * @return string
      */
@@ -63,6 +69,8 @@ class Pager extends ThemePager
     }
 
     /**
+     * Calculate total page count for the collection.
+     *
      * @return int
      */
     public function getLastPageNum()
@@ -81,6 +89,8 @@ class Pager extends ThemePager
     }
 
     /**
+     * Skip pager markup when a single page is shown.
+     *
      * @return string
      */
     protected function _toHtml()

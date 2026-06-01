@@ -13,11 +13,18 @@ use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Catalog\Helper\Image;
 use Magento\Framework\Exception\NoSuchEntityException;
+use Venbhas\Blog\Block\Frontend\ModuleEnabledTrait;
+use Venbhas\Blog\Model\Config;
 
 class View extends Template
 {
+    use ModuleEnabledTrait;
+
     /** @var Registry */
     private $registry;
+
+    /** @var Config */
+    private $config;
 
     /** @var RelatedProducts */
     private $relatedProducts;
@@ -42,6 +49,7 @@ class View extends Template
      * @param CollectionFactory $productCollectionFactory
      * @param ProductRepository $productRepository
      * @param Image $imageHelper
+     * @param Config $config
      * @param array $data
      */
     public function __construct(
@@ -52,9 +60,11 @@ class View extends Template
         CollectionFactory $productCollectionFactory,
         ProductRepository $productRepository,
         Image $imageHelper,
+        Config $config,
         array $data = []
     ) {
         $this->registry = $registry;
+        $this->config = $config;
         $this->relatedProducts = $relatedProducts;
         $this->storeManager = $storeManager;
         $this->productCollectionFactory = $productCollectionFactory;
@@ -114,23 +124,5 @@ class View extends Template
         return $this->storeManager->getStore()->getBaseUrl(
             \Magento\Framework\UrlInterface::URL_TYPE_MEDIA
         ) . ltrim($image, '/');
-    }
-
-    /**
-     * Prepare layout: set page and meta title from article meta title or title.
-     *
-     * @return $this
-     */
-    protected function _prepareLayout()
-    {
-        $article = $this->getArticle();
-        if ($article && $article->getId()) {
-            $metaTitle = trim((string) $article->getMetaTitle());
-            $title = $metaTitle !== '' ? $metaTitle : (string) $article->getTitle();
-            $this->pageConfig->getTitle()->set($title);
-            $this->pageConfig->setMetaTitle($title);
-        }
-
-        return parent::_prepareLayout();
     }
 }

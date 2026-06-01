@@ -4,11 +4,12 @@ declare(strict_types=1);
 namespace Venbhas\Blog\Model\ResourceModel\Article;
 
 use Magento\Framework\App\ResourceConnection;
+use Venbhas\Blog\Model\ResourceModel\RelatedArticlesResourceInterface;
 
 /**
  * Article-Category relation resource.
  */
-class CategoryRelation
+class CategoryRelation implements RelatedArticlesResourceInterface
 {
     private const TABLE = 'venbhas_article_category_relation';
 
@@ -31,17 +32,55 @@ class CategoryRelation
      */
     public function getCategoryIdByArticleId(int $articleId): ?int
     {
+        $categoryIds = $this->getCategoryIdsByArticleId($articleId);
+
+        return $categoryIds !== [] ? $categoryIds[0] : null;
+    }
+
+    /**
+     * Get assigned category ids for an article.
+     *
+     * @param int $articleId
+     * @return int[]
+     */
+    public function getCategoryIdsByArticleId(int $articleId): array
+    {
         $connection = $this->resource->getConnection();
         $select = $connection->select()
             ->from($this->resource->getTableName(self::TABLE), 'category_id')
             ->where('article_id = ?', $articleId)
-            ->limit(1);
-        $value = $connection->fetchOne($select);
-        return $value !== false ? (int) $value : null;
+            ->order('category_id ASC');
+        $values = $connection->fetchCol($select);
+
+        return array_values(array_map('intval', $values ?: []));
     }
 
     /**
-     * Save article-category relation.
+     * Save article-category relations.
+     *
+     * @param int $articleId
+     * @param int[] $categoryIds
+     * @return void
+     */
+    public function saveArticleCategories(int $articleId, array $categoryIds): void
+    {
+        $connection = $this->resource->getConnection();
+        $table = $this->resource->getTableName(self::TABLE);
+        $connection->delete($table, ['article_id = ?' => $articleId]);
+
+        $categoryIds = array_values(array_unique(array_filter(array_map('intval', $categoryIds))));
+        foreach ($categoryIds as $categoryId) {
+            if ($categoryId > 0) {
+                $connection->insert($table, [
+                    'article_id' => $articleId,
+                    'category_id' => $categoryId,
+                ]);
+            }
+        }
+    }
+
+    /**
+     * Save a single article-category relation (backward compatible).
      *
      * @param int $articleId
      * @param int|null $categoryId
@@ -49,15 +88,10 @@ class CategoryRelation
      */
     public function saveArticleCategory(int $articleId, ?int $categoryId): void
     {
-        $connection = $this->resource->getConnection();
-        $table = $this->resource->getTableName(self::TABLE);
-        $connection->delete($table, ['article_id = ?' => $articleId]);
-        if ($categoryId > 0) {
-            $connection->insert($table, [
-                'article_id' => $articleId,
-                'category_id' => $categoryId,
-            ]);
-        }
+        $this->saveArticleCategories(
+            $articleId,
+            $categoryId !== null && $categoryId > 0 ? [$categoryId] : []
+        );
     }
 
     /**
@@ -68,10 +102,19 @@ class CategoryRelation
      */
     public function getArticleIdsByCategoryId(int $categoryId): array
     {
+        return $this->getRelatedArticleIds($categoryId);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getRelatedArticleIds(int $entityId): array
+    {
         $connection = $this->resource->getConnection();
         $select = $connection->select()
             ->from($this->resource->getTableName(self::TABLE), 'article_id')
-            ->where('category_id = ?', $categoryId);
+            ->where('category_id = ?', $entityId)
+            ->order('article_id ASC');
         return array_map('intval', $connection->fetchCol($select) ?: []);
     }
 

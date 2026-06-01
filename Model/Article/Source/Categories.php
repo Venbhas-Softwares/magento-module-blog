@@ -12,8 +12,6 @@ class Categories implements OptionSourceInterface
     private $collectionFactory;
 
     /**
-     * Constructor.
-     *
      * @param CategoryCollectionFactory $collectionFactory
      */
     public function __construct(CategoryCollectionFactory $collectionFactory)
@@ -22,7 +20,7 @@ class Categories implements OptionSourceInterface
     }
 
     /**
-     * Return category options for select.
+     * Return hierarchical category options for select.
      *
      * @return array
      */
@@ -30,13 +28,44 @@ class Categories implements OptionSourceInterface
     {
         $options = [['value' => '', 'label' => __('-- Please Select --')]];
         $collection = $this->collectionFactory->create();
-        $collection->setOrder('name', 'asc');
+        $collection->addFieldToSelect(['category_id', 'name', 'parent_id', 'level'])
+            ->setOrder('level', 'ASC')
+            ->setOrder('position', 'ASC')
+            ->setOrder('name', 'ASC');
+
+        $byParent = [];
         foreach ($collection as $category) {
+            $parentId = (int) $category->getParentId();
+            $byParent[$parentId][] = $category;
+        }
+
+        $this->appendOptions($options, $byParent, 0, 0);
+
+        return $options;
+    }
+
+    /**
+     * Append hierarchical category options for multiselect fields.
+     *
+     * @param array $options
+     * @param array $byParent
+     * @param int $parentId
+     * @param int $depth
+     * @return void
+     */
+    private function appendOptions(array &$options, array $byParent, int $parentId, int $depth): void
+    {
+        if (empty($byParent[$parentId])) {
+            return;
+        }
+
+        foreach ($byParent[$parentId] as $category) {
+            $prefix = $depth > 0 ? str_repeat('— ', $depth) : '';
             $options[] = [
                 'value' => (string) $category->getId(),
-                'label' => $category->getName(),
+                'label' => $prefix . $category->getName(),
             ];
+            $this->appendOptions($options, $byParent, (int) $category->getId(), $depth + 1);
         }
-        return $options;
     }
 }

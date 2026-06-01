@@ -8,6 +8,7 @@ use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Venbhas\Blog\Block\Frontend\Article\ToolbarAwareInterface;
 use Venbhas\Blog\Block\Frontend\Article\ToolbarAwareTrait;
+use Venbhas\Blog\Block\Frontend\ModuleEnabledTrait;
 use Venbhas\Blog\Model\Category;
 use Venbhas\Blog\Model\Config;
 use Venbhas\Blog\Model\ResourceModel\Article\CollectionFactory as ArticleCollectionFactory;
@@ -19,6 +20,7 @@ use Magento\Store\Model\StoreManagerInterface;
  */
 class View extends Template implements ToolbarAwareInterface
 {
+    use ModuleEnabledTrait;
     use ToolbarAwareTrait;
     /** @var ArticleCollectionFactory */
     private $articleCollectionFactory;
@@ -116,24 +118,6 @@ class View extends Template implements ToolbarAwareInterface
     }
 
     /**
-     * Prepare layout: set category meta title.
-     *
-     * @return $this
-     */
-    protected function _prepareLayout()
-    {
-        if ($this->getCategory()) {
-            $category = $this->getCategory();
-            $metaTitle = trim((string) $category->getMetaTitle());
-            $title = $metaTitle !== '' ? $metaTitle : (string) $category->getName();
-            $this->pageConfig->getTitle()->set($title);
-            $this->pageConfig->setMetaTitle($title);
-
-        }
-        return parent::_prepareLayout();
-    }
-
-    /**
      * Get current sort order from request or config default.
      *
      * @return string
@@ -160,6 +144,8 @@ class View extends Template implements ToolbarAwareInterface
     }
 
     /**
+     * Return the article collection for the category toolbar.
+     *
      * @return \Magento\Framework\Data\Collection\AbstractDb|array
      */
     protected function getToolbarCollection()

@@ -9,6 +9,8 @@ use Magento\Backend\Model\Auth\Session as AuthSession;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Controller\ResultInterface;
+use Venbhas\Blog\Model\Article\CategoryIdsResolver;
+use Venbhas\Blog\Model\Article\Source\Status as ArticleStatus;
 use Venbhas\Blog\Model\ArticleFactory;
 use Venbhas\Blog\Model\ResourceModel\Article as ArticleResource;
 use Venbhas\Blog\Model\ResourceModel\Article\CategoryRelation;
@@ -37,6 +39,9 @@ class Save extends Action implements HttpPostActionInterface
     /** @var AuthSession */
     private $authSession;
 
+    /** @var CategoryIdsResolver */
+    private $categoryIdsResolver;
+
     /** @var string[] Allowed article table columns for setData (author is set from logged-in admin) */
     private const ALLOWED_FIELDS = [
         'article_id', 'title', 'url_key', 'meta_title', 'meta_description', 'meta_keywords',
@@ -53,6 +58,7 @@ class Save extends Action implements HttpPostActionInterface
      * @param CategoryRelation $categoryRelation
      * @param DataPersistorInterface $dataPersistor
      * @param AuthSession $authSession
+     * @param CategoryIdsResolver $categoryIdsResolver
      */
     public function __construct(
         Context $context,
@@ -61,7 +67,8 @@ class Save extends Action implements HttpPostActionInterface
         RelatedProducts $relatedProducts,
         CategoryRelation $categoryRelation,
         DataPersistorInterface $dataPersistor,
-        AuthSession $authSession
+        AuthSession $authSession,
+        CategoryIdsResolver $categoryIdsResolver
     ) {
         parent::__construct($context);
         $this->articleFactory = $articleFactory;
@@ -70,6 +77,7 @@ class Save extends Action implements HttpPostActionInterface
         $this->categoryRelation = $categoryRelation;
         $this->dataPersistor = $dataPersistor;
         $this->authSession = $authSession;
+        $this->categoryIdsResolver = $categoryIdsResolver;
     }
 
     /**
@@ -85,6 +93,8 @@ class Save extends Action implements HttpPostActionInterface
             $this->messageManager->addErrorMessage(__('Invalid request data.'));
             return $resultRedirect->setPath('*/*/');
         }
+        $categoryIds = $this->categoryIdsResolver->resolve($data);
+
         // UI component form may submit with fields nested under 'data'
         if (!empty($data['data']) && is_array($data['data'])) {
             $data = array_merge($data, $data['data']);
@@ -123,6 +133,7 @@ class Save extends Action implements HttpPostActionInterface
         if (empty($id) && isset($articleData['article_id'])) {
             unset($articleData['article_id']);
         }
+        $articleData['status'] = $this->resolveStatus($articleData['status'] ?? null);
         $articleData['author'] = $this->getLoggedInAdminUserId();
         $model->setData($articleData);
         try {
@@ -130,8 +141,10 @@ class Save extends Action implements HttpPostActionInterface
             $articleId = (int) $model->getId();
             if ($articleId > 0) {
                 // Store category in venbhas_article_category_relation (not on article table)
-                $categoryId = $this->resolveCategoryId($data);
-                $this->categoryRelation->saveArticleCategory($articleId, $categoryId > 0 ? $categoryId : null);
+                if ($categoryIds === []) {
+                    $categoryIds = $this->categoryIdsResolver->resolve($data);
+                }
+                $this->categoryRelation->saveArticleCategories($articleId, $categoryIds);
                 $productIds = $this->resolveRelatedProductIds($data);
                 $this->relatedProducts->saveRelatedProducts($articleId, $productIds);
             }
@@ -226,18 +239,18 @@ class Save extends Action implements HttpPostActionInterface
     }
 
     /**
-     * Resolve category id from form data.
+     * Resolve article status for persistence.
      *
-     * @param array $data
+     * @param mixed $status
      * @return int
      */
-    private function resolveCategoryId(array $data): int
+    private function resolveStatus($status): int
     {
-        $raw = $data['category_id'] ?? null;
-        if (is_array($raw)) {
-            $raw = $raw[0] ?? reset($raw);
+        if ($status === null || $status === '') {
+            return ArticleStatus::STATUS_DRAFT;
         }
-        return (int) ($raw ?: 0);
+
+        return (int) $status;
     }
 
     /**

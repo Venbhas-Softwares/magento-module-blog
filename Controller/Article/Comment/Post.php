@@ -3,18 +3,19 @@ declare(strict_types=1);
 
 namespace Venbhas\Blog\Controller\Article\Comment;
 
-use Magento\Framework\App\Action\HttpPostActionInterface;
-use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
-use Magento\Framework\App\RequestInterface;
+use Magento\Framework\App\Action\HttpPostActionInterface;
+use Magento\Framework\Controller\Result\ForwardFactory;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
+use Venbhas\Blog\Controller\AbstractEnabledAction;
 use Venbhas\Blog\Model\CommentFactory;
 use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Model\Config\ModuleEnabledGuard;
 use Venbhas\Blog\Model\ResourceModel\Article as ArticleResource;
 
-class Post extends Action implements HttpPostActionInterface
+class Post extends AbstractEnabledAction implements HttpPostActionInterface
 {
     /** @var RedirectFactory */
     protected $resultRedirectFactory;
@@ -41,6 +42,8 @@ class Post extends Action implements HttpPostActionInterface
      * Constructor.
      *
      * @param Context $context
+     * @param ModuleEnabledGuard $moduleEnabledGuard
+     * @param ForwardFactory $resultForwardFactory
      * @param RedirectFactory $resultRedirectFactory
      * @param ManagerInterface $messageManager
      * @param CommentFactory $commentFactory
@@ -51,6 +54,8 @@ class Post extends Action implements HttpPostActionInterface
      */
     public function __construct(
         Context $context,
+        ModuleEnabledGuard $moduleEnabledGuard,
+        ForwardFactory $resultForwardFactory,
         RedirectFactory $resultRedirectFactory,
         ManagerInterface $messageManager,
         CommentFactory $commentFactory,
@@ -59,7 +64,7 @@ class Post extends Action implements HttpPostActionInterface
         ArticleResource $articleResource,
         \Venbhas\Blog\Model\ArticleFactory $articleFactory
     ) {
-        parent::__construct($context);
+        parent::__construct($context, $moduleEnabledGuard, $resultForwardFactory);
         $this->resultRedirectFactory = $resultRedirectFactory;
         $this->messageManager = $messageManager;
         $this->commentFactory = $commentFactory;
@@ -82,6 +87,10 @@ class Post extends Action implements HttpPostActionInterface
         }
 
         $storeId = (int) $this->storeManager->getStore()->getId();
+        if (!$this->isModuleEnabled($storeId)) {
+            $this->messageManager->addErrorMessage(__('Blog is disabled.'));
+            return $this->resultRedirectFactory->create()->setPath('/');
+        }
         if (!$this->config->isCommentsEnabled($storeId)) {
             $this->messageManager->addErrorMessage(__('Comments are disabled.'));
             return $this->getRedirectToArticle((int) $request->getPost('article_id'));

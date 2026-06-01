@@ -19,6 +19,6 @@ class NewAction extends Action implements HttpGetActionInterface
      */
     public function execute(): ResultInterface
     {
-        return $this->resultRedirectFactory->create()->setPath('*/*/edit');
+        return $this->resultRedirectFactory->create()->setPath('*/*/add', ['parent' => 0]);
     }
 }

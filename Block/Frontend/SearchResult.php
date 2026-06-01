@@ -15,6 +15,8 @@ use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory as CategoryColle
  */
 class SearchResult extends Template
 {
+    use ModuleEnabledTrait;
+
     /** @var ArticleCollectionFactory */
     private $articleCollectionFactory;
 

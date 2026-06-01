@@ -48,16 +48,11 @@
             </settings>
         </field>
         <field name="status" formElement="select">
-            <argument name="data" xsi:type="array">
-                <item name="config" xsi:type="array">
-                    <item name="default" xsi:type="number">0</item>
-                </item>
-            </argument>
             <settings>
                 <validation>
                     <rule name="required-entry" xsi:type="boolean">true</rule>
                 </validation>
-                <dataType>number</dataType>
+                <dataType>text</dataType>
                 <label translate="true">Status</label>
                 <dataScope>status</dataScope>
             </settings>
@@ -79,16 +74,34 @@
                 <dataScope>title</dataScope>
             </settings>
         </field>
-        <field name="category_id" formElement="select">
+        <field name="category_ids" sortOrder="30" formElement="select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="formElement" xsi:type="string">select</item>
+                    <item name="componentType" xsi:type="string">field</item>
+                    <item name="component" xsi:type="string">Magento_Ui/js/form/element/ui-select</item>
+                    <item name="elementTmpl" xsi:type="string">ui/grid/filters/elements/ui-select</item>
+                    <item name="filterOptions" xsi:type="boolean">true</item>
+                    <item name="chipsEnabled" xsi:type="boolean">true</item>
+                    <item name="multiple" xsi:type="boolean">true</item>
+                    <item name="showCheckbox" xsi:type="boolean">true</item>
+                    <item name="lastSelectable" xsi:type="boolean">false</item>
+                    <item name="selectType" xsi:type="string">tree</item>
+                    <item name="levelsVisibility" xsi:type="number">1</item>
+                    <item name="dataScope" xsi:type="string">category_ids</item>
+                    <item name="dataType" xsi:type="string">array</item>
+                    <item name="placeholder" xsi:type="string" translate="true">Select categories...</item>
+                </item>
+            </argument>
             <settings>
-                <dataType>text</dataType>
-                <label translate="true">Category</label>
-                <dataScope>category_id</dataScope>
+                <dataType>array</dataType>
+                <label translate="true">Categories</label>
+                <dataScope>category_ids</dataScope>
             </settings>
             <formElements>
                 <select>
                     <settings>
-                        <options class="Venbhas\Blog\Model\Article\Source\Categories"/>
+                        <options class="Venbhas\Blog\Ui\Component\Article\Form\Categories\Options"/>
                     </settings>
                 </select>
             </formElements>

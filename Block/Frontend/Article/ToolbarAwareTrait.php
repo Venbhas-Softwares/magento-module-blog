@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace Venbhas\Blog\Block\Frontend\Article;
 
 use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
-use Magento\Store\Model\ScopeInterface;
 
 /**
  * Shared toolbar wiring for article listing blocks.
@@ -12,6 +11,8 @@ use Magento\Store\Model\ScopeInterface;
 trait ToolbarAwareTrait
 {
     /**
+     * Render the top list toolbar HTML.
+     *
      * @return string
      */
     public function getToolbarHtml(): string
@@ -25,6 +26,8 @@ trait ToolbarAwareTrait
     }
 
     /**
+     * Render the bottom list toolbar HTML.
+     *
      * @return string
      */
     public function getBottomToolbarHtml(): string
@@ -38,6 +41,8 @@ trait ToolbarAwareTrait
     }
 
     /**
+     * Configure toolbar before block HTML is rendered.
+     *
      * @return $this
      */
     protected function _beforeToHtml()
@@ -51,6 +56,8 @@ trait ToolbarAwareTrait
     }
 
     /**
+     * Apply paging and sort settings to the toolbar block.
+     *
      * @param AbstractCollection $collection
      * @return void
      */
@@ -77,6 +84,8 @@ trait ToolbarAwareTrait
     }
 
     /**
+     * Resolve the active page size from the request.
+     *
      * @return int
      */
     protected function getPageLimit(): int
@@ -94,6 +103,8 @@ trait ToolbarAwareTrait
     }
 
     /**
+     * Get the current store id.
+     *
      * @return int
      */
     protected function getStoreId(): int
@@ -102,6 +113,8 @@ trait ToolbarAwareTrait
     }
 
     /**
+     * Get sort options for the toolbar.
+     *
      * @return array
      */
     protected function getToolbarSortOptions(): array
@@ -110,6 +123,8 @@ trait ToolbarAwareTrait
     }
 
     /**
+     * Apply the configured sort order to a collection.
+     *
      * @param AbstractCollection $collection
      * @return void
      */
@@ -120,6 +135,8 @@ trait ToolbarAwareTrait
     }
 
     /**
+     * Resolve the toolbar block from layout.
+     *
      * @return Toolbar|null
      */
     protected function getArticleToolbarBlock(): ?Toolbar
@@ -135,6 +152,8 @@ trait ToolbarAwareTrait
     }
 
     /**
+     * Return the collection used by the toolbar.
+     *
      * @return AbstractCollection|array|null
      */
     abstract protected function getToolbarCollection();

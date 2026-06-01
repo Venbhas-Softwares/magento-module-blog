@@ -9,6 +9,7 @@ use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Model\StoreManagerInterface;
 use Venbhas\Blog\Block\Frontend\Article\ToolbarAwareInterface;
 use Venbhas\Blog\Block\Frontend\Article\ToolbarAwareTrait;
+use Venbhas\Blog\Block\Frontend\ModuleEnabledTrait;
 use Venbhas\Blog\Model\Config;
 use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory;
 
@@ -17,6 +18,7 @@ use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory;
  */
 class ListBlock extends Template implements ToolbarAwareInterface
 {
+    use ModuleEnabledTrait;
     use ToolbarAwareTrait;
 
     /** @var CollectionFactory */
@@ -103,6 +105,8 @@ class ListBlock extends Template implements ToolbarAwareInterface
     }
 
     /**
+     * Apply category list sort order to the collection.
+     *
      * @param AbstractCollection $collection
      * @return void
      */
@@ -113,6 +117,8 @@ class ListBlock extends Template implements ToolbarAwareInterface
     }
 
     /**
+     * Return the category collection for the list toolbar.
+     *
      * @return \Magento\Framework\Data\Collection\AbstractDb
      */
     protected function getToolbarCollection()

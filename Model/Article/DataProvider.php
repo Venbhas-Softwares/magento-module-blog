@@ -10,6 +10,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 use Magento\Ui\DataProvider\Modifier\ModifierInterface;
 use Magento\Ui\DataProvider\Modifier\PoolInterface;
+use Venbhas\Blog\Model\Article\Source\Status as ArticleStatus;
 use Venbhas\Blog\Model\ResourceModel\Article\CategoryRelation;
 use Venbhas\Blog\Model\ResourceModel\Article\CollectionFactory as ArticleCollectionFactory;
 
@@ -97,42 +98,30 @@ class DataProvider extends AbstractDataProvider
             return $this->loadedData;
         }
 
-        $id = $this->request->getParam($this->getRequestFieldName());
+        $id = (int) $this->request->getParam($this->getRequestFieldName());
         $persistorData = $this->dataPersistor->get('venbhas_blog');
+        if ($id <= 0) {
+            $defaults = $this->getNewArticleDefaults();
 
-        // New record (no id): return defaults so form renders - use both '' and 0 for key compatibility
-        if (!$id) {
-            $defaults = !empty($persistorData)
-                ? $persistorData
-                : [
-                    'article_id' => null,
-                    'title' => '',
-                    'url_key' => '',
-                    'status' => 1,
-                    'short_description' => '',
-                    'description' => '',
-                    'featured_image' => '',
-                    'meta_title' => '',
-                    'meta_keywords' => '',
-                    'meta_description' => '',
-                    'meta_robots' => '',
-                    'use_config_meta_robots' => 1,
-                    'category_id' => '',
-                ];
             if (!empty($persistorData)) {
+                $defaults = array_merge($defaults, $this->normalizeCategoryIds($persistorData));
                 $this->dataPersistor->clear('venbhas_blog');
             }
+            $defaults['status'] = (string) ArticleStatus::STATUS_DRAFT;
+
             $this->loadedData[''] = $defaults;
             $this->loadedData[0] = $defaults;
         } else {
-            // Edit: load single record
             $this->collection->addFieldToFilter($this->getPrimaryFieldName(), (int) $id);
             $items = $this->collection->getItems();
 
             foreach ($items as $article) {
                 $data = $article->getData();
-                $categoryId = $this->categoryRelation->getCategoryIdByArticleId((int) $article->getId());
-                $data['category_id'] = $categoryId !== null ? (string) $categoryId : '';
+                $data['status'] = (string) (int) ($data['status'] ?? ArticleStatus::STATUS_DRAFT);
+                $data['category_ids'] = array_map(
+                    'strval',
+                    $this->categoryRelation->getCategoryIdsByArticleId((int) $article->getId())
+                );
                 $metaRobots = trim((string) ($data['meta_robots'] ?? ''));
                 $data['use_config_meta_robots'] = $metaRobots === '' ? 1 : 0;
                 $featuredImage = $data['featured_image'] ?? '';
@@ -171,5 +160,58 @@ class DataProvider extends AbstractDataProvider
         }
 
         return $meta;
+    }
+
+    /**
+     * Default field values for a new article form.
+     *
+     * @return array
+     */
+    private function getNewArticleDefaults(): array
+    {
+        return [
+            'article_id' => null,
+            'title' => '',
+            'url_key' => '',
+            'status' => (string) ArticleStatus::STATUS_DRAFT,
+            'short_description' => '',
+            'description' => '',
+            'featured_image' => '',
+            'meta_title' => '',
+            'meta_keywords' => '',
+            'meta_description' => '',
+            'meta_robots' => '',
+            'use_config_meta_robots' => 1,
+            'category_ids' => [],
+        ];
+    }
+
+    /**
+     * Normalize legacy category_id form data to category_ids array.
+     *
+     * @param array $data
+     * @return array
+     */
+    private function normalizeCategoryIds(array $data): array
+    {
+        if (!isset($data['category_ids']) && array_key_exists('category_id', $data)) {
+            $categoryId = (int) ($data['category_id'] ?? 0);
+            $data['category_ids'] = $categoryId > 0 ? [$categoryId] : [];
+        }
+
+        if (isset($data['category_ids']) && !is_array($data['category_ids'])) {
+            $categoryIds = array_map('intval', explode(',', (string) $data['category_ids']));
+            $data['category_ids'] = array_map(
+                'strval',
+                array_values(array_filter($categoryIds))
+            );
+        } elseif (isset($data['category_ids']) && is_array($data['category_ids'])) {
+            $data['category_ids'] = array_map(
+                'strval',
+                array_values(array_filter(array_map('intval', $data['category_ids'])))
+            );
+        }
+
+        return $data;
     }
 }

@@ -15,6 +15,7 @@ use Venbhas\Blog\Model\ResourceModel\Article\RelatedProducts as ArticleRelatedPr
 
 class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
 {
+    use ModuleEnabledTrait;
     /** @var CollectionFactory */
     protected $productCollectionFactory;
 

@@ -10,6 +10,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Venbhas\Blog\Model\ArticleFactory;
 use Venbhas\Blog\Model\CategoryFactory;
 use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Model\Config\ModuleEnabledGuard;
 use Venbhas\Blog\Model\ResourceModel\Article as ArticleResource;
 use Venbhas\Blog\Model\ResourceModel\Category as CategoryResource;
 
@@ -33,6 +34,9 @@ class Router implements RouterInterface
     /** @var Config */
     private $config;
 
+    /** @var ModuleEnabledGuard */
+    private $moduleEnabledGuard;
+
     /** @var StoreManagerInterface */
     private $storeManager;
 
@@ -48,6 +52,7 @@ class Router implements RouterInterface
      * @param CategoryFactory $categoryFactory
      * @param CategoryResource $categoryResource
      * @param Config $config
+     * @param ModuleEnabledGuard $moduleEnabledGuard
      * @param StoreManagerInterface $storeManager
      */
     public function __construct(
@@ -57,6 +62,7 @@ class Router implements RouterInterface
         CategoryFactory $categoryFactory,
         CategoryResource $categoryResource,
         Config $config,
+        ModuleEnabledGuard $moduleEnabledGuard,
         StoreManagerInterface $storeManager
     ) {
         $this->actionFactory = $actionFactory;
@@ -65,6 +71,7 @@ class Router implements RouterInterface
         $this->categoryFactory = $categoryFactory;
         $this->categoryResource = $categoryResource;
         $this->config = $config;
+        $this->moduleEnabledGuard = $moduleEnabledGuard;
         $this->storeManager = $storeManager;
     }
 
@@ -78,10 +85,6 @@ class Router implements RouterInterface
      */
     public function match(RequestInterface $request)
     {
-        if (!$this->config->isModuleEnabled()) {
-            return null;
-        }
-
         if ($request->getParam(self::ROUTER_FORWARDED_FLAG)) {
             return null;
         }
@@ -94,6 +97,10 @@ class Router implements RouterInterface
             $storeId = (int) $this->storeManager->getStore()->getId();
         } catch (\Throwable $e) {
             $storeId = null;
+        }
+
+        if (!$this->moduleEnabledGuard->isEnabled($storeId)) {
+            return null;
         }
 
         $articleListRoute = $this->config->getArticleListRoute($storeId);

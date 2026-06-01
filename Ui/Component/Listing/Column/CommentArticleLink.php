@@ -19,6 +19,16 @@ class CommentArticleLink extends Column
     /** @var Escaper */
     private $escaper;
 
+    /**
+     * Initialize comment article link column.
+     *
+     * @param ContextInterface $context
+     * @param UiComponentFactory $uiComponentFactory
+     * @param UrlInterface $urlBuilder
+     * @param Escaper $escaper
+     * @param array $components
+     * @param array $data
+     */
     public function __construct(
         ContextInterface $context,
         UiComponentFactory $uiComponentFactory,
@@ -32,6 +42,12 @@ class CommentArticleLink extends Column
         parent::__construct($context, $uiComponentFactory, $components, $data);
     }
 
+    /**
+     * Add admin article edit links to comment grid rows.
+     *
+     * @param array $dataSource
+     * @return array
+     */
     public function prepareDataSource(array $dataSource): array
     {
         if (!isset($dataSource['data']['items'])) {
@@ -56,4 +72,3 @@ class CommentArticleLink extends Column
         return $dataSource;
     }
 }
-

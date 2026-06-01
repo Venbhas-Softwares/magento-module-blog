@@ -135,6 +135,12 @@ class DataProvider extends AbstractDataProvider
         return $this->loadedData;
     }
 
+    /**
+     * Build admin edit link HTML for a related article.
+     *
+     * @param int $articleId
+     * @return string
+     */
     private function buildArticleLinkHtml(int $articleId): string
     {
         if ($articleId <= 0) {
@@ -152,6 +158,12 @@ class DataProvider extends AbstractDataProvider
         );
     }
 
+    /**
+     * Load article title for comment grid display.
+     *
+     * @param int $articleId
+     * @return string
+     */
     private function fetchArticleTitle(int $articleId): string
     {
         try {

@@ -9,10 +9,13 @@ use Magento\Framework\View\Element\Template\Context;
 use Venbhas\Blog\Model\Comment;
 use Venbhas\Blog\Model\Config;
 use Venbhas\Blog\Model\ResourceModel\Comment\Collection;
+use Venbhas\Blog\Block\Frontend\ModuleEnabledTrait;
 use Venbhas\Blog\Model\ResourceModel\Comment\CollectionFactory as CommentCollectionFactory;
 
 class CommentList extends Template
 {
+    use ModuleEnabledTrait;
+
     /** @var Config */
     private $config;
 

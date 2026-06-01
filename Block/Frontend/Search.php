@@ -13,6 +13,8 @@ use Venbhas\Blog\Model\Config;
  */
 class Search extends Template
 {
+    use ModuleEnabledTrait;
+
     /** @var Config */
     private $config;
 

@@ -7,10 +7,12 @@ use Magento\Framework\Registry;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 use Venbhas\Blog\Model\Article;
+use Venbhas\Blog\Block\Frontend\ModuleEnabledTrait;
 use Venbhas\Blog\Model\Config;
 
 class CommentForm extends Template
 {
+    use ModuleEnabledTrait;
     /** @var Config */
     private $config;
 

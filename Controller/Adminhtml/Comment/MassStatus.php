@@ -25,6 +25,14 @@ class MassStatus extends Action implements HttpPostActionInterface
     /** @var CommentResource */
     private $commentResource;
 
+    /**
+     * Initialize mass status action dependencies.
+     *
+     * @param Context $context
+     * @param Filter $filter
+     * @param CollectionFactory $collectionFactory
+     * @param CommentResource $commentResource
+     */
     public function __construct(
         Context $context,
         Filter $filter,
@@ -37,6 +45,11 @@ class MassStatus extends Action implements HttpPostActionInterface
         $this->commentResource = $commentResource;
     }
 
+    /**
+     * Mass-update comment status from admin grid.
+     *
+     * @return ResultInterface
+     */
     public function execute(): ResultInterface
     {
         $resultRedirect = $this->resultRedirectFactory->create();
@@ -68,4 +81,3 @@ class MassStatus extends Action implements HttpPostActionInterface
         return $resultRedirect->setPath('*/*/');
     }
 }
-

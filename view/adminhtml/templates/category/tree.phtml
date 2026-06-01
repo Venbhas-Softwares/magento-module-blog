@@ -1,0 +1,256 @@
+<?php
+/**
+ * @var $block \Venbhas\Blog\Block\Adminhtml\Category\Tree
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$secureRenderer = $block->getSecureRenderer();
+?>
+<?php $root = $block->getRoot(); ?>
+
+<div class="categories-side-col">
+    <div class="sidebar-actions">
+        <?php if ($root): ?>
+            <?= $block->getAddRootButtonHtml() ?><br/>
+            <?= $block->getAddSubButtonHtml() ?>
+        <?php endif; ?>
+    </div>
+    <div class="tree-actions">
+        <?php if ($root): ?>
+            <a id="colapseAll" href="#"><?= $escaper->escapeHtml(__('Collapse All')) ?></a>
+            <span class="separator">|</span>
+            <a id="expandAll" href="#"><?= $escaper->escapeHtml(__('Expand All')) ?></a>
+        <?php endif; ?>
+    </div>
+    <?php if ($root): ?>
+        <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
+            'onclick',
+            'TreeConfig.collapseAll(); event.preventDefault();',
+            '#colapseAll'
+        ) ?>
+        <?= /* @noEscape */ $secureRenderer->renderEventListenerAsTag(
+            'onclick',
+            'TreeConfig.expandAll();event.preventDefault();',
+            '#expandAll'
+        ) ?>
+        <div class="tree-holder">
+            <div id="tree-div" class="tree-wrapper x-tree"></div>
+        </div>
+    </div>
+
+        <?php $divElement = '<div id="tree-div" class="tree-wrapper x-tree"></div>'; ?>
+
+        <?php $scriptString = <<<script
+            let TreeConfig, expandAll = false;
+            require([
+                'jquery',
+                'jquery/jstree/jquery.jstree',
+                'Magento_Ui/js/modal/confirm'
+            ], function($, undefined, confirm) {
+                let registry = {
+                    data: [],
+                    set: function (key, value) {
+                        this.data[key] = value;
+                    },
+                    get: function (key) {
+                        return this.data[key];
+                    }
+                };
+
+                let treeDiv = $('#tree-div'),
+                treeInstance,
+script;
+        $scriptString .= 'currentNodeId = ' . (int) $block->getCategoryId() . ',
+         defaultTree = ' . $block->getTreeJson() . ',
+         defaultParams = {
+                text: ' . /* @noEscape */ json_encode((string) __('Blog Categories')) . ',
+                allowDrop: true,
+                id: ' . (int) $root->getId() . ',
+                expanded: ' . (int) $block->getIsWasExpanded() . ',
+                category_id: ' . (int) $block->getCategoryId() . ',
+                parent: ' . (int) $block->getRequest()->getParam('parent') . '
+        };' . PHP_EOL;
+
+        $scriptString .= <<<script
+        TreeConfig = function () {
+            return {
+                createTree: function () {
+                    treeDiv.jstree({
+                        core: {
+                            'data' : function (obj, callback) {
+                                if(obj.id != '#' && obj.children.length === 0){
+                                    $.ajax({
+                                        url: '{$block->escapeJs($block->getLoadTreeUrl())}',
+                                        type: "POST",
+                                        data: {
+                                            id: obj.id,
+                                            form_key: FORM_KEY
+                                        },
+                                        dataType: 'json',
+                                        success: function (response) {
+                                            TreeConfig.updateChildrenKey(response);
+                                            callback.call(this, response);
+                                        }
+                                    });
+                                } else {
+                                    TreeConfig.updateChildrenKey(defaultTree);
+                                    callback.call(this, defaultTree);
+                                }
+                            },
+                            check_callback: function (operation, node) {
+                                return !(operation === 'move_node' &&
+                                    node.original !== undefined && node.original.allowDrag === false);
+                            }
+                        },
+                        plugins: ['dnd'],
+                    }).bind('move_node.jstree', function (e, data) {
+                        TreeConfig.categoryMove(data);
+                    }).bind('ready.jstree', function(e, data) {
+                        TreeConfig.selectNode(data);
+                    });
+                    treeInstance = treeDiv.jstree(true);
+                },
+
+                categoryMove : function (obj){
+                    let data = {id: obj.node.id, form_key: FORM_KEY};
+
+                    if(obj.node.parent === '#'){
+                        data.pid = defaultParams.id;
+                    }else{
+                        data.pid = obj.node.parent;
+                    }
+
+                    data.paid = obj.old_parent;
+                    if (obj.position > 0) {
+                        data.aid = TreeConfig.getSiblings(obj.node.parent, obj.position);
+                    }
+
+                    let pd = [];
+                    for (let key in data) {
+                        pd.push(encodeURIComponent(key), '=', encodeURIComponent(data[key]), '&');
+                    }
+                    pd.splice(pd.length - 1, 1);
+                    registry.set('pd', pd.join(''));
+
+                    confirm({
+                        content: $.mage.__('Are you sure you want to move this category?'),
+                        actions: {
+                            confirm: function () {
+                                $.ajax({
+                                    url: '{$block->escapeJs($block->getMoveUrl())}',
+                                    method: 'POST',
+                                    data: registry.get('pd'),
+                                    showLoader: true
+                                }).done(function (response) {
+                                    if (response.error) {
+                                        TreeConfig.reRenderTree();
+                                    }
+                                    if (response.messages) {
+                                        $('.page-main-actions').next('.messages').remove();
+                                        $('.page-main-actions').after(response.messages);
+                                    }
+                                }).fail(function () {
+                                    location.reload();
+                                });
+                            },
+                            cancel: function () {
+                                TreeConfig.reRenderTree();
+                            }
+                        }
+                    });
+                },
+
+                getSiblings : function (parent, position) {
+                    let parentNode = treeInstance.get_node(parent);
+                    let sibling = treeInstance.get_node(parentNode.children[position - 1]);
+                    return sibling ? sibling.id : 0;
+                },
+
+                reRenderTree : function(){
+                     $('.tree-holder').empty().append('{$divElement}');
+                     treeDiv = $('#tree-div');
+                     TreeConfig.createTree();
+                     treeDiv.on('changed.jstree', function (e, data) {
+                        TreeConfig.categoryClick(data);
+                     });
+                },
+
+                updateChildrenKey : function(treeJson) {
+                    treeJson.forEach(node => {
+                        if (Array.isArray(node.children) && node.children.length === 0) {
+                            node.children = true;
+                        } else if (Array.isArray(node.children)) {
+                            TreeConfig.updateChildrenKey(node.children);
+                        }
+                    });
+                },
+
+                selectNode : function(){
+                    if (defaultParams.expanded) {
+                        treeInstance.open_all();
+                    } else {
+                        let catId = treeInstance.get_node(defaultParams.category_id);
+                        if (catId) {
+                            currentNodeId = defaultParams.category_id;
+                        } else if (defaultParams.parent > 0 && defaultParams.category_id === 0) {
+                            currentNodeId = defaultParams.parent;
+                        }
+
+                        let selectedNode = treeInstance.get_node(currentNodeId);
+                        if (selectedNode) {
+                            treeInstance.select_node(selectedNode, true);
+                            treeInstance.open_node(selectedNode);
+                        }
+                    }
+                },
+
+                categoryClick : function(data){
+                    let baseUrl = '{$block->escapeJs($block->getEditUrl())}';
+                    if(data.node !== undefined && data.node.original !== undefined)
+                    {
+                        let id = data.node.original.id;
+                        if (parseInt(id, 10) > 0) {
+                            setLocation(baseUrl + 'category_id/' + id + '/');
+                        }
+                    }
+                },
+
+                expandAll : function(){
+                    expandAll = true;
+                    treeInstance.open_all();
+                },
+
+                collapseAll : function(){
+                    treeInstance.close_all();
+                    let selectedNode = treeDiv.jstree('get_selected');
+                    if(selectedNode.length > 0){
+                        let nodeObj = treeInstance.get_node(selectedNode),
+                            parents = nodeObj.parents;
+                        if(parents.indexOf('#') > -1){
+                           parents.splice(parents.indexOf('#'), 1);
+                        }
+                        treeInstance.select_node(selectedNode, true);
+                        treeInstance.open_node(parents);
+                   }
+                }
+            };
+        }();
+
+        treeDiv.on('changed.jstree', function (e, data) {
+             TreeConfig.categoryClick(data);
+        });
+
+        TreeConfig.createTree();
+
+        function addNew(url, isRoot) {
+            if (isRoot) {
+                currentNodeId = defaultParams.id;
+            }
+            url += 'parent/' + currentNodeId + '/';
+            location.href = url;
+        }
+        window.addNew = addNew;
+    });
+script;
+        ?>
+        <?= /* @noEscape */ $secureRenderer->renderTag('script', [], $scriptString, false) ?>
+<?php endif; ?>

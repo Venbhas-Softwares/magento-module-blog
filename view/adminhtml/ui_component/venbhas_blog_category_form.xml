@@ -47,6 +47,13 @@
                 <dataScope>category_id</dataScope>
             </settings>
         </field>
+        <field name="parent_id" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+                <dataScope>parent_id</dataScope>
+            </settings>
+        </field>
         <field name="status" formElement="checkbox">
             <argument name="data" xsi:type="array">
                 <item name="config" xsi:type="array">
@@ -252,26 +259,5 @@
                 </formElements>
             </field>
         </container>
-    </fieldset>
-    <fieldset name="related_articles" sortOrder="25">
-        <settings>
-            <collapsible>true</collapsible>
-            <label translate="true">Related Articles</label>
-        </settings>
-        <field name="related_articles" formElement="multiselect">
-            <settings>
-                <dataType>array</dataType>
-                <label translate="true">Articles in Category</label>
-                <dataScope>related_articles</dataScope>
-                <notice translate="true">Select articles to show as related to this category.</notice>
-            </settings>
-            <formElements>
-                <multiselect>
-                    <settings>
-                        <options class="Venbhas\Blog\Model\Category\Source\Articles"/>
-                    </settings>
-                </multiselect>
-            </formElements>
-        </field>
     </fieldset>
 </form>

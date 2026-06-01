@@ -100,6 +100,9 @@ class DataProvider extends AbstractDataProvider
                 ? $persistorData
                 : [
                     'category_id' => null,
+                    'parent_id' => $this->request->has('parent')
+                        ? (int) $this->request->getParam('parent')
+                        : 0,
                     'name' => '',
                     'url_key' => '',
                     'status' => 1,
@@ -111,7 +114,6 @@ class DataProvider extends AbstractDataProvider
                     'meta_robots' => '',
                     'use_config_meta_robots' => 1,
                     'featured_image' => '',
-                    'related_articles' => [],
                 ];
             if (!empty($persistorData)) {
                 $this->dataPersistor->clear('venbhas_blog_category');
@@ -126,16 +128,6 @@ class DataProvider extends AbstractDataProvider
                 $data = $category->getData();
                 $metaRobots = trim((string) ($data['meta_robots'] ?? ''));
                 $data['use_config_meta_robots'] = $metaRobots === '' ? 1 : 0;
-                // related_articles is stored as comma-separated ids; multiselect options use string values
-                $relatedArticlesRaw = trim((string) ($data['related_articles'] ?? ''));
-                $data['related_articles'] = $relatedArticlesRaw !== ''
-                    ? array_values(
-                        array_map(
-                            'strval',
-                            array_filter(array_map('intval', explode(',', $relatedArticlesRaw)))
-                        )
-                    )
-                    : [];
                 $featuredImage = $data['featured_image'] ?? $data['featured image'] ?? '';
                 if ($featuredImage) {
                     $fileName = preg_replace('#^.*[/\\\\]#', '', $featuredImage);

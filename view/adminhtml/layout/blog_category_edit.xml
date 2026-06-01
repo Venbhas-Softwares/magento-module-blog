@@ -1,7 +1,18 @@
 <?xml version="1.0"?>
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      layout="admin-2columns-left"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="editor"/>
+    <head>
+        <link src="Venbhas_Blog::js/category-edit-tree.js"/>
+    </head>
     <body>
+        <referenceContainer name="left" htmlTag="div"/>
+        <referenceContainer name="left">
+            <block class="Venbhas\Blog\Block\Adminhtml\Category\Tree"
+                   name="venbhas.blog.category.tree"
+                   template="Venbhas_Blog::category/tree.phtml"/>
+        </referenceContainer>
         <referenceContainer name="content">
             <uiComponent name="venbhas_blog_category_form"/>
         </referenceContainer>

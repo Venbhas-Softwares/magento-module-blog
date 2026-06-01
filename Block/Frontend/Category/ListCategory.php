@@ -10,6 +10,7 @@ use Magento\Framework\View\Element\Template\Context;
 use Magento\Store\Model\StoreManagerInterface;
 use Venbhas\Blog\Model\Category;
 use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Block\Frontend\ModuleEnabledTrait;
 use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory;
 
 /**
@@ -17,6 +18,7 @@ use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory;
  */
 class ListCategory extends Template
 {
+    use ModuleEnabledTrait;
     /** @var CollectionFactory */
     protected $categoryCollectionFactory;
 

@@ -90,6 +90,13 @@ class DisableAuthorFields implements ModifierInterface
         return $meta;
     }
 
+    /**
+     * Remove a form field from UI meta by name.
+     *
+     * @param array $meta
+     * @param string $fieldName
+     * @return array
+     */
     private function removeFieldByName(array $meta, string $fieldName): array
     {
         $path = $this->arrayManager->findPath($fieldName, $meta, null, 'children');

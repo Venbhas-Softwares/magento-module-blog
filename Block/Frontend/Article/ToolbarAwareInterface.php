@@ -9,11 +9,15 @@ namespace Venbhas\Blog\Block\Frontend\Article;
 interface ToolbarAwareInterface
 {
     /**
+     * Render the top list toolbar HTML.
+     *
      * @return string
      */
     public function getToolbarHtml(): string;
 
     /**
+     * Get the active list sort order code.
+     *
      * @return string
      */
     public function getCurrentSortOrder(): string;
