@@ -106,4 +106,16 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\Backend\Model\Menu\Builder">
+        <plugin name="venbhas_blog_hide_menu_when_disabled"
+                type="Venbhas\Blog\Plugin\Backend\Menu\HideWhenDisabledPlugin"
+                sortOrder="100"/>
+    </type>
+
+    <type name="Magento\Backend\App\AbstractAction">
+        <plugin name="venbhas_blog_admin_dispatch_guard"
+                type="Venbhas\Blog\Plugin\Backend\App\DispatchGuardPlugin"
+                sortOrder="10"/>
+    </type>
 </config>

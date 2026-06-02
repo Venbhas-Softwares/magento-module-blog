@@ -50,6 +50,19 @@ class Config
     }
 
     /**
+     * Whether the module is enabled at default (global) scope — used for admin UI visibility.
+     *
+     * @return bool
+     */
+    public function isModuleEnabledForAdmin(): bool
+    {
+        return $this->scopeConfig->isSetFlag(
+            self::XML_PATH_ENABLED,
+            ScopeConfigInterface::SCOPE_TYPE_DEFAULT
+        );
+    }
+
+    /**
      * Alias for {@see isModuleEnabled()} — use in plugins via ModuleEnabledGuard when possible.
      *
      * @param int|null $storeId

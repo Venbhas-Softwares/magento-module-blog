@@ -31,4 +31,14 @@ class ModuleEnabledGuard
     {
         return $this->config->isModuleEnabled($storeId);
     }
+
+    /**
+     * Whether admin blog menus and controllers should be available (default config scope).
+     *
+     * @return bool
+     */
+    public function isEnabledForAdmin(): bool
+    {
+        return $this->config->isModuleEnabledForAdmin();
+    }
 }
