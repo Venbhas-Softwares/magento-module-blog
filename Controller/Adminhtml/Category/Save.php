@@ -227,13 +227,7 @@ class Save extends Action implements HttpPostActionInterface
             }
             return array_values(array_filter($ids));
         }
-        if (!empty($data['related_products']) && is_array($data['related_products'])) {
-            return array_values(array_filter(array_map('intval', $data['related_products'])));
-        }
-        if (!empty($data['related_product_skus'])) {
-            $skus = array_map('trim', explode(',', (string) $data['related_product_skus']));
-            return $this->relatedProducts->getProductIdsBySkus($skus);
-        }
+
         return [];
     }
 

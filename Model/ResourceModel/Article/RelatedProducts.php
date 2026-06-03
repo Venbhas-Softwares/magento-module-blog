@@ -62,40 +62,4 @@ class RelatedProducts implements RelatedProductsResourceInterface
         $result = $connection->fetchCol($select);
         return is_array($result) ? $result : [];
     }
-
-    /**
-     * Get product ids by skus.
-     *
-     * @param array $skus
-     * @return array
-     */
-    public function getProductIdsBySkus(array $skus): array
-    {
-        if (empty($skus)) {
-            return [];
-        }
-        $connection = $this->resource->getConnection();
-        $select = $connection->select()
-            ->from($this->resource->getTableName('catalog_product_entity'), 'entity_id')
-            ->where('sku IN (?)', $skus);
-        return $connection->fetchCol($select) ?: [];
-    }
-
-    /**
-     * Get skus by product ids.
-     *
-     * @param array $productIds
-     * @return array
-     */
-    public function getSkusByProductIds(array $productIds): array
-    {
-        if (empty($productIds)) {
-            return [];
-        }
-        $connection = $this->resource->getConnection();
-        $select = $connection->select()
-            ->from($this->resource->getTableName('catalog_product_entity'), 'sku')
-            ->where('entity_id IN (?)', $productIds);
-        return $connection->fetchCol($select) ?: [];
-    }
 }
