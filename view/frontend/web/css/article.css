@@ -105,6 +105,22 @@
     width: 100%;
 }
 
+.venbhas-article-view .article-content.cms-content img,
+.venbhas-article-view .article-content.cms-content [data-content-type="image"] img,
+.venbhas-article-view .article-content.cms-content figure img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+.venbhas-article-category-view .category-description.cms-content img,
+.venbhas-article-category-view .category-description.cms-content [data-content-type="image"] img,
+.venbhas-article-category-view .category-description.cms-content figure img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
 .article-comment-section {
     margin-top: 35px;
     padding-top: 25px;

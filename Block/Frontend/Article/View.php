@@ -15,6 +15,7 @@ use Magento\Catalog\Helper\Image;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Venbhas\Blog\Block\Frontend\ModuleEnabledTrait;
 use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Model\Content\HtmlFilter;
 
 class View extends Template
 {
@@ -41,6 +42,9 @@ class View extends Template
     /** @var Image */
     private $imageHelper;
 
+    /** @var HtmlFilter */
+    private $htmlFilter;
+
     /**
      * @param Context $context
      * @param Registry $registry
@@ -50,6 +54,7 @@ class View extends Template
      * @param ProductRepository $productRepository
      * @param Image $imageHelper
      * @param Config $config
+     * @param HtmlFilter $htmlFilter
      * @param array $data
      */
     public function __construct(
@@ -61,6 +66,7 @@ class View extends Template
         ProductRepository $productRepository,
         Image $imageHelper,
         Config $config,
+        HtmlFilter $htmlFilter,
         array $data = []
     ) {
         $this->registry = $registry;
@@ -70,6 +76,7 @@ class View extends Template
         $this->productCollectionFactory = $productCollectionFactory;
         $this->productRepository = $productRepository;
         $this->imageHelper = $imageHelper;
+        $this->htmlFilter = $htmlFilter;
         parent::__construct($context, $data);
     }
 
@@ -81,6 +88,19 @@ class View extends Template
     public function getArticle(): ?Article
     {
         return $this->registry->registry('current_article');
+    }
+
+    /**
+     * Article body with CMS widgets and Page Builder markup rendered.
+     */
+    public function getFilteredDescription(): string
+    {
+        $article = $this->getArticle();
+        if (!$article) {
+            return '';
+        }
+
+        return $this->htmlFilter->filter($article->getDescription());
     }
 
     /**

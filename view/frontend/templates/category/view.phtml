@@ -21,9 +21,10 @@ $articles = $block->getArticles();
         </div>
 
         <div class="category-info">
-            <?php if ($category->getDescription()): ?>
-                <div class="category-description">
-                    <?= /* @noEscape */ $category->getDescription() ?>
+            <?php $descriptionHtml = $block->getFilteredDescription(); ?>
+            <?php if ($descriptionHtml !== ''): ?>
+                <div class="category-description cms-content">
+                    <?= /* @noEscape */ $descriptionHtml ?>
                 </div>
             <?php endif; ?>
         </div>

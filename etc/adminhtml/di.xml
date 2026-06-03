@@ -70,43 +70,6 @@
         </arguments>
     </type>
 
-    <!-- Admin grids: register collections for UI data sources -->
-    <virtualType name="Venbhas\Blog\Ui\DataProvider\Article\Listing\Collection" type="Venbhas\Blog\Model\ResourceModel\Article\Grid\Collection">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">venbhas_article</argument>
-            <argument name="eventPrefix" xsi:type="string">venbhas_blog_article_grid_collection</argument>
-            <argument name="eventObject" xsi:type="string">article_collection</argument>
-            <argument name="resourceModel" xsi:type="string">Venbhas\Blog\Model\ResourceModel\Article</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Venbhas\Blog\Ui\DataProvider\Category\Listing\Collection" type="Venbhas\Blog\Model\ResourceModel\Category\Grid\Collection">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">venbhas_article_category</argument>
-            <argument name="eventPrefix" xsi:type="string">venbhas_blog_category_grid_collection</argument>
-            <argument name="eventObject" xsi:type="string">category_collection</argument>
-            <argument name="resourceModel" xsi:type="string">Venbhas\Blog\Model\ResourceModel\Category</argument>
-        </arguments>
-    </virtualType>
-    <virtualType name="Venbhas\Blog\Ui\DataProvider\Comment\Listing\Collection" type="Venbhas\Blog\Model\ResourceModel\Comment\Grid\Collection">
-        <arguments>
-            <argument name="mainTable" xsi:type="string">venbhas_article_comment</argument>
-            <argument name="eventPrefix" xsi:type="string">venbhas_blog_comment_grid_collection</argument>
-            <argument name="eventObject" xsi:type="string">comment_collection</argument>
-            <argument name="resourceModel" xsi:type="string">Venbhas\Blog\Model\ResourceModel\Comment</argument>
-        </arguments>
-    </virtualType>
-
-    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
-        <arguments>
-            <argument name="collections" xsi:type="array">
-                <item name="venbhas_blog_listing_data_source" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Article\Listing\Collection</item>
-                <item name="venbhas_blog_category_listing_data_source" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Category\Listing\Collection</item>
-                <item name="category_article_article_listing_data_source" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Article\Listing\Collection</item>
-                <item name="venbhas_blog_comment_listing_data_source" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Comment\Listing\Collection</item>
-            </argument>
-        </arguments>
-    </type>
-
     <type name="Magento\Backend\Model\Menu\Builder">
         <plugin name="venbhas_blog_hide_menu_when_disabled"
                 type="Venbhas\Blog\Plugin\Backend\Menu\HideWhenDisabledPlugin"

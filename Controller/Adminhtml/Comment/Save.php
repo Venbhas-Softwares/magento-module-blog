@@ -78,9 +78,14 @@ class Save extends Action implements HttpPostActionInterface
         if (empty($id) && isset($commentData['comment_id'])) {
             unset($commentData['comment_id']);
         }
-        // When editing, do not overwrite user_name, user_email, comment (non-editable)
+        // When editing, do not overwrite article, author, or original comment text.
         if ($id) {
-            unset($commentData['user_name'], $commentData['user_email'], $commentData['comment']);
+            unset(
+                $commentData['article_id'],
+                $commentData['user_name'],
+                $commentData['user_email'],
+                $commentData['comment']
+            );
         }
         $model->setData($commentData);
         try {

@@ -53,8 +53,8 @@ class Collection extends CommentCollection implements SearchResultInterface
         $eventObject,
         $resourceModel,
         $model = Document::class,
-        AdapterInterface $connection = null,
-        AbstractDb $resource = null
+        ?AdapterInterface $connection = null,
+        ?AbstractDb $resource = null
     ) {
         $this->resourceModel = $resourceModel;
         $this->model = $model;
@@ -79,6 +79,16 @@ class Collection extends CommentCollection implements SearchResultInterface
             'main_table.article_id = article.article_id',
             ['article_title' => 'title']
         );
+
+        $this->addFilterToMap('comment_id', 'main_table.comment_id');
+        $this->addFilterToMap('article_id', 'main_table.article_id');
+        $this->addFilterToMap('user_name', 'main_table.user_name');
+        $this->addFilterToMap('user_email', 'main_table.user_email');
+        $this->addFilterToMap('comment', 'main_table.comment');
+        $this->addFilterToMap('status', 'main_table.status');
+        $this->addFilterToMap('created_at', 'main_table.created_at');
+        $this->addFilterToMap('updated_at', 'main_table.updated_at');
+        $this->addFilterToMap('article_title', 'article.title');
 
         return $this;
     }
@@ -167,5 +177,6 @@ class Collection extends CommentCollection implements SearchResultInterface
     {
         parent::_resetState();
         $this->_init($this->model, $this->resourceModel);
+        $this->_initSelect();
     }
 }

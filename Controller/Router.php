@@ -131,6 +131,11 @@ class Router implements RouterInterface
 
         array_shift($pathParts);
 
+        // Comment POST uses standard route article/comment/post (see routes.xml).
+        if (($pathParts[0] ?? '') === 'comment') {
+            return null;
+        }
+
         if (empty($pathParts)) {
             $request->setParam(self::ROUTER_FORWARDED_FLAG, true);
             $request->setModuleName('article')->setControllerName('index')->setActionName('index');
@@ -140,16 +145,6 @@ class Router implements RouterInterface
         if ($pathParts[0] === 'search' && count($pathParts) === 1) {
             $request->setParam(self::ROUTER_FORWARDED_FLAG, true);
             $request->setModuleName('article')->setControllerName('search')->setActionName('index');
-            return $this->actionFactory->create(\Magento\Framework\App\Action\Forward::class);
-        }
-
-        // Forward article/comment/post to Article\Controller\Article\Comment\Post (flag avoids loop).
-        if ($pathParts[0] === 'comment') {
-            $actionName = $pathParts[1] ?? 'post';
-            $request->setParam(self::ROUTER_FORWARDED_FLAG, true);
-            $request->setModuleName('article')
-                ->setControllerName('article_comment')
-                ->setActionName($actionName);
             return $this->actionFactory->create(\Magento\Framework\App\Action\Forward::class);
         }
 

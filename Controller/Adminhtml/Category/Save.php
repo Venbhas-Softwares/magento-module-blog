@@ -8,6 +8,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Controller\ResultInterface;
+use Venbhas\Blog\Model\Adminhtml\Form\DataNormalizer;
 use Venbhas\Blog\Model\CategoryFactory;
 use Venbhas\Blog\Model\ResourceModel\Category as CategoryResource;
 use Venbhas\Blog\Model\ResourceModel\Article\CategoryRelation;
@@ -84,9 +85,7 @@ class Save extends Action implements HttpPostActionInterface
             unset($data['data']);
         }
 
-        if (!empty($data['use_config_meta_robots'])) {
-            $data['meta_robots'] = null;
-        }
+        $data = DataNormalizer::resolveMetaRobots(DataNormalizer::flattenGroupedFields($data));
         $id = (int) ($data['category_id'] ?? 0);
         $model = $this->categoryFactory->create();
         if ($id) {

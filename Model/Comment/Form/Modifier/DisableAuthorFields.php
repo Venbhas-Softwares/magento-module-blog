@@ -49,34 +49,14 @@ class DisableAuthorFields implements ModifierInterface
             return $meta;
         }
 
-        // When editing: show article as a link (instead of a disabled select or hidden field).
-        $meta = $this->removeFieldByName($meta, 'user_name');
-        $meta = $this->removeFieldByName($meta, 'user_email');
-        $meta = $this->removeFieldByName($meta, 'article_link');
-
-        $articleLinkField = [
-            'arguments' => [
-                'data' => [
-                    'config' => [
-                        'componentType' => 'field',
-                        'formElement' => 'input',
-                        'dataType' => 'text',
-                        'label' => __('Article'),
-                        'dataScope' => 'article_link',
-                        'sortOrder' => 19,
-                        'disabled' => true,
-                        'template' => 'ui/form/field',
-                        'elementTmpl' => 'ui/form/element/html',
-                    ],
-                ],
-            ],
-        ];
-        // Prefer inserting into the "general" fieldset if it exists, otherwise fall back to top-level.
-        $generalChildrenPath = $this->arrayManager->findPath('general', $meta, null, 'children');
-        $targetPath = $generalChildrenPath
-            ? $generalChildrenPath . '/children/article_link'
-            : 'general/children/article_link';
-        $meta = $this->arrayManager->set($targetPath, $meta, $articleLinkField);
+        // When editing: linked article is read-only and listed first.
+        $meta = $this->removeFieldByName($meta, 'article_id');
+        if (!$this->arrayManager->findPath('article_link', $meta, null, 'children')) {
+            $meta = $this->addArticleLinkField($meta);
+        } else {
+            $meta = $this->setFieldConfigValue($meta, 'article_link', 'visible', true);
+            $meta = $this->setFieldConfigValue($meta, 'article_link', 'sortOrder', 1);
+        }
 
         // Comment: keep single Comment field but make it disabled when editing
         foreach (['/arguments/data/config', '/data/config'] as $suffix) {
@@ -101,6 +81,57 @@ class DisableAuthorFields implements ModifierInterface
     {
         $path = $this->arrayManager->findPath($fieldName, $meta, null, 'children');
         return $path ? $this->arrayManager->remove($path, $meta) : $meta;
+    }
+
+    /**
+     * Set a config value on a form field regardless of meta array shape.
+     */
+    /**
+     * @param mixed $value
+     */
+    private function setFieldConfigValue(array $meta, string $fieldName, string $key, $value): array
+    {
+        $fieldPath = $this->arrayManager->findPath($fieldName, $meta, null, 'children');
+        if (!$fieldPath) {
+            return $meta;
+        }
+
+        foreach (['/arguments/data/config/' . $key, '/settings/' . $key] as $suffix) {
+            $configPath = $fieldPath . $suffix;
+            if ($this->arrayManager->exists($configPath, $meta)) {
+                return $this->arrayManager->set($configPath, $meta, $value);
+            }
+        }
+
+        return $this->arrayManager->set($fieldPath . '/arguments/data/config/' . $key, $meta, $value);
+    }
+
+    private function addArticleLinkField(array $meta): array
+    {
+        $articleLinkField = [
+            'arguments' => [
+                'data' => [
+                    'config' => [
+                        'componentType' => 'field',
+                        'formElement' => 'input',
+                        'dataType' => 'text',
+                        'label' => __('Article'),
+                        'dataScope' => 'article_link',
+                        'sortOrder' => 1,
+                        'visible' => true,
+                        'disabled' => true,
+                        'template' => 'ui/form/field',
+                        'elementTmpl' => 'ui/form/element/html',
+                    ],
+                ],
+            ],
+        ];
+        $generalChildrenPath = $this->arrayManager->findPath('general', $meta, null, 'children');
+        $targetPath = $generalChildrenPath
+            ? $generalChildrenPath . '/children/article_link'
+            : 'general/children/article_link';
+
+        return $this->arrayManager->set($targetPath, $meta, $articleLinkField);
     }
 
     /**

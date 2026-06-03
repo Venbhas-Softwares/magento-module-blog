@@ -1,21 +1,24 @@
 <?php
 declare(strict_types=1);
 
-namespace Venbhas\Blog\Controller\Article\Comment;
+namespace Venbhas\Blog\Controller\Comment;
 
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\ForwardFactory;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Venbhas\Blog\Controller\AbstractEnabledAction;
+use Venbhas\Blog\Model\ArticleFactory;
+use Venbhas\Blog\Model\Comment;
 use Venbhas\Blog\Model\CommentFactory;
 use Venbhas\Blog\Model\Config;
 use Venbhas\Blog\Model\Config\ModuleEnabledGuard;
 use Venbhas\Blog\Model\ResourceModel\Article as ArticleResource;
 
-class Post extends AbstractEnabledAction implements HttpPostActionInterface
+class Post extends AbstractEnabledAction implements HttpGetActionInterface, HttpPostActionInterface
 {
     /** @var RedirectFactory */
     protected $resultRedirectFactory;
@@ -35,23 +38,9 @@ class Post extends AbstractEnabledAction implements HttpPostActionInterface
     /** @var ArticleResource */
     protected $articleResource;
 
-    /** @var \Venbhas\Blog\Model\ArticleFactory */
+    /** @var ArticleFactory */
     protected $articleFactory;
 
-    /**
-     * Constructor.
-     *
-     * @param Context $context
-     * @param ModuleEnabledGuard $moduleEnabledGuard
-     * @param ForwardFactory $resultForwardFactory
-     * @param RedirectFactory $resultRedirectFactory
-     * @param ManagerInterface $messageManager
-     * @param CommentFactory $commentFactory
-     * @param Config $config
-     * @param StoreManagerInterface $storeManager
-     * @param ArticleResource $articleResource
-     * @param \Venbhas\Blog\Model\ArticleFactory $articleFactory
-     */
     public function __construct(
         Context $context,
         ModuleEnabledGuard $moduleEnabledGuard,
@@ -62,7 +51,7 @@ class Post extends AbstractEnabledAction implements HttpPostActionInterface
         Config $config,
         StoreManagerInterface $storeManager,
         ArticleResource $articleResource,
-        \Venbhas\Blog\Model\ArticleFactory $articleFactory
+        ArticleFactory $articleFactory
     ) {
         parent::__construct($context, $moduleEnabledGuard, $resultForwardFactory);
         $this->resultRedirectFactory = $resultRedirectFactory;
@@ -75,9 +64,7 @@ class Post extends AbstractEnabledAction implements HttpPostActionInterface
     }
 
     /**
-     * Execute action.
-     *
-     * @return \Magento\Framework\Controller\Result\Redirect
+     * @inheritdoc
      */
     public function execute()
     {
@@ -117,7 +104,7 @@ class Post extends AbstractEnabledAction implements HttpPostActionInterface
             $comment->setUserName($userName);
             $comment->setUserEmail($userEmail);
             $comment->setComment($commentText);
-            $comment->setStatus(\Venbhas\Blog\Model\Comment::STATUS_PENDING);
+            $comment->setStatus(Comment::STATUS_PENDING);
             $comment->save();
             $this->messageManager->addSuccessMessage(__('Your comment has been submitted and is awaiting moderation.'));
         } catch (\Throwable $e) {
@@ -127,12 +114,6 @@ class Post extends AbstractEnabledAction implements HttpPostActionInterface
         return $this->getRedirectToArticle($articleId);
     }
 
-    /**
-     * Get redirect result to article page.
-     *
-     * @param int $articleId
-     * @return \Magento\Framework\Controller\Result\Redirect
-     */
     private function getRedirectToArticle(int $articleId)
     {
         $redirect = $this->resultRedirectFactory->create();

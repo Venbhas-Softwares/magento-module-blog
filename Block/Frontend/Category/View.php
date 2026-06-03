@@ -11,6 +11,7 @@ use Venbhas\Blog\Block\Frontend\Article\ToolbarAwareTrait;
 use Venbhas\Blog\Block\Frontend\ModuleEnabledTrait;
 use Venbhas\Blog\Model\Category;
 use Venbhas\Blog\Model\Config;
+use Venbhas\Blog\Model\Content\HtmlFilter;
 use Venbhas\Blog\Model\ResourceModel\Article\CollectionFactory as ArticleCollectionFactory;
 use Venbhas\Blog\Model\ResourceModel\Category\RelatedProducts;
 use Magento\Store\Model\StoreManagerInterface;
@@ -37,6 +38,9 @@ class View extends Template implements ToolbarAwareInterface
     /** @var Config */
     private $config;
 
+    /** @var HtmlFilter */
+    private $htmlFilter;
+
     /**
      * Constructor.
      *
@@ -46,6 +50,7 @@ class View extends Template implements ToolbarAwareInterface
      * @param Registry $registry
      * @param StoreManagerInterface $storeManager
      * @param Config $config
+     * @param HtmlFilter $htmlFilter
      * @param array $data
      */
     public function __construct(
@@ -55,6 +60,7 @@ class View extends Template implements ToolbarAwareInterface
         Registry $registry,
         StoreManagerInterface $storeManager,
         Config $config,
+        HtmlFilter $htmlFilter,
         array $data = []
     ) {
         $this->articleCollectionFactory = $articleCollectionFactory;
@@ -62,6 +68,7 @@ class View extends Template implements ToolbarAwareInterface
         $this->registry = $registry;
         $this->storeManager = $storeManager;
         $this->config = $config;
+        $this->htmlFilter = $htmlFilter;
         parent::__construct($context, $data);
     }
 
@@ -73,6 +80,19 @@ class View extends Template implements ToolbarAwareInterface
     public function getCategory(): ?Category
     {
         return $this->_data['category'] ?? $this->registry->registry('current_article_category');
+    }
+
+    /**
+     * Category description with CMS widgets and Page Builder markup rendered.
+     */
+    public function getFilteredDescription(): string
+    {
+        $category = $this->getCategory();
+        if (!$category) {
+            return '';
+        }
+
+        return $this->htmlFilter->filter($category->getDescription());
     }
 
     /**

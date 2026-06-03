@@ -55,18 +55,30 @@
                     <label translate="true">Delete</label>
                 </settings>
             </action>
-            <action name="enable">
+            <action name="status_draft">
                 <settings>
-                    <url path="blog/article/massEnable"/>
-                    <type>enable</type>
-                    <label translate="true">Enable</label>
+                    <confirm>
+                        <message translate="true">Are you sure you want to mark the selected articles as Draft?</message>
+                        <title translate="true">Change status</title>
+                    </confirm>
+                    <url path="blog/article/massStatus">
+                        <param name="status">0</param>
+                    </url>
+                    <type>status_draft</type>
+                    <label translate="true">Draft</label>
                 </settings>
             </action>
-            <action name="disable">
+            <action name="status_published">
                 <settings>
-                    <url path="blog/article/massDisable"/>
-                    <type>disable</type>
-                    <label translate="true">Disable</label>
+                    <confirm>
+                        <message translate="true">Are you sure you want to mark the selected articles as Published?</message>
+                        <title translate="true">Change status</title>
+                    </confirm>
+                    <url path="blog/article/massStatus">
+                        <param name="status">1</param>
+                    </url>
+                    <type>status_published</type>
+                    <label translate="true">Published</label>
                 </settings>
             </action>
         </massaction>

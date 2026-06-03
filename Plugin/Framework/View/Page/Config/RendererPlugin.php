@@ -93,8 +93,6 @@ class RendererPlugin
     {
         $reflection = new \ReflectionClass($this->pageConfig);
         $property = $reflection->getProperty('metadata');
-        $property->setAccessible(true);
-
         $metadata = $property->getValue($this->pageConfig);
         foreach (self::BLOG_SEO_META as $name) {
             unset($metadata[$name]);

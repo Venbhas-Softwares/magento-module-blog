@@ -6,6 +6,7 @@ namespace Venbhas\Blog\Plugin\Backend\App;
 
 use Magento\Backend\App\AbstractAction;
 use Magento\Backend\Model\View\Result\Redirect;
+use Magento\Backend\Model\View\Result\RedirectFactory;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\Controller\ResultInterface;
@@ -30,15 +31,23 @@ class DispatchGuardPlugin
     private MessageManagerInterface $messageManager;
 
     /**
+     * @var RedirectFactory
+     */
+    private RedirectFactory $resultRedirectFactory;
+
+    /**
      * @param ModuleEnabledGuard $moduleEnabledGuard Module enabled guard
      * @param MessageManagerInterface $messageManager Admin flash messages
+     * @param RedirectFactory $resultRedirectFactory Admin redirect result factory
      */
     public function __construct(
         ModuleEnabledGuard $moduleEnabledGuard,
-        MessageManagerInterface $messageManager
+        MessageManagerInterface $messageManager,
+        RedirectFactory $resultRedirectFactory
     ) {
         $this->moduleEnabledGuard = $moduleEnabledGuard;
         $this->messageManager = $messageManager;
+        $this->resultRedirectFactory = $resultRedirectFactory;
     }
 
     /**
@@ -60,7 +69,7 @@ class DispatchGuardPlugin
             );
 
             /** @var Redirect $redirect */
-            $redirect = $subject->getResultRedirectFactory()->create();
+            $redirect = $this->resultRedirectFactory->create();
             $redirect->setPath('adminhtml/dashboard/index');
 
             return $redirect;

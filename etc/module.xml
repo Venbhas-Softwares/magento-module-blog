@@ -4,6 +4,9 @@
     <module name="Venbhas_Blog">
         <sequence>
             <module name="Magento_Store"/>
+            <module name="Magento_Cms"/>
+            <module name="Magento_Widget"/>
+            <module name="Magento_PageBuilder"/>
             <module name="Magento_Catalog"/>
             <module name="Magento_Backend"/>
             <module name="Magento_Ui"/>

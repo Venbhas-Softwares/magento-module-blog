@@ -23,7 +23,10 @@ $formattedDate = $updatedAt ? $block->formatDate($updatedAt, \IntlDateFormatter:
                  alt="<?= $escaper->escapeHtmlAttr($article->getTitle()) ?>">
         </div>
     <?php endif; ?>
-    <div class="article-content">
-        <?= /* @noEscape */ $article->getDescription() ?>
-    </div>
+    <?php $descriptionHtml = $block->getFilteredDescription(); ?>
+    <?php if ($descriptionHtml !== ''): ?>
+        <div class="article-content cms-content">
+            <?= /* @noEscape */ $descriptionHtml ?>
+        </div>
+    <?php endif; ?>
 </div>

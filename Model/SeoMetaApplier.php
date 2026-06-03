@@ -31,13 +31,15 @@ class SeoMetaApplier
      *
      * @param Page $resultPage
      * @param DataObject $entity
-     * @param string $browserTitle
+     * @param string $fallbackTitle Article title or category name when meta_title is empty
      * @return void
      */
-    public function apply(Page $resultPage, DataObject $entity, string $browserTitle): void
+    public function apply(Page $resultPage, DataObject $entity, string $fallbackTitle): void
     {
+        $metaTitle = $this->resolveMetaTitle($entity, $fallbackTitle);
+
         $meta = [
-            'title' => trim((string) $entity->getData('meta_title')),
+            'title' => $metaTitle,
             'description' => trim((string) $entity->getData('meta_description')),
             'keywords' => trim((string) $entity->getData('meta_keywords')),
             'robots' => trim((string) $entity->getData('meta_robots')),
@@ -48,7 +50,20 @@ class SeoMetaApplier
         }
         $this->registry->register(self::REGISTRY_KEY, $meta);
 
-        $resultPage->getConfig()->getTitle()->set($browserTitle);
+        $resultPage->getConfig()->getTitle()->set($metaTitle);
+    }
+
+    /**
+     * Use meta_title when set; otherwise fall back to the entity display name.
+     */
+    private function resolveMetaTitle(DataObject $entity, string $fallbackTitle): string
+    {
+        $metaTitle = trim((string) $entity->getData('meta_title'));
+        if ($metaTitle !== '') {
+            return $metaTitle;
+        }
+
+        return trim($fallbackTitle);
     }
 
     /**

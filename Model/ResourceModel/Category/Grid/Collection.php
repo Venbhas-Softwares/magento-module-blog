@@ -53,8 +53,8 @@ class Collection extends CategoryCollection implements SearchResultInterface
         $eventObject,
         $resourceModel,
         $model = Document::class,
-        AdapterInterface $connection = null,
-        AbstractDb $resource = null
+        ?AdapterInterface $connection = null,
+        ?AbstractDb $resource = null
     ) {
         $this->resourceModel = $resourceModel;
         $this->model = $model;

@@ -9,6 +9,7 @@ use Magento\Backend\Model\Auth\Session as AuthSession;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\App\Request\DataPersistorInterface;
 use Magento\Framework\Controller\ResultInterface;
+use Venbhas\Blog\Model\Adminhtml\Form\DataNormalizer;
 use Venbhas\Blog\Model\Article\CategoryIdsResolver;
 use Venbhas\Blog\Model\Article\Source\Status as ArticleStatus;
 use Venbhas\Blog\Model\ArticleFactory;
@@ -101,9 +102,7 @@ class Save extends Action implements HttpPostActionInterface
             unset($data['data']);
         }
 
-        if (!empty($data['use_config_meta_robots'])) {
-            $data['meta_robots'] = null;
-        }
+        $data = DataNormalizer::resolveMetaRobots(DataNormalizer::flattenGroupedFields($data));
         $id = (int) ($data['article_id'] ?? 0);
         $model = $this->articleFactory->create();
         if ($id) {
