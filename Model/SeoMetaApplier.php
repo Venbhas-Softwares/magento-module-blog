@@ -15,11 +15,13 @@ class SeoMetaApplier
 {
     public const REGISTRY_KEY = 'venbhas_blog_seo_meta';
 
-    /** @var Registry */
-    private $registry;
+    /**
+     * @var Registry
+     */
+    private Registry $registry;
 
     /**
-     * @param Registry $registry
+     * @param Registry $registry Application registry
      */
     public function __construct(Registry $registry)
     {
@@ -55,6 +57,10 @@ class SeoMetaApplier
 
     /**
      * Use meta_title when set; otherwise fall back to the entity display name.
+     *
+     * @param DataObject $entity
+     * @param string $fallbackTitle
+     * @return string
      */
     private function resolveMetaTitle(DataObject $entity, string $fallbackTitle): string
     {

@@ -12,8 +12,11 @@ class DataNormalizer
 
     /**
      * Hoist grouped meta robots fields to the root of the request array.
+     *
+     * @param array $data
+     * @return array
      */
-    public static function flattenGroupedFields(array $data): array
+    public function flattenGroupedFields(array $data): array
     {
         if (isset($data[self::META_ROBOTS_CONTAINER]) && is_array($data[self::META_ROBOTS_CONTAINER])) {
             foreach ($data[self::META_ROBOTS_CONTAINER] as $key => $value) {
@@ -22,15 +25,15 @@ class DataNormalizer
             unset($data[self::META_ROBOTS_CONTAINER]);
         }
 
-        $metaRobots = self::findFirstNonEmptyString($data, 'meta_robots');
+        $metaRobots = $this->findFirstNonEmptyString($data, 'meta_robots');
         if ($metaRobots !== null) {
             $data['meta_robots'] = $metaRobots;
         }
 
         $useConfigValues = [];
-        self::collectNestedValues($data, 'use_config_meta_robots', $useConfigValues);
+        $this->collectNestedValues($data, 'use_config_meta_robots', $useConfigValues);
         if ($useConfigValues !== []) {
-            $data['use_config_meta_robots'] = self::resolveUseConfigFlag($useConfigValues);
+            $data['use_config_meta_robots'] = $this->resolveUseConfigFlag($useConfigValues);
         }
 
         return $data;
@@ -38,14 +41,17 @@ class DataNormalizer
 
     /**
      * Apply use-config flag and remove non-persisted UI-only fields.
+     *
+     * @param array $data
+     * @return array
      */
-    public static function resolveMetaRobots(array $data): array
+    public function resolveMetaRobots(array $data): array
     {
-        $metaRobots = self::findFirstNonEmptyString($data, 'meta_robots');
+        $metaRobots = $this->findFirstNonEmptyString($data, 'meta_robots');
 
         if ($metaRobots !== null) {
             $data['meta_robots'] = $metaRobots;
-        } elseif (self::shouldUseConfigMetaRobots($data)) {
+        } elseif ($this->shouldUseConfigMetaRobots($data)) {
             $data['meta_robots'] = null;
         } else {
             $data['meta_robots'] = null;
@@ -57,11 +63,14 @@ class DataNormalizer
     }
 
     /**
+     * Collect nested values for a given key from a multi-dimensional array.
+     *
      * @param array $data
      * @param string $key
-     * @param array $values
+     * @param array $values Collected values (by reference)
+     * @return void
      */
-    private static function collectNestedValues(array $data, string $key, array &$values): void
+    private function collectNestedValues(array $data, string $key, array &$values): void
     {
         if (array_key_exists($key, $data)) {
             $values[] = $data[$key];
@@ -69,16 +78,19 @@ class DataNormalizer
 
         foreach ($data as $value) {
             if (is_array($value)) {
-                self::collectNestedValues($value, $key, $values);
+                $this->collectNestedValues($value, $key, $values);
             }
         }
     }
 
     /**
+     * Return the first non-empty string value for a key in a nested array.
+     *
      * @param array $data
      * @param string $key
+     * @return string|null
      */
-    private static function findFirstNonEmptyString(array $data, string $key): ?string
+    private function findFirstNonEmptyString(array $data, string $key): ?string
     {
         if (array_key_exists($key, $data)) {
             $value = trim((string) $data[$key]);
@@ -91,7 +103,7 @@ class DataNormalizer
             if (!is_array($value)) {
                 continue;
             }
-            $found = self::findFirstNonEmptyString($value, $key);
+            $found = $this->findFirstNonEmptyString($value, $key);
             if ($found !== null) {
                 return $found;
             }
@@ -101,9 +113,12 @@ class DataNormalizer
     }
 
     /**
-     * @param array<int|string, mixed> $values
+     * Resolve use-config flag from collected checkbox values.
+     *
+     * @param array $values Collected checkbox values
+     * @return int
      */
-    private static function resolveUseConfigFlag(array $values): int
+    private function resolveUseConfigFlag(array $values): int
     {
         foreach ($values as $value) {
             if ((int) $value === 0) {
@@ -115,17 +130,20 @@ class DataNormalizer
     }
 
     /**
+     * Whether meta robots should inherit from store configuration.
+     *
      * @param array $data
+     * @return bool
      */
-    private static function shouldUseConfigMetaRobots(array $data): bool
+    private function shouldUseConfigMetaRobots(array $data): bool
     {
         $values = [];
-        self::collectNestedValues($data, 'use_config_meta_robots', $values);
+        $this->collectNestedValues($data, 'use_config_meta_robots', $values);
 
         if ($values === []) {
             return true;
         }
 
-        return self::resolveUseConfigFlag($values) === 1;
+        return $this->resolveUseConfigFlag($values) === 1;
     }
 }

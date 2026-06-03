@@ -7,6 +7,7 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\ForwardFactory;
+use Magento\Framework\Controller\Result\Redirect;
 use Magento\Framework\Controller\Result\RedirectFactory;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
@@ -20,27 +21,53 @@ use Venbhas\Blog\Model\ResourceModel\Article as ArticleResource;
 
 class Post extends AbstractEnabledAction implements HttpGetActionInterface, HttpPostActionInterface
 {
-    /** @var RedirectFactory */
-    protected $resultRedirectFactory;
+    /**
+     * @var RedirectFactory
+     */
+    protected RedirectFactory $resultRedirectFactory;
 
-    /** @var ManagerInterface */
-    protected $messageManager;
+    /**
+     * @var ManagerInterface
+     */
+    protected ManagerInterface $messageManager;
 
-    /** @var CommentFactory */
-    protected $commentFactory;
+    /**
+     * @var CommentFactory
+     */
+    protected CommentFactory $commentFactory;
 
-    /** @var Config */
-    protected $config;
+    /**
+     * @var Config
+     */
+    protected Config $config;
 
-    /** @var StoreManagerInterface */
-    protected $storeManager;
+    /**
+     * @var StoreManagerInterface
+     */
+    protected StoreManagerInterface $storeManager;
 
-    /** @var ArticleResource */
-    protected $articleResource;
+    /**
+     * @var ArticleResource
+     */
+    protected ArticleResource $articleResource;
 
-    /** @var ArticleFactory */
-    protected $articleFactory;
+    /**
+     * @var ArticleFactory
+     */
+    protected ArticleFactory $articleFactory;
 
+    /**
+     * @param Context $context
+     * @param ModuleEnabledGuard $moduleEnabledGuard
+     * @param ForwardFactory $resultForwardFactory
+     * @param RedirectFactory $resultRedirectFactory
+     * @param ManagerInterface $messageManager
+     * @param CommentFactory $commentFactory
+     * @param Config $config
+     * @param StoreManagerInterface $storeManager
+     * @param ArticleResource $articleResource
+     * @param ArticleFactory $articleFactory
+     */
     public function __construct(
         Context $context,
         ModuleEnabledGuard $moduleEnabledGuard,
@@ -114,6 +141,12 @@ class Post extends AbstractEnabledAction implements HttpGetActionInterface, Http
         return $this->getRedirectToArticle($articleId);
     }
 
+    /**
+     * Redirect back to the article view or blog index.
+     *
+     * @param int $articleId
+     * @return Redirect
+     */
     private function getRedirectToArticle(int $articleId)
     {
         $redirect = $this->resultRedirectFactory->create();

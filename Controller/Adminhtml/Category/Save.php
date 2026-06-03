@@ -35,6 +35,9 @@ class Save extends Action implements HttpPostActionInterface
     /** @var DataPersistorInterface */
     private $dataPersistor;
 
+    /** @var DataNormalizer */
+    private $dataNormalizer;
+
     /** @var string[] Allowed category table columns for setData */
     private const ALLOWED_FIELDS = [
         'category_id', 'parent_id', 'name', 'url_key', 'status', 'description', 'short_description',
@@ -50,6 +53,7 @@ class Save extends Action implements HttpPostActionInterface
      * @param RelatedProducts $relatedProducts
      * @param CategoryRelation $categoryRelation
      * @param DataPersistorInterface $dataPersistor
+     * @param DataNormalizer $dataNormalizer
      */
     public function __construct(
         Context $context,
@@ -57,7 +61,8 @@ class Save extends Action implements HttpPostActionInterface
         CategoryResource $categoryResource,
         RelatedProducts $relatedProducts,
         CategoryRelation $categoryRelation,
-        DataPersistorInterface $dataPersistor
+        DataPersistorInterface $dataPersistor,
+        DataNormalizer $dataNormalizer
     ) {
         parent::__construct($context);
         $this->categoryFactory = $categoryFactory;
@@ -65,6 +70,7 @@ class Save extends Action implements HttpPostActionInterface
         $this->relatedProducts = $relatedProducts;
         $this->categoryRelation = $categoryRelation;
         $this->dataPersistor = $dataPersistor;
+        $this->dataNormalizer = $dataNormalizer;
     }
 
     /**
@@ -85,7 +91,7 @@ class Save extends Action implements HttpPostActionInterface
             unset($data['data']);
         }
 
-        $data = DataNormalizer::resolveMetaRobots(DataNormalizer::flattenGroupedFields($data));
+        $data = $this->dataNormalizer->resolveMetaRobots($this->dataNormalizer->flattenGroupedFields($data));
         $id = (int) ($data['category_id'] ?? 0);
         $model = $this->categoryFactory->create();
         if ($id) {

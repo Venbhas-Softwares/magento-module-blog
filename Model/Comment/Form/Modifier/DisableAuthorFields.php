@@ -13,21 +13,25 @@ use Magento\Ui\DataProvider\Modifier\ModifierInterface;
  */
 class DisableAuthorFields implements ModifierInterface
 {
-    /** @var RequestInterface */
-    private $request;
-
-    /** @var ArrayManager */
-    private $arrayManager;
-
-    /** @var Escaper */
-    private $escaper;
+    /**
+     * @var RequestInterface
+     */
+    private RequestInterface $request;
 
     /**
-     * Constructor.
-     *
-     * @param RequestInterface $request
-     * @param ArrayManager $arrayManager
-     * @param Escaper $escaper
+     * @var ArrayManager
+     */
+    private ArrayManager $arrayManager;
+
+    /**
+     * @var Escaper
+     */
+    private Escaper $escaper;
+
+    /**
+     * @param RequestInterface $request HTTP request
+     * @param ArrayManager $arrayManager UI meta array manager
+     * @param Escaper $escaper Output escaper
      */
     public function __construct(RequestInterface $request, ArrayManager $arrayManager, Escaper $escaper)
     {
@@ -85,9 +89,12 @@ class DisableAuthorFields implements ModifierInterface
 
     /**
      * Set a config value on a form field regardless of meta array shape.
-     */
-    /**
+     *
+     * @param array $meta
+     * @param string $fieldName
+     * @param string $key
      * @param mixed $value
+     * @return array
      */
     private function setFieldConfigValue(array $meta, string $fieldName, string $key, $value): array
     {
@@ -106,6 +113,12 @@ class DisableAuthorFields implements ModifierInterface
         return $this->arrayManager->set($fieldPath . '/arguments/data/config/' . $key, $meta, $value);
     }
 
+    /**
+     * Add a read-only article link field to the comment form meta.
+     *
+     * @param array $meta
+     * @return array
+     */
     private function addArticleLinkField(array $meta): array
     {
         $articleLinkField = [

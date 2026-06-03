@@ -43,6 +43,9 @@ class Save extends Action implements HttpPostActionInterface
     /** @var CategoryIdsResolver */
     private $categoryIdsResolver;
 
+    /** @var DataNormalizer */
+    private $dataNormalizer;
+
     /** @var string[] Allowed article table columns for setData (author is set from logged-in admin) */
     private const ALLOWED_FIELDS = [
         'article_id', 'title', 'url_key', 'meta_title', 'meta_description', 'meta_keywords',
@@ -60,6 +63,7 @@ class Save extends Action implements HttpPostActionInterface
      * @param DataPersistorInterface $dataPersistor
      * @param AuthSession $authSession
      * @param CategoryIdsResolver $categoryIdsResolver
+     * @param DataNormalizer $dataNormalizer
      */
     public function __construct(
         Context $context,
@@ -69,7 +73,8 @@ class Save extends Action implements HttpPostActionInterface
         CategoryRelation $categoryRelation,
         DataPersistorInterface $dataPersistor,
         AuthSession $authSession,
-        CategoryIdsResolver $categoryIdsResolver
+        CategoryIdsResolver $categoryIdsResolver,
+        DataNormalizer $dataNormalizer
     ) {
         parent::__construct($context);
         $this->articleFactory = $articleFactory;
@@ -79,6 +84,7 @@ class Save extends Action implements HttpPostActionInterface
         $this->dataPersistor = $dataPersistor;
         $this->authSession = $authSession;
         $this->categoryIdsResolver = $categoryIdsResolver;
+        $this->dataNormalizer = $dataNormalizer;
     }
 
     /**
@@ -102,7 +108,7 @@ class Save extends Action implements HttpPostActionInterface
             unset($data['data']);
         }
 
-        $data = DataNormalizer::resolveMetaRobots(DataNormalizer::flattenGroupedFields($data));
+        $data = $this->dataNormalizer->resolveMetaRobots($this->dataNormalizer->flattenGroupedFields($data));
         $id = (int) ($data['article_id'] ?? 0);
         $model = $this->articleFactory->create();
         if ($id) {
