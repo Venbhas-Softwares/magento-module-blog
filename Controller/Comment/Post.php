@@ -8,8 +8,6 @@ use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\App\Action\HttpPostActionInterface;
 use Magento\Framework\Controller\Result\ForwardFactory;
 use Magento\Framework\Controller\Result\Redirect;
-use Magento\Framework\Controller\Result\RedirectFactory;
-use Magento\Framework\Message\ManagerInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use Venbhas\Blog\Controller\AbstractEnabledAction;
 use Venbhas\Blog\Model\ArticleFactory;
@@ -21,16 +19,6 @@ use Venbhas\Blog\Model\ResourceModel\Article as ArticleResource;
 
 class Post extends AbstractEnabledAction implements HttpGetActionInterface, HttpPostActionInterface
 {
-    /**
-     * @var RedirectFactory
-     */
-    protected RedirectFactory $resultRedirectFactory;
-
-    /**
-     * @var ManagerInterface
-     */
-    protected ManagerInterface $messageManager;
-
     /**
      * @var CommentFactory
      */
@@ -60,8 +48,6 @@ class Post extends AbstractEnabledAction implements HttpGetActionInterface, Http
      * @param Context $context
      * @param ModuleEnabledGuard $moduleEnabledGuard
      * @param ForwardFactory $resultForwardFactory
-     * @param RedirectFactory $resultRedirectFactory
-     * @param ManagerInterface $messageManager
      * @param CommentFactory $commentFactory
      * @param Config $config
      * @param StoreManagerInterface $storeManager
@@ -72,8 +58,6 @@ class Post extends AbstractEnabledAction implements HttpGetActionInterface, Http
         Context $context,
         ModuleEnabledGuard $moduleEnabledGuard,
         ForwardFactory $resultForwardFactory,
-        RedirectFactory $resultRedirectFactory,
-        ManagerInterface $messageManager,
         CommentFactory $commentFactory,
         Config $config,
         StoreManagerInterface $storeManager,
@@ -81,8 +65,6 @@ class Post extends AbstractEnabledAction implements HttpGetActionInterface, Http
         ArticleFactory $articleFactory
     ) {
         parent::__construct($context, $moduleEnabledGuard, $resultForwardFactory);
-        $this->resultRedirectFactory = $resultRedirectFactory;
-        $this->messageManager = $messageManager;
         $this->commentFactory = $commentFactory;
         $this->config = $config;
         $this->storeManager = $storeManager;
