@@ -211,49 +211,50 @@
                 <dataScope>meta_description</dataScope>
             </settings>
         </field>
-        <field name="meta_robots" sortOrder="50" formElement="select">
-            <settings>
-                <dataType>text</dataType>
-                <label translate="true">Meta Robots</label>
-                <dataScope>meta_robots</dataScope>
-            </settings>
-            <formElements>
-                <select>
-                    <settings>
-                        <options class="Venbhas\Blog\Model\Config\Source\MetaRobots"/>
-                    </settings>
-                </select>
-            </formElements>
-        </field>
-        <field name="use_config_meta_robots" sortOrder="51" formElement="checkbox">
+        <container name="meta_robots_group" component="Magento_Ui/js/form/components/group" sortOrder="50">
             <argument name="data" xsi:type="array">
+                <item name="type" xsi:type="string">group</item>
                 <item name="config" xsi:type="array">
-                    <item name="component" xsi:type="string">Magento_Ui/js/form/element/single-checkbox</item>
-                    <item name="prefer" xsi:type="string">checkbox</item>
-                    <item name="description" xsi:type="string" translate="true">Use Config Settings</item>
-                    <item name="exports" xsi:type="array">
-                        <item name="checked" xsi:type="string">${ $.parentName }.meta_robots:disabled</item>
-                        <item name="__disableTmpl" xsi:type="array">
-                            <item name="checked" xsi:type="boolean">false</item>
-                        </item>
-                    </item>
+                    <item name="breakLine" xsi:type="boolean">true</item>
                 </item>
             </argument>
-            <settings>
-                <dataType>number</dataType>
-                <label translate="true"></label>
-                <dataScope>use_config_meta_robots</dataScope>
-            </settings>
-            <formElements>
-                <checkbox>
-                    <settings>
-                        <valueMap>
-                            <map name="false" xsi:type="number">0</map>
-                            <map name="true" xsi:type="number">1</map>
-                        </valueMap>
-                    </settings>
-                </checkbox>
-            </formElements>
-        </field>
+            <field name="meta_robots" formElement="select">
+                <settings>
+                    <additionalClasses>
+                        <class name="admin__field-default">true</class>
+                    </additionalClasses>
+                    <dataType>number</dataType>
+                    <label translate="true">Meta Robots</label>
+                    <dataScope>meta_robots</dataScope>
+                </settings>
+                <formElements>
+                    <select>
+                        <settings>
+                            <options class="Venbhas\Blog\Model\Config\Source\MetaRobots"/>
+                        </settings>
+                    </select>
+                </formElements>
+            </field>
+            <field name="use_config_meta_robots" formElement="checkbox">
+                <settings>
+                    <dataType>boolean</dataType>
+                    <dataScope>use_config_meta_robots</dataScope>
+                    <exports>
+                        <link name="checked">ns = ${ $.ns }, index = meta_robots :disabled</link>
+                    </exports>
+                </settings>
+                <formElements>
+                    <checkbox>
+                        <settings>
+                            <description translate="true">Use Config Settings</description>
+                            <valueMap>
+                                <map name="false" xsi:type="boolean">false</map>
+                                <map name="true" xsi:type="boolean">true</map>
+                            </valueMap>
+                        </settings>
+                    </checkbox>
+                </formElements>
+            </field>
+        </container>
     </fieldset>
 </form>

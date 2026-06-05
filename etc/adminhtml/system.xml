@@ -53,12 +53,12 @@
                 <comment>Default meta robots key for category and post pages. Can be overridden per category or per article.</comment>
                 <field id="category" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default Category Robots</label>
-                    <comment>Robots key for category listing pages (e.g. INDEX, FOLLOW).</comment>
+                    <comment>Default robots option for category pages (1=INDEX,FOLLOW, 2=NOINDEX,FOLLOW, 3=INDEX,NOFOLLOW, 4=NOINDEX,NOFOLLOW).</comment>
                     <source_model>Venbhas\Blog\Model\Config\Source\MetaRobots</source_model>
                 </field>
                 <field id="post" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Default Article Robots</label>
-                    <comment>Robots key for article detail pages.</comment>
+                    <comment>Default robots option for article pages (1=INDEX,FOLLOW, 2=NOINDEX,FOLLOW, 3=INDEX,NOFOLLOW, 4=NOINDEX,NOFOLLOW).</comment>
                     <source_model>Venbhas\Blog\Model\Config\Source\MetaRobots</source_model>
                 </field>
             </group>

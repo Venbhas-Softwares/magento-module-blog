@@ -251,34 +251,38 @@ class Config
     }
 
     /**
-     * Get category meta robots value.
+     * Get category meta robots option id.
      *
      * @param int|null $storeId
-     * @return string
+     * @return int
      */
-    public function getCategoryMetaRobots(?int $storeId = null): string
+    public function getCategoryMetaRobots(?int $storeId = null): int
     {
         $value = $this->scopeConfig->getValue(
             self::XML_PATH_META_ROBOTS_CATEGORY,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
-        return $value !== null ? (string) $value : 'INDEX,FOLLOW';
+        $normalized = Source\MetaRobots::normalizeValue($value);
+
+        return $normalized ?? Source\MetaRobots::INDEX_FOLLOW;
     }
 
     /**
-     * Get post meta robots value.
+     * Get post meta robots option id.
      *
      * @param int|null $storeId
-     * @return string
+     * @return int
      */
-    public function getPostMetaRobots(?int $storeId = null): string
+    public function getPostMetaRobots(?int $storeId = null): int
     {
         $value = $this->scopeConfig->getValue(
             self::XML_PATH_META_ROBOTS_POST,
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
-        return $value !== null ? (string) $value : 'INDEX,FOLLOW';
+        $normalized = Source\MetaRobots::normalizeValue($value);
+
+        return $normalized ?? Source\MetaRobots::INDEX_FOLLOW;
     }
 }

@@ -10,6 +10,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Magento\Ui\DataProvider\AbstractDataProvider;
 use Magento\Ui\DataProvider\Modifier\ModifierInterface;
 use Magento\Ui\DataProvider\Modifier\PoolInterface;
+use Venbhas\Blog\Model\Config\Source\MetaRobots;
 use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory as CategoryCollectionFactory;
 
 /**
@@ -111,8 +112,8 @@ class DataProvider extends AbstractDataProvider
                     'meta_title' => '',
                     'meta_keywords' => '',
                     'meta_description' => '',
-                    'meta_robots' => '',
-                    'use_config_meta_robots' => 1,
+                    'meta_robots' => null,
+                    'use_config_meta_robots' => true,
                     'featured_image' => '',
                 ];
             if (!empty($persistorData)) {
@@ -126,8 +127,9 @@ class DataProvider extends AbstractDataProvider
 
             foreach ($items as $category) {
                 $data = $category->getData();
-                $metaRobots = trim((string) ($data['meta_robots'] ?? ''));
-                $data['use_config_meta_robots'] = $metaRobots === '' ? 1 : 0;
+                $metaRobots = MetaRobots::normalizeValue($data['meta_robots'] ?? null);
+                $data['use_config_meta_robots'] = $metaRobots === null ? true : false;
+                $data['meta_robots'] = $metaRobots;
                 $featuredImage = $data['featured_image'] ?? $data['featured image'] ?? '';
                 if ($featuredImage) {
                     $fileName = preg_replace('#^.*[/\\\\]#', '', $featuredImage);
@@ -161,6 +163,10 @@ class DataProvider extends AbstractDataProvider
         /** @var ModifierInterface $modifier */
         foreach ($this->pool->getModifiersInstances() as $modifier) {
             $meta = $modifier->modifyMeta($meta);
+        }
+
+        if (isset($meta['seo']['children']['meta_robots_group']['children']['use_config_meta_robots'])) {
+            $meta['seo']['children']['meta_robots_group']['children']['use_config_meta_robots']['arguments']['data']['config']['default'] = true;
         }
 
         return $meta;

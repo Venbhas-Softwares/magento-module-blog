@@ -1,5 +1,5 @@
 /**
- * Related products slider - shows config.visibleCount at a time; prev/next scroll to see rest.
+ * Horizontal slider - shows config.visibleCount at a time; prev/next scroll to see rest.
  */
 define([
     'jquery'
@@ -14,10 +14,15 @@ define([
         if (!$block.length) {
             return;
         }
-        var $track = $block.find('.article-related-products-track');
-        var $prev = $block.find('.article-related-slider-prev');
-        var $next = $block.find('.article-related-slider-next');
-        var $items = $track.find('.product-item');
+        var trackSelector = config.trackSelector || '.article-related-products-track';
+        var prevSelector = config.prevSelector || '.article-related-slider-prev';
+        var nextSelector = config.nextSelector || '.article-related-slider-next';
+        var itemSelector = config.itemSelector || '.product-item';
+        var resizeNamespace = config.resizeNamespace || 'articleRelatedSlider';
+        var $track = $block.find(trackSelector);
+        var $prev = $block.find(prevSelector);
+        var $next = $block.find(nextSelector);
+        var $items = $track.find(itemSelector);
         if (!$track.length || !$prev.length || !$next.length) {
             return;
         }
@@ -61,7 +66,7 @@ define([
         });
 
         $track.on('scroll', updateButtons);
-        $(window).on('resize.articleRelatedSlider', function () {
+        $(window).on('resize.' + resizeNamespace, function () {
             setItemWidths();
             updateButtons();
         });

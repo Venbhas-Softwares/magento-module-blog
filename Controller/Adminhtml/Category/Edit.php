@@ -8,9 +8,7 @@ use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Registry;
 use Magento\Framework\View\Result\PageFactory;
-use Venbhas\Blog\Model\Category;
 use Venbhas\Blog\Model\CategoryFactory;
-use Venbhas\Blog\Model\ResourceModel\Category\CollectionFactory;
 
 class Edit extends Action implements HttpGetActionInterface
 {
@@ -25,28 +23,22 @@ class Edit extends Action implements HttpGetActionInterface
     /** @var CategoryFactory */
     private $categoryFactory;
 
-    /** @var CollectionFactory */
-    private $collectionFactory;
-
     /**
      * @param Context $context
      * @param PageFactory $resultPageFactory
      * @param Registry $coreRegistry
      * @param CategoryFactory $categoryFactory
-     * @param CollectionFactory $collectionFactory
      */
     public function __construct(
         Context $context,
         PageFactory $resultPageFactory,
         Registry $coreRegistry,
-        CategoryFactory $categoryFactory,
-        CollectionFactory $collectionFactory
+        CategoryFactory $categoryFactory
     ) {
         parent::__construct($context);
         $this->resultPageFactory = $resultPageFactory;
         $this->coreRegistry = $coreRegistry;
         $this->categoryFactory = $categoryFactory;
-        $this->collectionFactory = $collectionFactory;
     }
 
     /**
@@ -66,17 +58,7 @@ class Edit extends Action implements HttpGetActionInterface
         } elseif ($this->getRequest()->has('parent')) {
             $model->setData('parent_id', (int) $this->getRequest()->getParam('parent'));
         } else {
-            $collection = $this->collectionFactory->create();
-            $collection->setOrder('level', 'ASC')->setOrder('position', 'ASC')->setOrder('category_id', 'ASC');
-            $collection->setPageSize(1);
-            $firstId = (int) $collection->getFirstItem()->getId();
-            if ($firstId) {
-                return $this->resultRedirectFactory->create()->setPath(
-                    '*/*/edit',
-                    ['category_id' => $firstId]
-                );
-            }
-            $model->setData('parent_id', Category::TREE_ROOT_ID);
+            return $this->resultRedirectFactory->create()->setPath('*/*/index');
         }
 
         $this->coreRegistry->register('venbhas_blog_category', $model);

@@ -5,33 +5,37 @@ namespace Venbhas\Blog\Controller\Adminhtml\Category;
 
 use Magento\Backend\App\Action;
 use Magento\Backend\App\Action\Context;
-use Magento\Backend\Model\View\Result\ForwardFactory;
 use Magento\Framework\App\Action\HttpGetActionInterface;
+use Magento\Framework\View\Result\PageFactory;
 
 class Index extends Action implements HttpGetActionInterface
 {
     public const ADMIN_RESOURCE = 'Venbhas_Blog::category';
 
-    /** @var ForwardFactory */
-    private $resultForwardFactory;
+    /** @var PageFactory */
+    private $resultPageFactory;
 
     /**
      * @param Context $context
-     * @param ForwardFactory $resultForwardFactory
+     * @param PageFactory $resultPageFactory
      */
-    public function __construct(Context $context, ForwardFactory $resultForwardFactory)
+    public function __construct(Context $context, PageFactory $resultPageFactory)
     {
         parent::__construct($context);
-        $this->resultForwardFactory = $resultForwardFactory;
+        $this->resultPageFactory = $resultPageFactory;
     }
 
     /**
-     * Categories index forwards to tree edit page (catalog-style).
+     * Categories index shows the grid listing.
      *
-     * @return \Magento\Backend\Model\View\Result\Forward
+     * @return \Magento\Framework\View\Result\Page
      */
     public function execute()
     {
-        return $this->resultForwardFactory->create()->forward('edit');
+        $resultPage = $this->resultPageFactory->create();
+        $resultPage->setActiveMenu('Venbhas_Blog::category_manage');
+        $resultPage->getConfig()->getTitle()->prepend(__('Categories'));
+
+        return $resultPage;
     }
 }

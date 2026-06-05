@@ -88,7 +88,12 @@ class View extends AbstractEnabledAction implements HttpGetActionInterface
         $this->getRequest()->setParam('category_id', $category->getId());
 
         $resultPage = $this->resultPageFactory->create();
-        $this->seoMetaApplier->apply($resultPage, $category, (string) $category->getName());
+        $this->seoMetaApplier->apply(
+            $resultPage,
+            $category,
+            (string) $category->getName(),
+            SeoMetaApplier::ROBOTS_CONFIG_CATEGORY
+        );
 
         return $resultPage;
     }

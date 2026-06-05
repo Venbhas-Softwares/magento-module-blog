@@ -13,8 +13,8 @@
                 <related_products_limit>10</related_products_limit>
             </general>
             <meta_robots>
-                <category>INDEX,FOLLOW</category>
-                <post>INDEX,FOLLOW</post>
+                <category>1</category>
+                <post>1</post>
             </meta_robots>
         </venbhas_blog>
     </default>

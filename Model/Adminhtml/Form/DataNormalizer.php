@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Venbhas\Blog\Model\Adminhtml\Form;
 
+use Venbhas\Blog\Model\Config\Source\MetaRobots;
+
 /**
  * Normalizes admin UI form POST payloads before persistence.
  */
@@ -25,7 +27,7 @@ class DataNormalizer
             unset($data[self::META_ROBOTS_CONTAINER]);
         }
 
-        $metaRobots = $this->findFirstNonEmptyString($data, 'meta_robots');
+        $metaRobots = $this->findFirstMetaRobotsValue($data);
         if ($metaRobots !== null) {
             $data['meta_robots'] = $metaRobots;
         }
@@ -47,7 +49,7 @@ class DataNormalizer
      */
     public function resolveMetaRobots(array $data): array
     {
-        $metaRobots = $this->findFirstNonEmptyString($data, 'meta_robots');
+        $metaRobots = $this->findFirstMetaRobotsValue($data);
 
         if ($metaRobots !== null) {
             $data['meta_robots'] = $metaRobots;
@@ -84,18 +86,17 @@ class DataNormalizer
     }
 
     /**
-     * Return the first non-empty string value for a key in a nested array.
+     * Return the first valid meta robots option id in a nested array.
      *
      * @param array $data
-     * @param string $key
-     * @return string|null
+     * @return int|null
      */
-    private function findFirstNonEmptyString(array $data, string $key): ?string
+    private function findFirstMetaRobotsValue(array $data): ?int
     {
-        if (array_key_exists($key, $data)) {
-            $value = trim((string) $data[$key]);
-            if ($value !== '') {
-                return $value;
+        if (array_key_exists('meta_robots', $data)) {
+            $normalized = MetaRobots::normalizeValue($data['meta_robots']);
+            if ($normalized !== null) {
+                return $normalized;
             }
         }
 
@@ -103,7 +104,7 @@ class DataNormalizer
             if (!is_array($value)) {
                 continue;
             }
-            $found = $this->findFirstNonEmptyString($value, $key);
+            $found = $this->findFirstMetaRobotsValue($value);
             if ($found !== null) {
                 return $found;
             }
@@ -121,7 +122,7 @@ class DataNormalizer
     private function resolveUseConfigFlag(array $values): int
     {
         foreach ($values as $value) {
-            if ((int) $value === 0) {
+            if ($value === false || $value === 0 || $value === '0') {
                 return 0;
             }
         }

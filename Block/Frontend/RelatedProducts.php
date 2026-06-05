@@ -1,10 +1,9 @@
 <?php
-declare(strict_types=1);
-
 namespace Venbhas\Blog\Block\Frontend;
 
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Attribute\Source\Status as ProductStatus;
+use Magento\Catalog\Model\ResourceModel\Product\CollectionFactory;
 use Magento\Catalog\Model\ProductRepository;
 use Magento\Catalog\Helper\Image;
 use Magento\Framework\Exception\NoSuchEntityException;
@@ -17,6 +16,8 @@ use Venbhas\Blog\Model\ResourceModel\Article\RelatedProducts as ArticleRelatedPr
 class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
 {
     use ModuleEnabledTrait;
+    /** @var CollectionFactory */
+    protected $productCollectionFactory;
 
     /** @var CategoryRelatedProducts */
     protected $relatedCategoryProducts;
@@ -41,6 +42,7 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
 
     /**
      * @param \Magento\Catalog\Block\Product\Context $context
+     * @param CollectionFactory $productCollectionFactory
      * @param ProductRepository $productRepository
      * @param Image $imageHelper
      * @param Registry $registry
@@ -52,6 +54,7 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
      */
     public function __construct(
         \Magento\Catalog\Block\Product\Context $context,
+        \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
         \Magento\Catalog\Model\ProductRepository $productRepository,
         \Magento\Catalog\Helper\Image $imageHelper,
         Registry $registry,
@@ -61,6 +64,7 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
         Config $config,
         array $data = []
     ) {
+        $this->productCollectionFactory = $productCollectionFactory;
         $this->productRepository = $productRepository;
         $this->imageHelper = $imageHelper;
         $this->registry = $registry;
@@ -133,6 +137,22 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
         $storeId = (int) $this->storeManager->getStore()->getId();
         $n = $this->config->getRelatedProductsLimit($storeId);
         return $n > 0 ? $n : 4;
+    }
+
+    /**
+     * Deprecated: use getRelatedProducts() instead. Returns empty collection for backwards compatibility.
+     *
+     * @deprecated Use getRelatedProducts() instead.
+     * @see getRelatedProducts()
+     */
+    public function getRelatedProductCollection()
+    {
+        $ids = $this->getRelatedProductIds();
+        $collection = $this->productCollectionFactory->create();
+        $collection->setStoreId($this->storeManager->getStore()->getId())
+            ->addAttributeToSelect('*')
+            ->addIdFilter(empty($ids) ? [0] : $ids);
+        return $collection;
     }
 
     /**
