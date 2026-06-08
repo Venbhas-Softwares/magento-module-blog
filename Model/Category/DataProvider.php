@@ -33,6 +33,9 @@ class DataProvider extends AbstractDataProvider
     /** @var StoreManagerInterface */
     private $storeManager;
 
+    /** @var MetaRobots */
+    private $metaRobots;
+
     /**
      * Constructor.
      *
@@ -44,6 +47,7 @@ class DataProvider extends AbstractDataProvider
      * @param PoolInterface $pool
      * @param RequestInterface $request
      * @param StoreManagerInterface $storeManager
+     * @param MetaRobots $metaRobots
      * @param array $meta
      * @param array $data
      */
@@ -56,6 +60,7 @@ class DataProvider extends AbstractDataProvider
         PoolInterface $pool,
         RequestInterface $request,
         StoreManagerInterface $storeManager,
+        MetaRobots $metaRobots,
         array $meta = [],
         array $data = []
     ) {
@@ -64,6 +69,7 @@ class DataProvider extends AbstractDataProvider
         $this->pool = $pool;
         $this->request = $request;
         $this->storeManager = $storeManager;
+        $this->metaRobots = $metaRobots;
         parent::__construct($name, $primaryFieldName, $requestFieldName, $meta, $data);
     }
 
@@ -127,7 +133,7 @@ class DataProvider extends AbstractDataProvider
 
             foreach ($items as $category) {
                 $data = $category->getData();
-                $metaRobots = MetaRobots::normalizeValue($data['meta_robots'] ?? null);
+                $metaRobots = $this->metaRobots->normalizeValue($data['meta_robots'] ?? null);
                 $data['use_config_meta_robots'] = $metaRobots === null ? true : false;
                 $data['meta_robots'] = $metaRobots;
                 $featuredImage = $data['featured_image'] ?? $data['featured image'] ?? '';
@@ -166,7 +172,8 @@ class DataProvider extends AbstractDataProvider
         }
 
         if (isset($meta['seo']['children']['meta_robots_group']['children']['use_config_meta_robots'])) {
-            $meta['seo']['children']['meta_robots_group']['children']['use_config_meta_robots']['arguments']['data']['config']['default'] = true;
+            $useConfigMetaRobots = &$meta['seo']['children']['meta_robots_group']['children']['use_config_meta_robots'];
+            $useConfigMetaRobots['arguments']['data']['config']['default'] = true;
         }
 
         return $meta;

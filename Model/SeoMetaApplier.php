@@ -29,13 +29,20 @@ class SeoMetaApplier
     private Config $config;
 
     /**
+     * @var MetaRobots
+     */
+    private MetaRobots $metaRobots;
+
+    /**
      * @param Registry $registry Application registry
      * @param Config $config Blog configuration
+     * @param MetaRobots $metaRobots Meta robots option source
      */
-    public function __construct(Registry $registry, Config $config)
+    public function __construct(Registry $registry, Config $config, MetaRobots $metaRobots)
     {
         $this->registry = $registry;
         $this->config = $config;
+        $this->metaRobots = $metaRobots;
     }
 
     /**
@@ -96,16 +103,16 @@ class SeoMetaApplier
      */
     private function resolveRobotsDirective(DataObject $entity, string $robotsConfigKey): string
     {
-        $metaRobots = MetaRobots::normalizeValue($entity->getData('meta_robots'));
+        $metaRobots = $this->metaRobots->normalizeValue($entity->getData('meta_robots'));
         if ($metaRobots !== null) {
-            return MetaRobots::toDirective($metaRobots);
+            return $this->metaRobots->toDirective($metaRobots);
         }
 
         $configValue = $robotsConfigKey === self::ROBOTS_CONFIG_CATEGORY
             ? $this->config->getCategoryMetaRobots()
             : $this->config->getPostMetaRobots();
 
-        return MetaRobots::toDirective($configValue);
+        return $this->metaRobots->toDirective($configValue);
     }
 
     /**

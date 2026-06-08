@@ -13,6 +13,19 @@ class DataNormalizer
     private const META_ROBOTS_CONTAINER = 'container_meta_robots';
 
     /**
+     * @var MetaRobots
+     */
+    private MetaRobots $metaRobots;
+
+    /**
+     * @param MetaRobots $metaRobots Meta robots option source
+     */
+    public function __construct(MetaRobots $metaRobots)
+    {
+        $this->metaRobots = $metaRobots;
+    }
+
+    /**
      * Hoist grouped meta robots fields to the root of the request array.
      *
      * @param array $data
@@ -94,7 +107,7 @@ class DataNormalizer
     private function findFirstMetaRobotsValue(array $data): ?int
     {
         if (array_key_exists('meta_robots', $data)) {
-            $normalized = MetaRobots::normalizeValue($data['meta_robots']);
+            $normalized = $this->metaRobots->normalizeValue($data['meta_robots']);
             if ($normalized !== null) {
                 return $normalized;
             }

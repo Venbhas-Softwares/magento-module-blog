@@ -24,14 +24,19 @@ class Config
     /** @var ScopeConfigInterface */
     private $scopeConfig;
 
+    /** @var Source\MetaRobots */
+    private $metaRobots;
+
     /**
      * Constructor.
      *
      * @param ScopeConfigInterface $scopeConfig
+     * @param Source\MetaRobots $metaRobots
      */
-    public function __construct(ScopeConfigInterface $scopeConfig)
+    public function __construct(ScopeConfigInterface $scopeConfig, Source\MetaRobots $metaRobots)
     {
         $this->scopeConfig = $scopeConfig;
+        $this->metaRobots = $metaRobots;
     }
 
     /**
@@ -252,7 +257,7 @@ class Config
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
-        $normalized = Source\MetaRobots::normalizeValue($value);
+        $normalized = $this->metaRobots->normalizeValue($value);
 
         return $normalized ?? Source\MetaRobots::INDEX_FOLLOW;
     }
@@ -270,7 +275,7 @@ class Config
             ScopeInterface::SCOPE_STORE,
             $storeId
         );
-        $normalized = Source\MetaRobots::normalizeValue($value);
+        $normalized = $this->metaRobots->normalizeValue($value);
 
         return $normalized ?? Source\MetaRobots::INDEX_FOLLOW;
     }

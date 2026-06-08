@@ -40,7 +40,7 @@ class MetaRobots implements OptionSourceInterface
      * @param int|string|null $value
      * @return string
      */
-    public static function toDirective($value): string
+    public function toDirective($value): string
     {
         $id = (int) $value;
 
@@ -53,7 +53,7 @@ class MetaRobots implements OptionSourceInterface
      * @param mixed $value
      * @return int|null
      */
-    public static function normalizeValue($value): ?int
+    public function normalizeValue($value): ?int
     {
         if ($value === null || $value === '') {
             return null;
