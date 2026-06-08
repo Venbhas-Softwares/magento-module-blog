@@ -63,17 +63,6 @@ class Config
     }
 
     /**
-     * Alias for {@see isModuleEnabled()} — use in plugins via ModuleEnabledGuard when possible.
-     *
-     * @param int|null $storeId
-     * @return bool
-     */
-    public function isEnabled(?int $storeId = null): bool
-    {
-        return $this->isModuleEnabled($storeId);
-    }
-
-    /**
      * Check if comments are enabled.
      *
      * @param int|null $storeId

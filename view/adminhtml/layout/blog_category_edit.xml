@@ -3,9 +3,6 @@
       layout="admin-2columns-left"
       xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="editor"/>
-    <head>
-        <link src="Venbhas_Blog::js/category-edit-tree.js"/>
-    </head>
     <body>
         <referenceContainer name="left" htmlTag="div"/>
         <referenceContainer name="left">

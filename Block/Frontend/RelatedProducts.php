@@ -140,22 +140,6 @@ class RelatedProducts extends \Magento\Catalog\Block\Product\AbstractProduct
     }
 
     /**
-     * Deprecated: use getRelatedProducts() instead. Returns empty collection for backwards compatibility.
-     *
-     * @deprecated Use getRelatedProducts() instead.
-     * @see getRelatedProducts()
-     */
-    public function getRelatedProductCollection()
-    {
-        $ids = $this->getRelatedProductIds();
-        $collection = $this->productCollectionFactory->create();
-        $collection->setStoreId($this->storeManager->getStore()->getId())
-            ->addAttributeToSelect('*')
-            ->addIdFilter(empty($ids) ? [0] : $ids);
-        return $collection;
-    }
-
-    /**
      * Get product image URL by product ID.
      *
      * @param int $productId
