@@ -5,6 +5,7 @@ namespace Venbhas\Blog\Model;
 
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
+use Venbhas\Blog\Model\Config\Source\MetaRobots;
 
 /**
  * Article module configuration.
@@ -24,16 +25,16 @@ class Config
     /** @var ScopeConfigInterface */
     private $scopeConfig;
 
-    /** @var Source\MetaRobots */
+    /** @var MetaRobots */
     private $metaRobots;
 
     /**
      * Constructor.
      *
      * @param ScopeConfigInterface $scopeConfig
-     * @param Source\MetaRobots $metaRobots
+     * @param MetaRobots $metaRobots
      */
-    public function __construct(ScopeConfigInterface $scopeConfig, Source\MetaRobots $metaRobots)
+    public function __construct(ScopeConfigInterface $scopeConfig, MetaRobots $metaRobots)
     {
         $this->scopeConfig = $scopeConfig;
         $this->metaRobots = $metaRobots;
@@ -259,7 +260,7 @@ class Config
         );
         $normalized = $this->metaRobots->normalizeValue($value);
 
-        return $normalized ?? Source\MetaRobots::INDEX_FOLLOW;
+        return $normalized ?? MetaRobots::INDEX_FOLLOW;
     }
 
     /**
@@ -277,6 +278,6 @@ class Config
         );
         $normalized = $this->metaRobots->normalizeValue($value);
 
-        return $normalized ?? Source\MetaRobots::INDEX_FOLLOW;
+        return $normalized ?? MetaRobots::INDEX_FOLLOW;
     }
 }
