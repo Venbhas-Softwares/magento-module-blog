@@ -1,0 +1,24 @@
+<?php
+declare(strict_types=1);
+
+namespace Venbhas\Blog\Model\Comment\Source;
+
+use Magento\Framework\Data\OptionSourceInterface;
+use Venbhas\Blog\Model\Comment;
+
+class Status implements OptionSourceInterface
+{
+    /**
+     * Return comment status options for select.
+     *
+     * @return array
+     */
+    public function toOptionArray(): array
+    {
+        return [
+            ['value' => Comment::STATUS_PENDING, 'label' => __('Pending')],
+            ['value' => Comment::STATUS_APPROVED, 'label' => __('Approved')],
+            ['value' => Comment::STATUS_REJECTED, 'label' => __('Rejected')],
+        ];
+    }
+}

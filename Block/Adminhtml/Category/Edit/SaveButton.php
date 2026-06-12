@@ -1,0 +1,39 @@
+<?php
+declare(strict_types=1);
+
+namespace Venbhas\Blog\Block\Adminhtml\Category\Edit;
+
+use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
+
+/**
+ * Save button for category edit form.
+ */
+class SaveButton extends GenericButton implements ButtonProviderInterface
+{
+    /**
+     * Get button data.
+     *
+     * @return array
+     */
+    public function getButtonData(): array
+    {
+        return [
+            'label' => __('Save'),
+            'class' => 'save primary',
+            'data_attribute' => [
+                'mage-init' => [
+                    'buttonAdapter' => [
+                        'actions' => [
+                            [
+                                'targetName' => 'venbhas_blog_category_form.venbhas_blog_category_form',
+                                'actionName' => 'save',
+                                'params' => [false],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            'sort_order' => 90,
+        ];
+    }
+}

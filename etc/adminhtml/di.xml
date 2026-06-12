@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Form\Modifier\ArticleRelatedProducts"
+                 type="Venbhas\Blog\Ui\DataProvider\Form\Modifier\RelatedProducts">
+        <arguments>
+            <argument name="relatedProductsResource" xsi:type="object">Venbhas\Blog\Model\ResourceModel\Article\RelatedProducts</argument>
+            <argument name="scopeName" xsi:type="string">venbhas_blog_form.venbhas_blog_form</argument>
+            <argument name="entityIdField" xsi:type="string">article_id</argument>
+            <argument name="sectionContent" xsi:type="string">Related products are shown to customers in addition to the item the customer is looking at.</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Form\Modifier\CategoryRelatedProducts"
+                 type="Venbhas\Blog\Ui\DataProvider\Form\Modifier\RelatedProducts">
+        <arguments>
+            <argument name="relatedProductsResource" xsi:type="object">Venbhas\Blog\Model\ResourceModel\Category\RelatedProducts</argument>
+            <argument name="scopeName" xsi:type="string">venbhas_blog_category_form.venbhas_blog_category_form</argument>
+            <argument name="entityIdField" xsi:type="string">category_id</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Form\Modifier\CategoryRelatedArticles"
+                 type="Venbhas\Blog\Ui\DataProvider\Form\Modifier\RelatedArticles">
+        <arguments>
+            <argument name="relatedArticlesResource" xsi:type="object">Venbhas\Blog\Model\ResourceModel\Article\CategoryRelation</argument>
+            <argument name="scopeName" xsi:type="string">venbhas_blog_category_form.venbhas_blog_category_form</argument>
+            <argument name="entityIdField" xsi:type="string">category_id</argument>
+            <argument name="sectionContent" xsi:type="string">Assign articles to this category. They will appear on the category page on the storefront.</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Article\Form\Modifier\Pool"
+                 type="Magento\Ui\DataProvider\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="categories" xsi:type="array">
+                    <item name="class" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Article\Form\Modifier\Categories</item>
+                    <item name="sortOrder" xsi:type="number">5</item>
+                </item>
+                <item name="related_products" xsi:type="array">
+                    <item name="class" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Form\Modifier\ArticleRelatedProducts</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Venbhas\Blog\Ui\DataProvider\Category\Form\Modifier\Pool"
+                 type="Magento\Ui\DataProvider\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="articles_in_category" xsi:type="array">
+                    <item name="class" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Form\Modifier\CategoryRelatedArticles</item>
+                    <item name="sortOrder" xsi:type="number">5</item>
+                </item>
+                <item name="related_products" xsi:type="array">
+                    <item name="class" xsi:type="string">Venbhas\Blog\Ui\DataProvider\Form\Modifier\CategoryRelatedProducts</item>
+                    <item name="sortOrder" xsi:type="number">10</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Venbhas\Blog\Model\Article\DataProvider">
+        <arguments>
+            <argument name="pool" xsi:type="object">Venbhas\Blog\Ui\DataProvider\Article\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+    <type name="Venbhas\Blog\Model\Category\DataProvider">
+        <arguments>
+            <argument name="pool" xsi:type="object">Venbhas\Blog\Ui\DataProvider\Category\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\Backend\Model\Menu\Builder">
+        <plugin name="venbhas_blog_hide_menu_when_disabled"
+                type="Venbhas\Blog\Plugin\Backend\Menu\HideWhenDisabledPlugin"
+                sortOrder="100"/>
+    </type>
+
+    <type name="Magento\Backend\App\AbstractAction">
+        <plugin name="venbhas_blog_admin_dispatch_guard"
+                type="Venbhas\Blog\Plugin\Backend\App\DispatchGuardPlugin"
+                sortOrder="10"/>
+    </type>
+</config>

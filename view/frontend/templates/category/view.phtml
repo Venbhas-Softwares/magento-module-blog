@@ -1,0 +1,68 @@
+<?php
+/**
+ * @var $block \Venbhas\Blog\Block\Frontend\Category\View
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$category = $block->getCategory();
+if (!$category) {
+    return;
+}
+$articles = $block->getArticles();
+?>
+
+<div class="venbhas-article-category-view">
+<h1><?= $escaper->escapeHtml($category->getName()) ?></h1>
+    <div class="category-header">
+        <div class="category-image">
+            <?php if ($category->getFeaturedImage()): ?>
+                <img src="<?= $escaper->escapeUrl($block->getImageUrl($category->getFeaturedImage())) ?>"
+                     alt="<?= $escaper->escapeHtml($category->getName()) ?>">
+            <?php endif; ?>
+        </div>
+
+        <div class="category-info">
+            <?php $descriptionHtml = $block->getFilteredDescription(); ?>
+            <?php if ($descriptionHtml !== ''): ?>
+                <div class="category-description cms-content">
+                    <?= /* @noEscape */ $descriptionHtml ?>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <?php if ($articles && $articles->getSize()): ?>
+        <div class="category-articles">
+            <h2><?= $escaper->escapeHtml(__('Articles')) ?></h2>
+            <?= $block->getToolbarHtml() ?>
+            <ul class="article-list">
+                <?php foreach ($articles as $article):
+                    $updatedAt = $article->getUpdatedAt();
+                    $formattedDate = $block->formatDate(
+                        $updatedAt,
+                        \IntlDateFormatter::MEDIUM,
+                        true
+                    );
+                    $timeAgo = $block->getTimeAgo($updatedAt);
+                    $artUrl = $block->getArticleUrl($article->getUrlKey());
+                    ?>
+                    <li class="article-item">
+                        <a href="<?= $escaper->escapeUrl($artUrl) ?>">
+                            <?= $escaper->escapeHtml($article->getTitle()) ?>
+                        </a>
+
+                        <div class="article-meta"
+                             title="<?= $escaper->escapeHtml($formattedDate) ?>">
+                            <?= $escaper->escapeHtml(__('Updated %1 ago', $timeAgo)) ?>
+                        </div>
+
+                        <div class="article-hover">
+                            <?= /* @noEscape */ $article->getShortDescription() ?>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+            <?= $block->getBottomToolbarHtml() ?>
+        </div>
+    <?php endif; ?>
+
+</div>

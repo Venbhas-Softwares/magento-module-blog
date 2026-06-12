@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">venbhas_blog_comment_listing.venbhas_blog_comment_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>venbhas_blog_comment_columns</spinner>
+        <deps>
+            <dep>venbhas_blog_comment_listing.venbhas_blog_comment_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="venbhas_blog_comment_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="indexField" xsi:type="string">comment_id</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Venbhas_Blog::comment</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider" name="venbhas_blog_comment_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>comment_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <bookmark name="bookmarks"/>
+        <columnsControls name="columns_controls"/>
+        <filterSearch name="fulltext"/>
+        <filters name="listing_filters"/>
+        <massaction name="listing_massaction">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="indexField" xsi:type="string">comment_id</item>
+                </item>
+            </argument>
+            <action name="status_pending">
+                <settings>
+                    <confirm>
+                        <message translate="true">Are you sure you want to mark the selected comments as Pending?</message>
+                        <title translate="true">Change status</title>
+                    </confirm>
+                    <url path="blog/comment/massStatus">
+                        <param name="status">0</param>
+                    </url>
+                    <type>status_pending</type>
+                    <label translate="true">Pending</label>
+                </settings>
+            </action>
+            <action name="status_approved">
+                <settings>
+                    <confirm>
+                        <message translate="true">Are you sure you want to mark the selected comments as Approved?</message>
+                        <title translate="true">Change status</title>
+                    </confirm>
+                    <url path="blog/comment/massStatus">
+                        <param name="status">1</param>
+                    </url>
+                    <type>status_approved</type>
+                    <label translate="true">Approved</label>
+                </settings>
+            </action>
+            <action name="status_rejected">
+                <settings>
+                    <confirm>
+                        <message translate="true">Are you sure you want to mark the selected comments as Rejected?</message>
+                        <title translate="true">Change status</title>
+                    </confirm>
+                    <url path="blog/comment/massStatus">
+                        <param name="status">2</param>
+                    </url>
+                    <type>status_rejected</type>
+                    <label translate="true">Rejected</label>
+                </settings>
+            </action>
+        </massaction>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="venbhas_blog_comment_columns">
+        <selectionsColumn name="ids" sortOrder="0">
+            <settings>
+                <indexField>comment_id</indexField>
+            </settings>
+        </selectionsColumn>
+        <column name="comment_id" sortOrder="10">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">ID</label>
+                <sorting>asc</sorting>
+            </settings>
+        </column>
+        <column name="article_title" sortOrder="20" class="Venbhas\Blog\Ui\Component\Listing\Column\CommentArticleLink">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Article</label>
+                <bodyTmpl>ui/grid/cells/html</bodyTmpl>
+            </settings>
+        </column>
+        <column name="user_name" sortOrder="30">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Name</label>
+            </settings>
+        </column>
+        <column name="user_email" sortOrder="40">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Email</label>
+            </settings>
+        </column>
+        <column name="comment" sortOrder="50">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Comment</label>
+            </settings>
+        </column>
+        <column name="status" sortOrder="60" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <options class="Venbhas\Blog\Model\Comment\Source\Status"/>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+        <column name="created_at" sortOrder="70" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+                <label translate="true">Created at</label>
+            </settings>
+        </column>
+        <column name="updated_at" sortOrder="80" class="Magento\Ui\Component\Listing\Columns\Date" component="Magento_Ui/js/grid/columns/date">
+            <settings>
+                <filter>dateRange</filter>
+                <dataType>date</dataType>
+                <label translate="true">Updated at</label>
+            </settings>
+        </column>
+        <actionsColumn name="actions" sortOrder="9999" class="Venbhas\Blog\Ui\Component\Listing\Column\CommentActions">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="sortOrder" xsi:type="number">9999</item>
+                </item>
+            </argument>
+            <settings>
+                <indexField>comment_id</indexField>
+            </settings>
+        </actionsColumn>
+    </columns>
+</listing>

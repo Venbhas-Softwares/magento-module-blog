@@ -1,0 +1,71 @@
+<?php
+/**
+ * @var $block \Venbhas\Blog\Block\Frontend\Product\RelatedArticles
+ * @var \Magento\Framework\Escaper $escaper
+ */
+$articles = $block->getRelatedArticles();
+if ($articles === []) {
+    return;
+}
+
+$visibleCount = (int) $block->getVisibleCount();
+$visibleCount = $visibleCount > 0 ? $visibleCount : 4;
+?>
+<div class="product-related-articles">
+    <h3><?= $escaper->escapeHtml(__('Related Articles')) ?></h3>
+    <div class="product-related-articles-slider"
+         data-visible-count="<?= $escaper->escapeHtmlAttr((string) $visibleCount) ?>">
+        <button type="button" class="action product-related-articles-slider-prev"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Previous')) ?>">&larr;</button>
+        <div class="product-related-articles-track">
+            <ol class="article-items">
+                <?php foreach ($articles as $article): ?>
+                    <?php $articleUrl = $block->getArticleUrl((string) $article->getUrlKey()); ?>
+                    <li class="article-item">
+                        <div class="article-item-info">
+                            <a href="<?= $escaper->escapeUrl($articleUrl) ?>"
+                               class="article photo article-item-photo">
+                                <?php $imgUrl = $block->getImageUrl($article->getFeaturedImage()); ?>
+                                <?php if ($imgUrl): ?>
+                                    <img src="<?= $escaper->escapeUrl($imgUrl) ?>"
+                                         alt="<?= $escaper->escapeHtml($article->getTitle()) ?>"/>
+                                <?php endif; ?>
+                            </a>
+                            <div class="article details article-item-details">
+                                <strong class="article name article-item-name">
+                                    <a href="<?= $escaper->escapeUrl($articleUrl) ?>">
+                                        <?= $escaper->escapeHtml($article->getTitle()) ?>
+                                    </a>
+                                </strong>
+                                <?php if ($article->getShortDescription()): ?>
+                                    <div class="article-short-description">
+                                        <?= /* @noEscape */ $article->getShortDescription() ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ol>
+        </div>
+        <button type="button" class="action product-related-articles-slider-next"
+                aria-label="<?= $escaper->escapeHtmlAttr(__('Next')) ?>">
+            &rarr;</button>
+    </div>
+</div>
+<script>
+require(['jquery', 'domReady!', 'Venbhas_Blog/js/article-related-slider'], function ($, _, slider) {
+    var el = document.querySelector('.product-related-articles-slider');
+    var attr = el && el.getAttribute('data-visible-count');
+    var visibleCount = attr ? parseInt(attr, 10) : 4;
+    slider({
+        selector: '.product-related-articles-slider',
+        trackSelector: '.product-related-articles-track',
+        prevSelector: '.product-related-articles-slider-prev',
+        nextSelector: '.product-related-articles-slider-next',
+        itemSelector: '.article-item',
+        resizeNamespace: 'productRelatedArticlesSlider',
+        visibleCount: isNaN(visibleCount) ? 4 : Math.max(1, visibleCount)
+    });
+});
+</script>

@@ -1,0 +1,19 @@
+<?php
+/**
+ * @var $block \Venbhas\Blog\Block\Frontend\Article\Toolbar
+ */
+?>
+<?php if ($block->getCollection() && $block->getCollection()->getSize()): ?>
+    <div class="toolbar toolbar-products"
+         data-mage-init='<?= /* @noEscape */ $block->getToolbarMageInitAttribute() ?>'>
+        <?php if ($block->getIsBottom()): ?>
+            <?= /* @noEscape */ $block->getPagerHtml() ?>
+            <?= /* @noEscape */ $block->getLimiterHtml() ?>
+        <?php else: ?>
+            <?= /* @noEscape */ $block->getAmountHtml() ?>
+            <?php if ($block->isExpanded()): ?>
+                <?= /* @noEscape */ $block->getSorterHtml() ?>
+            <?php endif ?>
+        <?php endif ?>
+    </div>
+<?php endif ?>

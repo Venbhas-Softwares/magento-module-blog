@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Framework\App\RouterList">
+        <arguments>
+            <argument name="routerList" xsi:type="array">
+                <item name="article" xsi:type="array">
+                    <item name="class" xsi:type="string">Venbhas\Blog\Controller\Router</item>
+                    <item name="disable" xsi:type="boolean">false</item>
+                    <!-- Run after urlrewrite (20) but before standard (30) -->
+                    <item name="sortOrder" xsi:type="string">25</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="Magento\Framework\View\Page\Config\Renderer">
+        <plugin name="venbhas_blog_seo_meta_renderer"
+                type="Venbhas\Blog\Plugin\Framework\View\Page\Config\RendererPlugin"
+                sortOrder="10"/>
+    </type>
+</config>

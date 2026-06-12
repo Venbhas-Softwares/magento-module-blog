@@ -1,0 +1,22 @@
+<?php
+declare(strict_types=1);
+
+namespace Venbhas\Blog\Model\Source;
+
+use Magento\Framework\Data\OptionSourceInterface;
+
+class IsActive implements OptionSourceInterface
+{
+    /**
+     * Return enabled/disabled options for select.
+     *
+     * @return array
+     */
+    public function toOptionArray(): array
+    {
+        return [
+            ['value' => 1, 'label' => __('Enabled')],
+            ['value' => 0, 'label' => __('Disabled')],
+        ];
+    }
+}

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<listing xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">category_article_article_listing.category_article_article_listing_data_source</item>
+        </item>
+    </argument>
+    <settings>
+        <spinner>venbhas_blog_article_picker_columns</spinner>
+        <deps>
+            <dep>category_article_article_listing.category_article_article_listing_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="category_article_article_listing_data_source" component="Magento_Ui/js/grid/provider">
+        <settings>
+            <storageConfig>
+                <param name="cacheRequests" xsi:type="boolean">false</param>
+            </storageConfig>
+            <updateUrl path="mui/index/render"/>
+        </settings>
+        <aclResource>Venbhas_Blog::article</aclResource>
+        <dataProvider class="Magento\Framework\View\Element\UiComponent\DataProvider\DataProvider"
+                      name="category_article_article_listing_data_source">
+            <settings>
+                <requestFieldName>id</requestFieldName>
+                <primaryFieldName>article_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <listingToolbar name="listing_top">
+        <filters name="listing_filters"/>
+        <paging name="listing_paging"/>
+    </listingToolbar>
+    <columns name="venbhas_blog_article_picker_columns">
+        <selectionsColumn name="ids" sortOrder="0">
+            <settings>
+                <indexField>article_id</indexField>
+            </settings>
+        </selectionsColumn>
+        <column name="article_id" sortOrder="10">
+            <settings>
+                <filter>textRange</filter>
+                <label translate="true">ID</label>
+                <sorting>asc</sorting>
+            </settings>
+        </column>
+        <column name="title" sortOrder="20">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">Title</label>
+            </settings>
+        </column>
+        <column name="url_key" sortOrder="30">
+            <settings>
+                <filter>text</filter>
+                <label translate="true">URL Key</label>
+            </settings>
+        </column>
+        <column name="status" sortOrder="40" component="Magento_Ui/js/grid/columns/select">
+            <settings>
+                <options class="Venbhas\Blog\Model\Article\Source\Status"/>
+                <filter>select</filter>
+                <dataType>select</dataType>
+                <label translate="true">Status</label>
+            </settings>
+        </column>
+    </columns>
+</listing>

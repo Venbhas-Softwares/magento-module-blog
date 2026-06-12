@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">venbhas_blog_comment_form.venbhas_blog_comment_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">Comment Information</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="save" class="Venbhas\Blog\Block\Adminhtml\Comment\Edit\SaveButton"/>
+            <button name="delete" class="Venbhas\Blog\Block\Adminhtml\Comment\Edit\DeleteButton"/>
+            <button name="back" class="Venbhas\Blog\Block\Adminhtml\Comment\Edit\BackButton"/>
+        </buttons>
+        <namespace>venbhas_blog_comment_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>venbhas_blog_comment_form.venbhas_blog_comment_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="venbhas_blog_comment_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="blog/comment/save"/>
+        </settings>
+        <dataProvider class="Venbhas\Blog\Model\Comment\DataProvider" name="venbhas_blog_comment_form_data_source">
+            <settings>
+                <requestFieldName>comment_id</requestFieldName>
+                <primaryFieldName>comment_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+    <fieldset name="general">
+        <settings>
+            <label translate="true">General</label>
+        </settings>
+        <field name="comment_id" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+                <dataScope>comment_id</dataScope>
+            </settings>
+        </field>
+        <field name="article_link" formElement="input" sortOrder="1">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Article</label>
+                <dataScope>article_link</dataScope>
+                <disabled>true</disabled>
+                <elementTmpl>ui/form/element/html</elementTmpl>
+            </settings>
+        </field>
+        <field name="user_name" formElement="input" sortOrder="20">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">User Name</label>
+                <dataScope>user_name</dataScope>
+                <disabled>true</disabled>
+
+            </settings>
+        </field>
+        <field name="user_email" formElement="input" sortOrder="30">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">User Email</label>
+                <dataScope>user_email</dataScope>
+                <disabled>true</disabled>
+
+            </settings>
+        </field>
+        <field name="status" formElement="select" sortOrder="40">
+            <settings>
+                <dataType>number</dataType>
+                <label translate="true">Status</label>
+                <dataScope>status</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="Venbhas\Blog\Model\Comment\Source\Status"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+    </fieldset>
+    <fieldset name="content" sortOrder="15">
+        <settings>
+            <collapsible>false</collapsible>
+            <label translate="true">Messages</label>
+        </settings>
+        <field name="comment" formElement="textarea">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>text</dataType>
+                <label translate="true">Comment</label>
+                <dataScope>comment</dataScope>
+            </settings>
+        </field>
+        <field name="reply" formElement="textarea">
+            <settings>
+                <dataType>text</dataType>
+                <label translate="true">Reply</label>
+                <dataScope>reply</dataScope>
+            </settings>
+        </field>
+    </fieldset>
+</form>

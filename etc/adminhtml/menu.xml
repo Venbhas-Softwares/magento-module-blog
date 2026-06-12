@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="Venbhas_Blog::article" title="Blog" translate="title" module="Venbhas_Blog" sortOrder="50" parent="Magento_Backend::content" resource="Venbhas_Blog::article_manage"/>
+        <add id="Venbhas_Blog::article_manage" title="Articles" translate="title" module="Venbhas_Blog" sortOrder="10" parent="Venbhas_Blog::article" action="blog/article/index" resource="Venbhas_Blog::article"/>
+        <add id="Venbhas_Blog::category_manage" title="Categories" translate="title" module="Venbhas_Blog" sortOrder="20" parent="Venbhas_Blog::article" action="blog/category/index" resource="Venbhas_Blog::category"/>
+        <add id="Venbhas_Blog::comment_manage" title="Comments" translate="title" module="Venbhas_Blog" sortOrder="30" parent="Venbhas_Blog::article" action="blog/comment/index" resource="Venbhas_Blog::comment"/>
+        <add id="Venbhas_Blog::config" title="Configuration" translate="title" module="Venbhas_Blog" sortOrder="40" parent="Venbhas_Blog::article" action="adminhtml/system_config/edit/section/venbhas_blog" resource="Venbhas_Blog::config"/>
+    </menu>
+</config>

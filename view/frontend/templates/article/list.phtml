@@ -1,0 +1,80 @@
+<?php
+/**
+ * @var $block \Venbhas\Blog\Block\Frontend\Article\ListBlock
+ * @var \Magento\Framework\Escaper $escaper
+ */
+
+$articles   = $block->getArticles();
+$categories = $block->getCategories();
+?>
+
+<div class="venbhas-article-wrapper">
+    <div class="article-layout">
+        <div class="article-content">
+            <?php if ($articles->getSize()): ?>
+                <?= $block->getToolbarHtml() ?>
+                <ul class="article-list">
+                    <?php foreach ($articles as $article): ?>
+                        <?php
+                        $updatedAt = $article->getUpdatedAt();
+                        $formattedDate = $block->formatDate(
+                            $updatedAt,
+                            \IntlDateFormatter::MEDIUM,
+                            true
+                        );
+                        ?>
+                        <li class="article-item">
+                            <?php $articleUrl = $block->getArticleUrl((string) $article->getUrlKey()); ?>
+                            <a href="<?= $escaper->escapeUrl($articleUrl) ?>">
+                                <?= $escaper->escapeHtml($article->getTitle()) ?>
+                            </a>
+
+                            <span class="article-updated"
+                                  title="<?= $escaper->escapeHtmlAttr($formattedDate) ?>"
+                                  data-date="<?= $escaper->escapeHtmlAttr($updatedAt) ?>">
+                            </span>
+                            <?php if ($article->getShortDescription()): ?>
+                                <div class="article-short-description">
+                                    <?= /* @noEscape */ $article->getShortDescription() ?>
+                                </div>
+                            <?php endif; ?>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+                <?= $block->getBottomToolbarHtml() ?>
+            <?php else: ?>
+                <p><?= $escaper->escapeHtml(__('No articles yet.')) ?></p>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
+<script>
+require(['jquery'], function ($) {
+    function timeAgo(dateString) {
+        const now = new Date();
+        const past = new Date(dateString);
+        const seconds = Math.floor((now - past) / 1000);
+
+        const intervals = {
+            year: 31536000,
+            month: 2592000,
+            day: 86400,
+            hour: 3600,
+            minute: 60
+        };
+
+        for (let key in intervals) {
+            const interval = Math.floor(seconds / intervals[key]);
+            if (interval >= 1) {
+                return interval + " " + key + (interval > 1 ? "s" : "") + " ago";
+            }
+        }
+        return "Just now";
+    }
+
+    $('.article-updated').each(function () {
+        const date = $(this).data('date');
+        $(this).text("Last updated " + timeAgo(date));
+    });
+});
+</script>

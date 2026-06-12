@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      layout="3columns"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+
+    <head>
+        <css src="Venbhas_Blog::css/article.css"/>
+    </head>
+    <body>
+
+        <!-- Left Sidebar (Categories) -->
+        <referenceContainer name="sidebar.main">
+            <block class="Venbhas\Blog\Block\Frontend\Category\ListCategory"
+                   name="venbhas.article.category.leftnav"
+                   template="Venbhas_Blog::category/leftnav.phtml"/>
+        </referenceContainer>
+
+        <!-- Main Article Content (article, comment section, related products) -->
+        <referenceContainer name="content">
+            <block class="Venbhas\Blog\Block\Frontend\Article\View"
+                   name="article.view"
+                   template="Venbhas_Blog::article/view.phtml"/>
+            <block class="Venbhas\Blog\Block\Frontend\Article\CommentList"
+                   name="article.comment.list"
+                   template="Venbhas_Blog::article/comment/list.phtml"/>
+            <block class="Venbhas\Blog\Block\Frontend\Article\CommentForm"
+                   name="article.comment.form"
+                   template="Venbhas_Blog::article/comment/form.phtml"/>
+            <block class="Venbhas\Blog\Block\Frontend\RelatedProducts"
+                   name="article.related.products"
+                   template="Venbhas_Blog::article/related_products.phtml"/>
+        </referenceContainer>
+
+        <referenceBlock name="catalog.compare.sidebar" remove="true"/>
+        <referenceBlock name="wishlist_sidebar" remove="true"/>
+        <referenceContainer name="sidebar.additional">
+            <block class="Venbhas\Blog\Block\Frontend\Search" name="article.search.sidebar" template="Venbhas_Blog::search/form.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

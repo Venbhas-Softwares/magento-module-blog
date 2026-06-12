@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Venbhas_Blog::css/article.css"/>
+    </head>
+    <body>
+        <referenceContainer name="content.aside">
+            <block class="Venbhas\Blog\Block\Frontend\Product\RelatedArticles"
+                   name="product.related.articles"
+                   template="Venbhas_Blog::product/related_articles.phtml"
+                   after="catalog.product.related"/>
+        </referenceContainer>
+    </body>
+</page>

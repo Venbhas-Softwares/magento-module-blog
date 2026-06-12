@@ -1,0 +1,27 @@
+<?php
+declare(strict_types=1);
+
+namespace Venbhas\Blog\Block\Adminhtml\Comment\Edit;
+
+use Magento\Framework\View\Element\UiComponent\Control\ButtonProviderInterface;
+
+/**
+ * Save button for comment edit form.
+ */
+class SaveButton extends GenericButton implements ButtonProviderInterface
+{
+    /**
+     * Get button data.
+     *
+     * @return array
+     */
+    public function getButtonData(): array
+    {
+        return [
+            'label' => __('Save'),
+            'class' => 'save primary',
+            'data_attribute' => ['mage-init' => ['button' => ['event' => 'save']]],
+            'sort_order' => 90,
+        ];
+    }
+}

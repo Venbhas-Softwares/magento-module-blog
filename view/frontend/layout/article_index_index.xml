@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      layout="3columns"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <css src="Venbhas_Blog::css/article.css"/>
+    </head>
+    <body>
+        <referenceContainer name="sidebar.main">
+            <block class="Venbhas\Blog\Block\Frontend\Category\ListCategory"
+                   name="venbhas.article.category.leftnav"
+                   template="Venbhas_Blog::category/leftnav.phtml"/>
+        </referenceContainer>
+        <referenceContainer name="content">
+            <block class="Venbhas\Blog\Block\Frontend\Article\ListBlock" name="article.list" template="Venbhas_Blog::article/list.phtml" cacheable="false">
+                <arguments>
+                    <argument name="list_title" xsi:type="string" translate="true">Articles</argument>
+                    <argument name="toolbar_block_name" xsi:type="string">article_list_toolbar</argument>
+                </arguments>
+                <block class="Venbhas\Blog\Block\Frontend\Article\Toolbar" name="article_list_toolbar" template="Venbhas_Blog::article/list/toolbar.phtml" cacheable="false">
+                    <arguments>
+                        <argument name="pager_block_name" xsi:type="string">article_list_toolbar_pager</argument>
+                    </arguments>
+                    <block class="Venbhas\Blog\Block\Frontend\Article\Pager" name="article_list_toolbar_pager"/>
+                </block>
+            </block>
+        </referenceContainer>
+        <referenceBlock name="catalog.compare.sidebar" remove="true"/>
+        <referenceBlock name="wishlist_sidebar" remove="true"/>
+        <referenceContainer name="sidebar.additional">
+            <block class="Venbhas\Blog\Block\Frontend\Search" name="article.search.sidebar" template="Venbhas_Blog::search/form.phtml"/>
+        </referenceContainer>
+    </body>
+</page>
